@@ -1,9 +1,28 @@
 import { useRef, useState } from 'react'
 
+function Chip({ label, n, on, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        'inline-flex items-center gap-1.5 text-[.8rem] font-medium rounded-full px-3 py-1 cursor-pointer transition active:scale-95 ' +
+        (on
+          ? 'bg-accent-deep text-white shadow-md shadow-accent-deep/30'
+          : 'bg-panel2 text-muted hover:bg-accent-soft hover:text-accent-deep')
+      }
+    >
+      {label}
+      <span className="text-[.66rem] opacity-60 tabular-nums">{n}</span>
+    </button>
+  )
+}
+
 // 可搜尋的分類表格:sections = [[分類標題, [[名稱, 對應, 說明], ...]], ...]
-// 點第一欄複製到剪貼簿。搜尋比對整列文字(中文、名稱都能搜)。
+// 點第一欄複製到剪貼簿。搜尋比對整列文字(中文、名稱都能搜),籤片過濾分類。
 export default function DataTable({ sections, headers, placeholder = '搜尋…' }) {
   const [q, setQ] = useState('')
+  const [cat, setCat] = useState(null)
   const [toast, setToast] = useState('')
   const timer = useRef(null)
   const term = q.trim().toLowerCase()
@@ -16,16 +35,19 @@ export default function DataTable({ sections, headers, placeholder = '搜尋…'
     })
   }
 
+  const total = sections.reduce((n, [, rows]) => n + rows.length, 0)
   const filtered = sections
+    .filter(([title]) => cat === null || title === cat)
     .map(([title, rows]) => [
       title,
       term ? rows.filter((r) => r.join(' ').toLowerCase().includes(term)) : rows,
     ])
     .filter(([, rows]) => rows.length > 0)
+  const shown = filtered.reduce((n, [, rows]) => n + rows.length, 0)
 
   return (
     <div>
-      <div className="my-5">
+      <div className="mt-5 mb-1.5">
         <input
           type="search"
           value={q}
@@ -33,6 +55,22 @@ export default function DataTable({ sections, headers, placeholder = '搜尋…'
           placeholder={placeholder}
           className="w-full max-w-[30rem] bg-panel border-[1.5px] border-line rounded-lg px-3.5 py-2 text-ink placeholder:text-muted focus:outline-none focus:border-accent-deep focus:ring-[3px] focus:ring-accent-soft"
         />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 mb-5">
+        <Chip label="全部" n={total} on={cat === null} onClick={() => setCat(null)} />
+        {sections.map(([title, rows]) => (
+          <Chip
+            key={title}
+            label={title}
+            n={rows.length}
+            on={cat === title}
+            onClick={() => setCat(cat === title ? null : title)}
+          />
+        ))}
+        <span className="ml-auto text-xs text-muted tabular-nums">
+          {shown} / {total} 筆
+        </span>
       </div>
 
       {filtered.length === 0 && (

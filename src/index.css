@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
-/* 自訂主題色(冷色調深色)— 定義後就能用 bg-panel、text-ink、border-line 這些 class */
+/* 自訂主題色(冷色調灰白)— 定義後就能用 bg-panel、text-ink、border-line 這些 class */
 @theme {
-  --color-bg: #0d1521;
-  --color-panel: #131e2c;
-  --color-panel2: #182534;
-  --color-line: #24344c;
-  --color-ink: #d9e4f1;
-  --color-muted: #8398b0;
-  --color-accent: #6fc3ff;
-  --color-accent-deep: #2f81c7;
-  --color-accent-soft: #14283c;
-  --color-codebg: #0f1927;
-  --color-danger: #ff8f8f;
+  --color-bg: #e9edf2;
+  --color-panel: #f7f9fb;
+  --color-panel2: #edf1f5;
+  --color-line: #d7dee7;
+  --color-ink: #212b38;
+  --color-muted: #66788c;
+  --color-accent: #2b7cc0;
+  --color-accent-deep: #2568a5;
+  --color-accent-soft: #ddeaf6;
+  --color-codebg: #eef2f6;
+  --color-danger: #c94f4f;
   --font-sans: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
 }

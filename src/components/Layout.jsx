@@ -13,7 +13,7 @@ export default function Layout() {
     <div className="flex min-h-screen max-md:flex-col">
       <aside className="w-[232px] shrink-0 bg-panel border-r border-line px-4 pt-6 pb-8 sticky top-0 h-screen overflow-y-auto max-md:w-full max-md:h-auto max-md:static max-md:border-r-0 max-md:border-b">
         <NavLink to="/" className="block text-lg font-bold mx-1.5 mb-5 text-ink hover:no-underline">
-          <span className="text-accent">~</span> Benji Wiki
+          Benji <span className="text-accent">Wiki</span>
         </NavLink>
         {NAV.map((p) => {
           const showGroup = p.group && p.group !== lastGroup

@@ -16,8 +16,7 @@ export default function Lock() {
         onSubmit={submit}
         className="w-[min(90vw,340px)] bg-panel border border-line rounded-2xl px-7 py-8 text-center"
       >
-        <div className="text-2xl text-accent">~</div>
-        <h1 className="text-xl mt-2 mb-0.5">Benji Wiki</h1>
+        <h1 className="text-xl mb-0.5">Benji <span className="text-accent">Wiki</span></h1>
         <p className="text-sm text-muted mb-5">私人筆記,輸入密碼解鎖</p>
         <input
           type="password"
