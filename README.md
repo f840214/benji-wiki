@@ -14,7 +14,14 @@ npm run dev      # http://localhost:5173
 1. 在 `src/pages/` 複製一頁改內容(表格型用 `DataTable`,文章型參考 `ReactPage.jsx`)。
 2. `src/nav.js` 加一行,側欄自動出現。
 3. `src/App.jsx` 加對應的 `<Route>`。
-4. `git push`,GitHub Actions 會自動 build 並部署到 GitHub Pages。
+
+## 部署
+
+```bash
+npm run deploy   # build 後推到 gh-pages 分支,GitHub Pages 自動更新
+```
+
+原始碼照常 `git push` 到 main;`npm run deploy` 負責更新線上頁面。
 
 ## 換密碼
 
