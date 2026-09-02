@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/* 自訂主題色(冷色調深色)— 定義後就能用 bg-panel、text-ink、border-line 這些 class */
+@theme {
+  --color-bg: #0d1521;
+  --color-panel: #131e2c;
+  --color-panel2: #182534;
+  --color-line: #24344c;
+  --color-ink: #d9e4f1;
+  --color-muted: #8398b0;
+  --color-accent: #6fc3ff;
+  --color-accent-deep: #2f81c7;
+  --color-accent-soft: #14283c;
+  --color-codebg: #0f1927;
+  --color-danger: #ff8f8f;
+  --font-sans: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* 全站文字預設 — wiki 是內容型網站,標題/段落統一在 base 層設,頁面元件就不用每次重複 */
+@layer base {
+  body { @apply bg-bg text-ink font-sans leading-[1.65]; }
+  h1 { @apply text-[1.7rem] font-bold mb-2 text-balance; }
+  h2 { @apply text-lg font-semibold mt-9 mb-3 pb-1.5 border-b border-line; }
+  h3 { @apply text-base font-semibold mt-6 mb-2; }
+  p { @apply max-w-[70ch]; }
+  a { @apply text-accent hover:underline; }
+  code { @apply bg-codebg border border-line rounded px-1.5 py-px font-mono text-[.85em]; }
+  pre code { @apply bg-transparent border-0 p-0 text-[length:inherit]; }
+}
