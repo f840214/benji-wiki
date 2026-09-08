@@ -635,6 +635,7 @@ ROOM_LAYER = { Stage: 0, ChatFloat: 1, Play: 2, UI: 3, Overlay: 4, Tutorial: 5 }
 // RoomView 自己只做:視訊 join / leave、關進房遮罩、預載房內資源;handler 與 store 不在這裡掛`}</Code>
 
       <h2>PixiJS + Spine:只經 pixi-game-framework</h2>
+      <p className="text-muted max-w-[62ch]">用到的 API、生命週期、命令式派彩的完整範例與踩過的坑,獨立成 <a href="#/pixi">Pixi / Spine</a> 一頁;這裡只留骨架。</p>
       <Code>{`// 宣告式:CanvasScope 指定畫進哪張 canvas,RenderLayer 給一個 design 座標系並管 DOM 對位、自適應、資源 refcount
 <CanvasScope target="fx">
   <div className="pointer-events-none absolute inset-x-0 top-[41.67%] aspect-[864/800] -translate-y-1/2">

@@ -10,6 +10,7 @@ const TOPICS = [
   { to: '/react-router', tag: 'React 生態', title: 'react-router-dom', desc: '路由設定、Link 導航、useNavigate / useParams。' },
   { to: '/zustand', tag: 'React 生態', title: 'Zustand', desc: '建 store、selector 用法、persist 存檔。' },
   { to: '/nexus-client', tag: '專案', title: 'nexus client', desc: 'roulette / colorgame 共用架構:技術棧、分環資料流、功能實作走讀(列表 / 定位 / 進房 / 傳資料 / 收發事件)、兩專案差異、skills。' },
+  { to: '/pixi', tag: '專案', title: 'Pixi / Spine', desc: 'nexus client 的 PixiJS 8 + Spine:用到的 API、兩種用法、資源生命週期、派彩三檔拍板、Spine 交付規則、踩過的坑。' },
 ]
 
 export default function Home() {
