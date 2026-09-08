@@ -7,5 +7,6 @@ export const NAV = [
   { path: '/react-dom', title: 'react-dom', group: 'React 生態' },
   { path: '/react-router', title: 'react-router-dom', group: 'React 生態' },
   { path: '/zustand', title: 'Zustand', group: 'React 生態' },
+  { path: '/roulette', title: 'nexus-roulette-client', group: '專案' },
   { path: '/colorgame', title: 'nexus-colorgame-client', group: '專案' },
 ]
