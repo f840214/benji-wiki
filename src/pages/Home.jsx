@@ -9,8 +9,7 @@ const TOPICS = [
   { to: '/react-dom', tag: 'React 生態', title: 'react-dom', desc: 'createRoot、Portal、與 react 套件的分工。' },
   { to: '/react-router', tag: 'React 生態', title: 'react-router-dom', desc: '路由設定、Link 導航、useNavigate / useParams。' },
   { to: '/zustand', tag: 'React 生態', title: 'Zustand', desc: '建 store、selector 用法、persist 存檔。' },
-  { to: '/roulette', tag: '專案', title: 'nexus-roulette-client', desc: '輪盤 H5 客戶端技術棧:每項技術怎麼用、為什麼、附範例;分環架構、資料流、Pixi/RWD/i18n。' },
-  { to: '/colorgame', tag: '專案', title: 'nexus-colorgame-client', desc: '彩骰 H5 客戶端上手:指令、分層、改動食譜、skills、現況缺口。' },
+  { to: '/nexus-client', tag: '專案', title: 'nexus client', desc: 'roulette / colorgame 共用架構:技術棧、分環資料流、功能實作走讀(列表 / 定位 / 進房 / 傳資料 / 收發事件)、兩專案差異、skills。' },
 ]
 
 export default function Home() {

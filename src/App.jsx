@@ -9,8 +9,7 @@ import ReactPage from './pages/ReactPage.jsx'
 import ReactDomPage from './pages/ReactDomPage.jsx'
 import ReactRouterPage from './pages/ReactRouterPage.jsx'
 import ZustandPage from './pages/ZustandPage.jsx'
-import RoulettePage from './pages/RoulettePage.jsx'
-import ColorGamePage from './pages/ColorGamePage.jsx'
+import NexusClientPage from './pages/NexusClientPage.jsx'
 
 export default function App() {
   const unlocked = useAuth((s) => s.unlocked)
@@ -26,8 +25,7 @@ export default function App() {
         <Route path="/react-dom" element={<ReactDomPage />} />
         <Route path="/react-router" element={<ReactRouterPage />} />
         <Route path="/zustand" element={<ZustandPage />} />
-        <Route path="/roulette" element={<RoulettePage />} />
-        <Route path="/colorgame" element={<ColorGamePage />} />
+        <Route path="/nexus-client" element={<NexusClientPage />} />
       </Route>
     </Routes>
   )
