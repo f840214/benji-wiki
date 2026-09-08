@@ -1,6 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { NAV } from '../nav.js'
 
+// 站台 icon:放在 public/,路徑要帶 base(GitHub Pages 是 /benji-wiki/)
+const ICON = import.meta.env.BASE_URL + 'boxing.svg'
+
 const linkClass = ({ isActive }) =>
   'block px-2.5 py-1.5 my-0.5 rounded-md text-sm transition-colors ' +
   (isActive
@@ -12,8 +15,9 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen max-md:flex-col">
       <aside className="w-[232px] shrink-0 bg-panel border-r border-line px-4 pt-6 pb-8 sticky top-0 h-screen overflow-y-auto max-md:w-full max-md:h-auto max-md:static max-md:border-r-0 max-md:border-b">
-        <NavLink to="/" className="block text-lg font-bold mx-1.5 mb-5 text-ink hover:no-underline">
-          Benji <span className="text-accent">Wiki</span>
+        <NavLink to="/" className="flex items-center gap-2 text-lg font-bold mx-1.5 mb-5 text-ink hover:no-underline">
+          <img src={ICON} alt="" aria-hidden="true" className="w-7 h-7" />
+          <span>Benji <span className="text-accent">Wiki</span></span>
         </NavLink>
         {NAV.map((p) => {
           const showGroup = p.group && p.group !== lastGroup

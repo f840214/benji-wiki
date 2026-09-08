@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '../store.js'
 
+const ICON = import.meta.env.BASE_URL + 'boxing.svg'
+
 export default function Lock() {
   const [pw, setPw] = useState('')
   const { tryUnlock, error, clearError } = useAuth()
@@ -16,6 +18,7 @@ export default function Lock() {
         onSubmit={submit}
         className="w-[min(90vw,340px)] bg-panel border border-line rounded-2xl px-7 py-8 text-center"
       >
+        <img src={ICON} alt="" aria-hidden="true" className="w-14 h-14 mx-auto mb-3" />
         <h1 className="text-xl mb-0.5">Benji <span className="text-accent">Wiki</span></h1>
         <p className="text-sm text-muted mb-5">私人筆記,輸入密碼解鎖</p>
         <input

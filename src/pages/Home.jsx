@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+const ICON = import.meta.env.BASE_URL + 'boxing.svg'
+
 const TOPICS = [
   { to: '/tailwind', tag: 'CSS', title: 'Tailwind CSS', desc: 'v4 常用 class 中文對照,含間距刻度、顏色寫法、前綴修飾。' },
   { to: '/html-tags', tag: '基礎', title: 'HTML 標籤', desc: '常用標籤分類查詢:結構、文字、表單、表格、媒體。' },
@@ -7,12 +9,16 @@ const TOPICS = [
   { to: '/react-dom', tag: 'React 生態', title: 'react-dom', desc: 'createRoot、Portal、與 react 套件的分工。' },
   { to: '/react-router', tag: 'React 生態', title: 'react-router-dom', desc: '路由設定、Link 導航、useNavigate / useParams。' },
   { to: '/zustand', tag: 'React 生態', title: 'Zustand', desc: '建 store、selector 用法、persist 存檔。' },
+  { to: '/colorgame', tag: '專案', title: 'nexus-colorgame-client', desc: '彩骰 H5 客戶端上手:指令、分層、改動食譜、skills、現況缺口。' },
 ]
 
 export default function Home() {
   return (
     <div>
-      <h1>Benji Wiki</h1>
+      <h1 className="flex items-center gap-3">
+        <img src={ICON} alt="" aria-hidden="true" className="w-10 h-10" />
+        Benji Wiki
+      </h1>
       <p className="text-muted mb-6 max-w-[62ch]">
         自己的前端查詢筆記。每頁都有即時搜尋(中文、API 名稱都能搜),想加什麼主題就加什麼。
         這個 wiki 本身就是用它教的東西做的:React + Vite + Tailwind v4 + react-router-dom + zustand。
