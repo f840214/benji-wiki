@@ -10,4 +10,5 @@ export const NAV = [
   { path: '/nexus-client', title: 'nexus client', group: '專案' },
   { path: '/colorgame-dirs', title: 'colorgame 目錄清單', group: '專案' },
   { path: '/pixi', title: 'Pixi / Spine', group: '專案' },
+  { path: '/figma-to-react', title: 'Figma → React', group: '專案' },
 ]
