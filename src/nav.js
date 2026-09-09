@@ -8,5 +8,6 @@ export const NAV = [
   { path: '/react-router', title: 'react-router-dom', group: 'React 生態' },
   { path: '/zustand', title: 'Zustand', group: 'React 生態' },
   { path: '/nexus-client', title: 'nexus client', group: '專案' },
+  { path: '/colorgame-dirs', title: 'colorgame 目錄清單', group: '專案' },
   { path: '/pixi', title: 'Pixi / Spine', group: '專案' },
 ]

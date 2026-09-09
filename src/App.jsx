@@ -11,6 +11,7 @@ import ReactRouterPage from './pages/ReactRouterPage.jsx'
 import ZustandPage from './pages/ZustandPage.jsx'
 import NexusClientPage from './pages/NexusClientPage.jsx'
 import PixiPage from './pages/PixiPage.jsx'
+import ColorGameDirsPage from './pages/ColorGameDirsPage.jsx'
 
 export default function App() {
   const unlocked = useAuth((s) => s.unlocked)
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/zustand" element={<ZustandPage />} />
         <Route path="/nexus-client" element={<NexusClientPage />} />
         <Route path="/pixi" element={<PixiPage />} />
+        <Route path="/colorgame-dirs" element={<ColorGameDirsPage />} />
       </Route>
     </Routes>
   )

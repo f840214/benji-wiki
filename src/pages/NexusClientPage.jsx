@@ -2,9 +2,11 @@ import DataTable from '../components/DataTable.jsx'
 import Code from '../components/Code.jsx'
 
 // nexus client（nexus-roulette-client / nexus-colorgame-client）共用架構筆記。
-// 兩個 repo 是同一套骨架:colorgame 由 baccarat / roulette 模板複製而來,分環、資料流、工具鏈、閘門全部相同,
-// 只有「玩法」那一層不同。資料來源:兩個 repo 的 CLAUDE.md / README / MEMORY / docs / eslint.config / vite.config 與 src(2026-09-08)。
-// 版本只寫大版,精確版看各 repo 的 package.json。範例程式碼以 roulette 為主(colorgame 的殼還是 placeholder)。
+// 兩個 repo 是同一套骨架:colorgame 以 nexus-roulette-client 為藍本同構複製(09-08 重推 master,更早那份 baccarat 底的骨架已被取代),
+// 分環、資料流、工具鏈、閘門全部相同,只有「玩法」那一層不同。
+// 資料來源:兩個 repo 的 CLAUDE.md / README / MEMORY / docs / eslint.config / vite.config 與 src(colorgame 對到 2026-09-08 晚間 aaca951)。
+// 版本只寫大版,精確版看各 repo 的 package.json。範例程式碼以 roulette 為主(colorgame 的畫面殼還是 placeholder);
+// colorgame 逐檔說明另有一頁 #/colorgame-dirs。
 
 const TECH = [
 ['核心 runtime', [
@@ -30,7 +32,7 @@ const TECH = [
   ['@toppath/game-client-sdk', '後端協定', 'WebSocket + HTTP、所有 model(Table / Round / User / BetInfoCollection / ChipSelector / GameMap / MessageCenter…)與事件。只經 SdkAdapter 出入,其他層不得 import;走 games/<game> 子路徑入口,少 22K gz。分支必須在 nexus_master'],
   ['@toppath/shared-code', '共用型別', 'G.ITable / G.IRound / G.IBet 等 codegen 型別;dist 有進 git,不用 build'],
   ['@toppath/game-client-framework', '框架無關工具', 'ELog 埋點、DeviceChecker 裝置分級、storage、Video(RTC) VideoManager、scheduleWhenIdle 閒時排程、isConstrainedNetwork 網路提示、SoundManager'],
-  ['@toppath/pixi-game-framework', 'React + Pixi 渲染層', 'PixiCanvas / SceneStack / RenderPlane / CanvasScope / RenderLayer / Layer / <Spine> 與資源生命週期;/surfaces 子路徑是可插拔 UI 的工廠(純 React、不碰 pixi);/geometry 有 containRect 這類幾何工具'],
+  ['@toppath/pixi-game-framework', 'React + Pixi 渲染層', 'PixiCanvas / SceneStack / RenderPlane / CanvasScope / RenderLayer / Layer / <Spine> 與資源生命週期;/geometry 有 containRect 這類幾何工具。可插拔 UI 的工廠原本在 /surfaces 子路徑,三個 client 都沒消費過,已從框架拔除、內聯到 colorgame 的 src/platform/surfaces/ 暫存,等實作驗證後再定落點'],
   ['api-helper', 'SDK 的內部依賴', 'colorgame 的 setup 會一併 build;SDK 未宣告的 internal dep,setup 偵測後印 link 指引'],
 ]],
 ['工具鏈', [
@@ -69,26 +71,25 @@ const DIRS = [
 ['目錄地圖(環由內到外)', [
   ['src/platform/', '最內環', '零遊戲知識、零 SDK:rwd 引擎、i18n 橋、uiManager(Toast / Modal / Loading)、sceneManager、sound、loading 進度、state(偏好 / 視訊 / 聊天 / i18n store)、dom 工具。整包自基底帶入'],
   ['src/integrations/', '外部系統', 'sdk/SdkAdapter(SDK 唯一出入口)+ sdk/queries(讀取模組)、config(fields.ts 唯一欄位清單 + ConfigManager)、elog 埋點、video/VideoAdapter、host 宿主橋'],
-  ['src/game/domain/', '純函式', 'roulette:rouletteWheel / rouletteBetTypes / tableLimitRange / roomListSort / tableCardData。colorgame:colorGame(六色 801–806)/ roomType(15 房型)/ roomVariant(11 版面)/ gameType(=31)。不碰 SDK 實例、全部有測試'],
-  ['src/game/store/', 'Zustand', 'useGameStore(局態)/ useBetStore(注單)/ useWalletStore(餘額)/ useUiStore(面板開關、派彩窗)/ useTutorialStore;一檔一 store'],
+  ['src/game/domain/', '純函式:遊戲知識與資料判讀', 'roulette:rouletteWheel / rouletteBetTypes / tableLimitRange / roomListSort / tableCardData。colorgame 15 支:colorGame(六色 801–806)/ betTypes(八注型)/ subType(15 子玩法鍵↔碼)/ roomVariant(11 版面)/ roomType(15 房型)/ roundResult(三同 / 二同 / 全異)/ odds(中沒中、倍率、獎池)/ lushu(路書一欄四筆)/ subGameGate(桌能不能進)/ bonusActivity(LuckyTriple 檔期)/ tableStatus / tableLimits / tableSort / currency / gameType(=31)。判準:輸出換一套視覺設計會不會變?會變就不是 domain(不回傳樣式名、命名不照畫面抄:BetArea→BetType、isLight→isWinning)。不碰 SDK 實例、全部有測試'],
+  ['src/game/store/', 'Zustand', 'roulette:useGameStore(局態)/ useBetStore(注單)/ useWalletStore(餘額)/ useUiStore(面板開關、派彩窗)/ useTutorialStore。colorgame 目前只有 Game / Ui / Wallet 三顆最小化版本,Bet / UltimateJackpot / 活動 store 在 docs/plan 設計裡等實作;一檔一 store'],
   ['src/game/actions/', '玩家寫入', 'bet / auth / navigation / video / chat / gift / favoriteBet / customChips / deposit;emit + 樂觀旗標 + elog + toast,永不寫金錢'],
   ['src/game/handlers/global/', 'App 啟動掛', 'Loading / Message / Scene / User / PageVisibility / LogMgr;名冊 globalHandlers.ts;活到關頁'],
   ['src/game/handlers/room/', '進房掛、離房拆', 'Game / Bet / Chat;名冊 roomHandlers.ts;由 SceneHandler 的 POSITION_CHANGED 驅動,不綁 React'],
   ['src/game/hooks/', '畫面讀', 'useTableLimits / useTableRoadmap / useTableSummaryRevision / useLobbyTableList / useLobbyCardLive / useLayoutWidth / useAppConfig…;回純資料,不外露 SDK 實例'],
-  ['src/views/', '畫面', 'LoadingView / LoginView / LobbyView / RoomView 四頁 + lobby/ room/ popup/ components/;campaigns/ skins/ 兩張可插拔總表'],
-  ['src/views/RoomView.tsx', '房間', 'roulette:五層 z-stack 的房間本體。colorgame:玩法路由器,判玩法後 lazy 畫對應 views/room/<玩法>/,自己沒有版面'],
+  ['src/views/', '畫面', 'LoadingView / LoginView / LobbyView / RoomView 四頁 + lobby/ room/ popup/ components/;可插拔總表只剩 campaigns/ 一張(skins/ 於 09-08 砍掉)'],
+  ['src/views/RoomView.tsx', '房間', 'roulette:五層 z-stack 的房間本體。colorgame:目前是純佔位殼(只履行 mount 時 setEntering(false) 的契約);設計上會依 subType 走 domain/roomVariant 判準 lazy 出對應版面,那條路由與 views/room/<玩法>/ 目錄都還沒建'],
   ['src/views/room/layers/', '房間分層', 'roomLayers.ts 是 z 序唯一真相(Stage 0 / ChatFloat 1 / Play 2 / UI 3 / Overlay 4 / Tutorial 5);每層一個 XxxLayer 元件'],
   ['src/views/room/betarea/', '注盤(roulette)', 'rect/(矩形盤)與 oval/(racetrack)姊妹盤,各自 Base / Label / Chip / Highlight / Click 五層 DOM,共用 store 與 actions/bet'],
-  ['src/views/room/variants.ts(colorgame)', '玩法總表', 'Record<RoomVariant, () => import(...)>,11 列 8 目錄;守門 variants.test.ts'],
-  ['src/views/room/payout/', '派彩特效', 'PayoutFx(顯示窗狀態機)→ PayoutEffect(命令式 pixi + RenderLayer)→ payoutSpines / payoutTimeline(純函式時間軸)'],
-  ['src/views/room/runtime/', '房間 runtime', 'loadRoomView(進房唯一載入點)、pixiRuntime(Spine 註冊)、roomGeometry / roomRatioSpec(RWD 查表)、roomAssets 預載清單'],
-  ['src/views/popup/', '面板', 'panels.ts 唯一匯出口;panels.sync.ts / panels.lazy.ts 各一份名單,同一面板只能在其一'],
-  ['src/views/subgames/(colorgame)', '第三張總表', 'registry(空)/ slots(六格)/ activation / hooks;機制在 pixi-game-framework/surfaces'],
+  ['src/views/room/payout/', '派彩特效(roulette)', 'PayoutFx(顯示窗狀態機)→ PayoutEffect(命令式 pixi + RenderLayer)→ payoutSpines / payoutTimeline(純函式時間軸)'],
+  ['src/views/room/runtime/', '房間 runtime', 'loadRoomView(進房唯一載入點)、pixiRuntime(Spine 註冊;colorgame 尚無)、roomGeometry / roomRatioSpec(RWD 查表;colorgame 是輪盤佔位值)、roomAssets 預載清單'],
+  ['src/views/popup/', '面板', 'roulette:panels.ts 唯一匯出口,panels.sync.ts / panels.lazy.ts 各一份名單。colorgame 不採面板總表:面板是 views/popup/<domain>/ 下的一般元件,消費端直接 import,真的重才就地 React.lazy(目前目錄還沒建)'],
+  ['src/views/campaigns/', '檔期活動總表', 'registry(空,一列三欄 id / isOn / surfaces)/ slots / activation(開關來源組裝)/ hooks(useCampaignSurfaces);只有疊加語意。colorgame 的消費端只有 Lucky Draw 與 Color War 兩檔;玩法不走這套(由 subType 決定)'],
   ['src/tutorial/', '新手教學', 'core/(可攜機制)ui/(可攜演出)roulette/(輪盤劇本與閘門);前兩層 lint 禁 import store / handlers'],
   ['src/assets/ vs public/assets/', '資源', 'bundled(import 的 svg / 小圖)vs served(runtime URL:籌碼系列、spine、字型、音效、大背景)'],
   ['src/testing/', '測試專用', '@toppath 替身 stub、toppathAbsentGuard、surfaceRegistryGates 六道守門、moduleGraphScan'],
   ['src/debug/ + dev/', '除錯', 'devConsole(window.__GAME_DEVTOOLS__,只在 DEV / staging 掛);dev/ 是元件檢視與測試工具框架'],
-  ['docs/', '中文文件', '開發規範與指引(規範本體)/ 設計背景與決策(為什麼)/ RWD架構 / 遊戲規格與畫面流程 / 資源規範與流程 / tutorial-system;colorgame 另有 docs/plan/基底蒸餾與目錄規劃.md'],
+  ['docs/', '中文文件', '開發規範與指引(規範本體)/ 設計背景與決策(為什麼)/ RWD架構 / 遊戲規格與畫面流程 / 資源規範與流程 / tutorial-system;colorgame 另有 docs/plan/資料流與Store設計.md(有壽命的實作期計畫書,§0 落點表寫了每節實作後要搬回哪個檔的 JSDoc)'],
 ]],
 ['鐵則', [
   ['前端不算結果、不決定派彩', '安全 1', '開獎、派彩、餘額全來自 server;action 永不寫金錢欄位,只有 handler 從 SDK 事件回寫'],
@@ -101,7 +102,7 @@ const DIRS = [
   ['Pixi 一律走 pixi-game-framework', '§11', '不自建 Application;雙實例症狀是 currentTarget.isInteractive is not a function'],
   ['文案一律 t({ id, defaultMessage })', '§6', '遠端 CSV 是唯一語言表;JSX 禁裸字串(lint 擋);runtime 動態 key 讀 useI18nStore'],
   ['首屏由 import 圖決定', '§14.1', 'pixi 只准從首屏程式碼 import() 到;預抓走 scheduleWhenIdle + isConstrainedNetwork,永不掛載即抓'],
-  ['一個單位 = 一個目錄 + 總表一列', '多 owner', '玩法 / 子玩法 / 活動 / 換皮都是;總表 append-only 一行一單位'],
+  ['一個活動 = 一個目錄 + 總表一列', '多 owner', '只有營運可上下架的檔期活動走這套(views/campaigns/,append-only 一行一單位)。玩法由桌台 subType 決定版面,走 domain/roomVariant 與路由;佈景主題是「主題 → 資源路徑」對照表,都不是總表的消費端'],
   ['註解一律繁中、當規格寫', '§3', '決定值與行為進註解;「比照 Cocos / 對 Figma / 原本…」這類來源與歷史進 commit message'],
   ['行為看 Cocos、外觀看 Figma', '真相源', 'roulette 對 ../roulette-client、colorgame 對 ../cg-client;衝突時行為 Cocos 贏、外觀 Figma(2× 稿,px ÷ 2)贏、票 vs 重現 → 重現贏'],
   ['不自動 git add / commit / push', '流程', 'agent 只產生 commit 一行:conventional 前綴 + 繁中摘要'],
@@ -119,8 +120,8 @@ const SKILLS = [
 ['版面與稿件', [
   ['rwd-layout', '隨畫面變的值走哪一軸', '引擎 API、CSS↔JS 接縫、兩道閘門;想用斷點或 matchMedia 時先看這個'],
   ['figma-2x-scale', '稿是 2×', 'px ÷ 2 換算與基準錨定,避免重複除以 2'],
-  ['figma-to-react', '照稿切版', 'design-spec 紀律、CSS/JSON → Tailwind 對應、資產下載腳本、跨比例對齊、陰影 / 發光擬合'],
-  ['preview-measurement', 'UI 變更要交量測證據', '同源 iframe 探針、灌 store 造狀態、像素取樣;320 / 375 / 460 三寬度驗'],
+  ['figma-to-react', '照稿切版 / 對稿', 'design-spec 紀律、CSS/JSON → Tailwind 對應、資產下載腳本、跨比例對齊、陰影 / 發光擬合;09-08 補上對稿三條教訓'],
+  ['preview-measurement', 'UI 變更要交量測證據', '同源 iframe 探針、灌 store 造狀態、像素取樣;320 / 375 / 460 三寬度驗;09-08 補上對稿教訓'],
   ['ui-panels-roomsheet', '加面板 / 子頁', 'RoomSheet 架構 + 視窗 / 字體陷阱'],
 ]],
 ['載入與部署', [
@@ -131,7 +132,8 @@ const SKILLS = [
 ]],
 ['流程與紀律', [
   ['cocos-parity-porting', '對照 cocos / 改了沒生效', '先找原生實作再寫;跨 repo dist 過期陷阱;SDK 分支要在 nexus_master'],
-  ['bootstrap-game-client', '以 roulette 為藍本開新 client', '分階段檢查表、逐檔判定、登入旅程移植、字樣清掃、坑清單'],
+  ['bootstrap-game-client', '從既有 client 長出新遊戲骨架', '不寫死來源:Phase 0 先量再選(byte-level diff、哪個 sibling 帶哪個機制),再分階段檢查表、逐檔判定、登入旅程移植、遊戲側接縫、字樣清掃 + 數值註解稽核、驗收三道、坑清單'],
+  ['game-client-sync', '基底同步 / 跟鄰居對齊 / 產升級包', '原 base-sync。Tier 模型(什麼算基底)、base-manifest 雜湊、逐檔判定(機制→框架 / 基底修正→兩邊都補 / 遊戲參數→預期分歧)、compare-and-sync 與 review-to-upgrade-kit 兩種模式'],
   ['ci-lint-policy', 'CI 紅本地綠', 'CI strip-deps lane + 0-warn lint 紀律;eslint-disable 使用規則'],
   ['i18n-copy-policy', '這句沒翻到 / 想改 key', '識別字 / key / 文案三種權威分工;改 key 名前先確認在不在遠端表'],
   ['project-docs-maintenance', '這內容該寫哪', 'AGENTS / README / MEMORY / docs 職責分工 + 過期稽核'],
@@ -728,15 +730,18 @@ usePreferencesStore.getState().setSoundsEnabled(false);              // 偏好:�
       <Code>{`載入集合   首屏(Loading / Login / Lobby 共用)  →  房間 chunk(RoomView + pixi + spine + framework,一包)  →  面板
 規則       首屏程式碼只能用 import() 碰到 pixi;check-dist-preload 掃產物,首屏 chunk 含 pixi 就 build 紅
 
-// 面板總表 views/popup/panels.ts——唯一匯出口,每個面板一行宣告 sync 或 lazy
+// 面板總表 views/popup/panels.ts(roulette)——唯一匯出口,每個面板一行宣告 sync 或 lazy
 export { TrendPanel } from './panels.sync';          // 預設同步(lazy 化冷開約 300ms,體感不可接受)
 export const HugePanel = lazyPanel('HugePanel');     // 只有進房很久才開、又重的才切 lazy;panels.test 抓兩邊不一致
+// colorgame 不採這套:面板是一般元件、消費端直接 import,真的重才就地 React.lazy(理由在設計背景 §三)
 
-// 可插拔 UI(campaigns/ skins/;colorgame 多 subgames/):一列一單位,呈現只經 import(),關著的 chunk 永遠不被請求
+// 可插拔 UI(views/campaigns/ 一張總表;skins/ 已砍):一列一單位,呈現只經 import(),關著的 chunk 永遠不被請求
 { id: 'autumn', isOn: (s) => s.config.isLobbyAutumnEnable && s.live.autumnOpen,
   surfaces: { 'room.topBanner': () => import('./autumn/banner') } }
-const banners = useCampaignSurfaces('room.topBanner');   // 疊加語意;換皮用 useSkinFor(slot) 取代語意
-// 六道守門(testing/surfaceRegistryGates):載入器必須字面值、id = 目錄名、總表只准 import ./slots、頂層無副作用…
+const banners = useCampaignSurfaces('room.topBanner');   // 只有疊加語意;isOn 的來源在 activation.ts 組裝
+// 守門(testing/surfaceRegistryGates):載入器必須字面值、id = 目錄名、總表只准 import ./slots、頂層無副作用…
+// colorgame 實測後的邊界:資產(14MB)比 JS 大百倍且不走 chunk,機制只省 JS 那份(進房集合 8–15%);
+//   玩法不是消費端,四檔活動裡乾淨適用的只有 Lucky Draw 與 Color War;若那兩檔也耦合核心就整套收掉
 
 // 預抓永遠閒時 + 網路允許,不掛載即抓(弱網會擠掉該畫面自己的資源)
 useEffect(() => scheduleWhenIdle(() => {
@@ -797,13 +802,14 @@ npm run dev        # 之後每天`}</Code>
         </tr></thead>
         <tbody>
           {[
-            ['狀態', '功能齊全上線中:大廳、兩盤注盤、派彩 Spine、聊天送禮、面板、教學', '骨架期(Phase 0):工具鏈、platform / integrations、登入旅程、四張 lazy 總表是真的;11 支玩法畫面都渲染 RoomPlaceholder,大廳是文字殼'],
-            ['來源', '從零建、Cocos roulette-client 為行為真相', '模板複製(不是 fork)自 nexus-baccarat-client,再疊 roulette 的首屏分包三件;漂移用 npm run base:diff 量。行為真相 ../cg-client(不含 pulaputi / native / PWA / Huawei IAP)'],
-            ['RoomView', '房間本體:五層 z-stack', '玩法路由器:桌 subType + 新 UI 旗標 → domain/roomVariant.resolveRoomVariant(11 種)→ hooks/useRoomVariant(綁 OPEN_ROUND 重算)→ views/room/variants.ts 總表 → lazy <VariantView>;每玩法一個 chunk'],
-            ['domain', 'rouletteWheel / rouletteBetTypes / tableLimitRange', 'colorGame(六色 801–806)/ roomType(15 房型)/ roomVariant(11 版面)/ gameType(=31)/ currency'],
-            ['可插拔總表', 'campaigns/、skins/ 兩張', '多一張 views/subgames/(六格 slot,registry 空);機制同一個工廠'],
-            ['幾何常數', '已錨定 Figma Roulette_2026', '房間幾何、RWD 基準值、roomRatioSpec 仍是輪盤 / 百家樂的值,每處標 TODO(colorgame),等彩骰 Figma 定案'],
-            ['路線', '維護 + Lark「輪盤 2.0」需求表', 'Phase 1 大廳 → 2 房間 normal 真實化 → 3 子玩法 + Match → 4 活動 + 換皮 Christmas → 5 其餘玩法由各 owner 平行落地'],
+            ['狀態', '功能齊全上線中:大廳、兩盤注盤、派彩 Spine、聊天送禮、面板、教學', '骨架期:工具鏈、platform / integrations / testing、登入旅程、campaigns 總表、domain 15 支與設定層是真的;Lobby / Room 是文字佔位殼,房間 handler / bet store / 注區 / 開獎演出 / 面板全部未建'],
+            ['來源', '從零建、Cocos roulette-client 為行為真相', '以 nexus-roulette-client(3f0cb7b)同構複製;更早那份 baccarat 底、含 11 種玩法路由的骨架於 09-08 被取代且不保留(只剩 reflog)。漂移用 npm run base:diff 量。行為真相 ../cg-client(不含 pulaputi:另開 repo,本專案永遠只做 tableType 31)'],
+            ['RoomView', '房間本體:五層 z-stack', '純佔位殼。設計:桌 subType → domain/roomVariant.resolveRoomVariant(11 種版面)決定開哪一種畫面;能不能進由 domain/subGameGate(設定的總開關 + 桌號名單)決定,兩個問題來源不重疊。路由與 views/room/<variant>/ 尚未建'],
+            ['domain', 'rouletteWheel / rouletteBetTypes / tableLimitRange', '15 支:colorGame / betTypes / subType / roomVariant / roomType / roundResult / odds / lushu / subGameGate / bonusActivity / tableStatus / tableLimits / tableSort / currency / gameType。邊界:知識與判讀,止於畫面之前(換視覺不變才算 domain)'],
+            ['可插拔總表', 'campaigns/、skins/ 兩張', '只剩 campaigns/ 一張(skins 砍了:佈景主題只是換圖路徑,要的是對照表);機制內聯在 src/platform/surfaces/。消費端只有 Lucky Draw 與 Color War'],
+            ['設定層', '輪盤欄位', 'fields.ts 多十列玩法開關(四玩法各「總開關 + 桌號名單」,192x 換皮再一組;欄位去 colorGame 前綴、jsonKey 沿用舊字串)+ Triple Bonus 五列;名單空 = 一桌都不開(fail-closed)。八列要請 SRE 補進三環境'],
+            ['幾何常數', '已錨定 Figma Roulette_2026', '房間幾何、RWD 基準值、roomRatioSpec 仍是輪盤的值,每處標 TODO(colorgame);大廳稿 lobby_all-size 已登記,房間 / 面板 / 注區稿待交付'],
+            ['範圍', '維護 + Lark「輪盤 2.0」需求表', '四玩法:192x doubleWheel(superWheel / superWheelNew)、108x superDouble、500x bonusV2、UJP ultimateJackpotV4;四活動:Triple Bonus、Lucky Draw V4、Freeplay、Color War V2。normal 不上線(連帶 SuperGame 小遊戲加注整條不做);範圍外的桌在大廳隱藏;順序由 benji 決定'],
           ].map((r) => (
             <tr key={r[0]}>
               <td className="px-3.5 py-2 border-t border-line align-top font-medium whitespace-nowrap">{r[0]}</td>
@@ -814,22 +820,37 @@ npm run dev        # 之後每天`}</Code>
         </tbody>
       </table>
 
-      <h3>colorgame 食譜:加一種玩法版面</h3>
-      <Code>{`1. game/domain/roomVariant.ts   RoomVariant 加一個值、resolveRoomVariant 加 case
-2. views/room/<玩法>/XRoomView.tsx   default export,props 是 IRoomVariantViewProps
-3. views/room/variants.ts       加一列  x: () => import('./x/XRoomView')   ← 必須字面值
-4. views/RoomView.tsx           VARIANT_COMPONENTS 加一列 lazy(...)  ← 少一列編譯就紅
-   variants.test 四道守門:載入器字面值 / 目錄=總表 / 檔案存在 / 外部不得 import 玩法目錄
-只改房內元件不換版面的(jackpotV2 三細分、bonus V1/V2)→ game/domain/roomType.ts,不是 variant
+      <h3>colorgame 現況地圖:四個問題各自的答案來源</h3>
+      <Code>{`這張桌開哪一種畫面?   table.subType → domain/subType(鍵↔碼)→ domain/roomVariant.resolveRoomVariant(11 種)
+                        設定碰不到這件事。fallback 的 classic 這版不做,所以範圍外的桌要在前一問就擋掉
+這張桌現在能不能進?   AppConfig 十列 → game/subGameGates.ts(接縫:設定 → domain 形狀)→ domain/subGameGate
+                        每支玩法 = 總開關 && 桌號名單;名單空 = 全關;192x 換皮是第三層。大廳隱藏、SceneHandler 守門都讀它
+房內用哪一套配置?     domain/roomType(15 房型 + 規則說明頁);jackpotV2 靠兩個桌台欄位再分三種
+這一注中了沒?         domain/roundResult(三同 / 二同 / 全異)→ domain/odds({ isWinning, rate, jackpot })
+路書一欄怎麼讀?       domain/lushu:四筆不是三筆,第四筆的意思每玩法不同(UJP 幸運物 / 108x 倍率 / 192x、500x 小遊戲結果)
 
-子玩法 / 活動 / 換皮單位:views/<管理域>/<name>/ 一個目錄 + registry.ts 一列
-  { id: 'match', isOn: (s) => s.config.isLiveEnabled && s.live.matchOpen,
-    surfaces: { 'room.topBanner': () => import('./match/banner') } }
-  開關要看的新來源 → activation.ts 加欄位;渠道旗標 → integrations/config/fields.ts 一列`}</Code>
+還沒建的(依 docs/plan/資料流與Store設計.md):
+  handlers/room/GameHandler(局態 + rateDetail / bonusResults 要在 OPEN_ROUND / SRC_RESULTS_CHANGED 順手拉,沒有專屬事件)
+  BetHandler + useBetStore(注區元件從第一支就要用通道無關的選擇器,Freeplay 改版會接進全部四玩法)
+  FreeBetHandler + actions/freeBet(Freeplay 歸 game/,不是活動;沒旗標,由錢包額度 FREE_BET 決定)
+  useUltimateJackpotStore、views/room/<variant>/、views/popup/<domain>/、views/campaigns/<name>/
+  活動 store 由該活動自己的 teardown 自清,不進 resetRoomStores
+
+加一檔活動:views/campaigns/<name>/ 一個目錄 + registry.ts 一列
+  { id: 'colorWar', isOn: (s) => s.config.isColorWarEnabled && s.live.colorWarOpen,
+    surfaces: { 'room.topBanner': () => import('./colorWar/banner') } }
+  開關要看的新來源 → activation.ts 加欄位;渠道旗標 → integrations/config/fields.ts 一列
+  Triple Bonus 只有彈窗 / 按鈕 / 中獎歷史走這裡;判定(domain/bonusActivity)與派彩分支歸核心
+
+坑(實讀 SDK / cg-client 後的結論,別再推一次):
+  tableSummary.betLimit 整個 SDK 沒人寫入,讀到永遠是 0 → 限額用 domain/tableLimits 自己聚合 rangeList
+  Lucky Draw V4 / Color War V2 都還不在 sibling repo(shared-code InfoType 只到 V3、SDK 只有一版 ColorWar)
+  二同色的「重複色」是出現兩次那一色,不是第一顆;jackpotV3 套 jackpotV1 配置但不列規則頁
+  桌列排序要在轉卡片資料之前做(order / isMaintain / 好路都在 Table model 上,map 完就沒了)`}</Code>
 
       <DataTable sections={DIRS} headers={['項目', '用途', '說明']} placeholder="搜尋指令、目錄、鐵則…" />
 
-      <h2>Agent skills(24 個專案 skill + 26 個 Pixi)</h2>
+      <h2>Agent skills(26 個專案 skill + 26 個 Pixi)</h2>
       <p className="text-muted max-w-[62ch]">
         住在 <code>team-skills/&lt;name&gt;/SKILL.md</code>,postinstall 連進 <code>.claude/skills</code>。agent 依 description 自動命中,也可以直接點名「用 <code>/rwd-layout</code>」。命中後仍要回查現碼與 cocos,skill 只給判準。
       </p>
@@ -842,8 +863,9 @@ npm run dev        # 之後每天`}</Code>
         <li><code>docs/設計背景與決策.md</code>:所有「為什麼」——選型理由、保護順序、載入分段決定、可插拔 UI 設計、版本約束。</li>
         <li><code>docs/RWD架構.md</code>:四軸模型與決策樹、驗證尺寸、反例集。</li>
         <li><code>docs/遊戲規格與畫面流程.md</code>:畫面結構、遊戲狀態流程、下注互動、面板清單、store ↔ 畫面對應表。</li>
-        <li><code>docs/tutorial-system.md</code>、<code>docs/資源規範與流程.md</code>;colorgame 的 <code>docs/plan/基底蒸餾與目錄規劃.md</code>(Tier、每個 cocos 模組走哪條路、Phase 0–5、決定 D-1…D-8)。</li>
-        <li><code>MEMORY.md</code>:跨任務通則(不看就會再犯的坑)、待辦缺口、延後的技術債。</li>
+        <li><code>docs/tutorial-system.md</code>、<code>docs/資源規範與流程.md</code>;colorgame 的 <code>docs/plan/資料流與Store設計.md</code>(四玩法四活動的層歸屬、GameHandler 事件表、store 一覽、離房重置邊界;實作完就併回 JSDoc 封存)。</li>
+        <li><code>MEMORY.md</code>:跨任務通則(不看就會再犯的坑)、待辦缺口、延後的技術債。colorgame 的 09-08 那幾則把每個非顯然判定都寫了理由。</li>
+        <li>colorgame 逐檔說明:<a href="#/colorgame-dirs">colorgame 目錄清單</a>。注意 colorgame 沒有 <code>.trellis/</code>(AGENTS 的 Key Documents 表還列著,待修)。</li>
         <li><code>team-skills/README.md</code>:skill 觸發情境索引;Pixi 的 26 個 skill 住在 <code>../pixi-game-framework/skills/</code>。</li>
       </ul>
     </div>
