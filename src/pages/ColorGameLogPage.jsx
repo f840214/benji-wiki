@@ -17,6 +17,42 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-09',
+    title: '大廳區塊 C 落地:桌卡列表 v1 接真實 SDK 資料;cg-client 大廳功能對照表',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '資料流:game/hooks/lobbyCardData.ts(Table → 桌卡純資料,唯一讀 SDK 的轉換點)、useLobbyTableList(hiddenRooms → isSubGameOpen → sortTables)、useLobbyCardLive(逐卡訂閱)、useTableCountdown(時間條)、actions/favorite.ts。',
+      '畫面:LobbyTableCard(卡 407×167,以稿 192x 為基準版面)、LobbyRoadStrip(六欄路書 + 加成標籤)、LobbyBetPercent(六色比例)、diceColors.ts。',
+      'public/project.json 補四支玩法開關 + dev 桌號名單,大廳從 0 桌變 16 桌。',
+      'docs/plan/大廳-design-spec.md 加區塊 C 幾何表與 cg-client 大廳逐功能對照表(頂欄 / 跑馬燈 / 廣告 / 活動入口 / 房間列表 / 路書 / 視訊 / jackpot / 桌台大賽 / 直入遊戲 / 換膚 / 教學 / eLog)。',
+    ],
+    decisions: [
+      '四變體先共用一張卡,獎池條依資料切換(有獎池金額顯示金額,否則桌名);變體專屬的頂列彩字與標語列為待做。理由:變體差異只在兩個區塊,先把資料流與版面骨架立起來。',
+      '過濾 fail-closed:沒登記的子玩法不顯示。dev 頻道 23 桌只有 16 桌屬於四支在做的玩法(doubleWheel / superDouble / bonusV2 / ultimateJackpotV4),其餘 normal / speed / jackpotV2 / bonusV1 / doubleChallenge 刻意不出現。',
+      'isSuspend 只在超級轉盤新 UI 的桌才算狀態(cg-client _isSuspend),由列表層拿 gates 判斷後傳進 toLobbyCardData。',
+      'Figma images API 也被 429 鎖了 → 收藏星 / 桌號徽章 / 觀看圖示先用 CSS + inline SVG,標 TODO(colorgame)。',
+    ],
+    pitfalls: [
+      'project.json 沒有八個開關 key 時大廳一桌都不顯示——這是設計(fail-closed),不是 bug;本機驗證要自己補 key(fields.ts 註解有寫)。',
+      'Vite dev 下 HMR 過的模組再 import(\'/src/...\') 會拿到第二個實例(SdkAdapter 尚未初始化);probe 改從 performance.getEntriesByType(\'resource\') 取 app 實際載入的 URL 再 import。',
+      'prettier 排版後再用字串取代會找不到原文——同一批修改先改完再 prettier,或改用 regex。',
+      'formatjs/no-literal-string-in-jsx 連 `${n}%` 這種樣板都擋,runtime 字串要在 JSX 外組好再放進去。',
+      '區塊 B 佔位 64px 跟 column gap 9 重複算,列表低了 10px;量測抓到,改 55px。',
+      'export 腳本 echo 裡 `$SIMPLIFY_STROKE（` 全形括號被 bash 當變數名一部分 → unbound variable;寫 `${VAR}`。',
+    ],
+    evidence: [
+      '432×768:卡 (12.5,151.5) 407×167;頂列 (20.4,5) 380×26.4;視訊 (7.6,39) 75×120;路書 (99.5,54.4);六色比例 x 273.45;時間條 (101.7,121.6) 253×4;獎池條 (91.2,125.6);PLAY (364.9,125.6) 39.9;收藏星 (2.74,2.5) 30;徽章 (13.7,122.6) 62×15;觀看膠囊 (11.35,102) 52×13——全部 = 設計值 ±0.1。',
+      '16 張卡真實資料:路書顏色、3x 加成標籤、六色百分比、限額 5 - 100k、桌號都來自 SDK。typecheck / lint 0 warning / 404 tests / build 綠。',
+    ],
+    todo: [
+      '四變體頂列彩字(逐字漸層 ULTIMATE / BONUS)、108x / 192x 的 UP TO 標語、jackpot 預扣與滾動數字、桌台大賽人數、免費投注狀態、視訊預覽、路書新欄閃爍、語言表桌名。',
+      '四支小圖等 Figma API 解鎖後匯出換回;區塊 B(標題 + 活動入口)、D(頁尾)。',
+      'MarqueeList handler、主選單面板、Banner 本體。',
+    ],
+    files: ['src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyTableList.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/game/hooks/useTableCountdown.ts', 'src/game/actions/favorite.ts', 'src/views/lobby/LobbyTableCard.tsx', 'src/views/lobby/LobbyRoadStrip.tsx', 'src/views/lobby/LobbyBetPercent.tsx', 'src/views/lobby/diceColors.ts', 'src/views/LobbyView.tsx', 'public/project.json', 'docs/plan/大廳-design-spec.md', 'MEMORY.md', 'CLAUDE.md'],
+    links: [['流程頁', '#/figma-to-react'], ['目錄清單', '#/colorgame-dirs']],
+  },
+  {
+    date: '2026-09-09',
     title: '大廳改走 432 縮放舞台(zoom),彩帶還原固定尺寸',
     branch: 'benji-dev(未 commit)',
     summary: [
