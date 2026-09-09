@@ -28,7 +28,10 @@ const ENTRIES = [
       '四張大廳稿(16:9 1:153 / 20:9 1:1176 / 21:9 1:2200 / 4:3 1:3224)邏輯寬全是 432 或 576,沒有窄手機稿;窄寬只能靠等比縮。',
       '這次用流式版面內的百分比解,沒有把房內的 --frame-w / scale-to-frame 帶進大廳(docs/RWD架構.md §一 明定房外先不混用)。但大廳現在有正式的四比例稿,「房外沒有 RWD 稿」這個前提已經過期——要不要讓大廳整個改走 432 縮放舞台,是待決定的架構題。',
     ],
-    pitfalls: ['「字不在中間」光看行框對不出來:行框已置中,是字型 ascent 讓墨偏上;要用 measureText 的 actualBoundingBox 量墨。'],
+    pitfalls: [
+      '「字不在中間」光看行框對不出來:行框已置中,是字型 ascent 讓墨偏上;要用 measureText 的 actualBoundingBox 量墨。',
+      '**Figma REST API 撞 429**:Viewer / Collaborator 席次的 rate limit 很低,同一天多次 get_figma_data(讀 1:153、1:131、再拆三欄各一次)就被鎖,Retry-After 約 4.3 天。skill 寫的「一個對話一次 get_figma_data」不是建議、是硬限制。要讀多個 node 時先落檔一次、之後只 grep;真的要再讀,走官方 figma MCP(OAuth,配額另計)或桌面版 MCP。',
+    ],
     evidence: ['432:三段文字墨中心 Δ 0.4 / 0.5 / 0.2;360:彩帶 421 寬置中、跑馬燈列 5.5～354.5 落在 350 內;typecheck / lint 綠。'],
     files: ['src/views/lobby/LobbyHeader.tsx', 'src/views/lobby/LobbyMessageBar.tsx'],
   },
