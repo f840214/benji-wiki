@@ -37,6 +37,7 @@ const ENTRIES = [
       'prettier 排版後再用字串取代會找不到原文——同一批修改先改完再 prettier,或改用 regex。',
       'formatjs/no-literal-string-in-jsx 連 `${n}%` 這種樣板都擋,runtime 字串要在 JSX 外組好再放進去。',
       '區塊 B 佔位 64px 跟 column gap 9 重複算,列表低了 10px;量測抓到,改 55px。',
+      '整個內容區都在捲,跑馬燈列跟著跑:稿上捲軸(1:196)在紅色底板內,只有桌卡列表該捲。捲動容器改到列表本身(min-h-0 flex-1 overflow-y-auto),probe 驗證 scrollTop=300 後跑馬燈 y 仍 57。',
       '獎池條「JACKPOT ₱100,000,000.00」被截:稿是兩段文字(83.5 + 147.4 寬),我做成一段置中;改回兩段後瀏覽器的 Luckiest Guy 仍比 Figma 寬(15 字元要 168 不是 147),金額欄放寬到 168、右邊留 27.6 給 PLAY 鈕,scrollWidth = width 剛好放下。',
       'export 腳本 echo 裡 `$SIMPLIFY_STROKE（` 全形括號被 bash 當變數名一部分 → unbound variable;寫 `${VAR}`。',
     ],
