@@ -17,6 +17,23 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-09',
+    title: '頂欄彩帶隨寬度縮放、文字墨心補 1px、跑馬燈膠囊改彈性寬',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '彩帶 bg_ribbon 由固定 505.5px 改為頂欄寬的 117.01%(505.5/432),窄機種跟著等比縮,不再被裁邊。',
+      '膠囊文字加 pt-[2px]:canvas measureText 量到墨中心比膠囊中心高 1.2～1.4px(Baloo 2 / Luckiest Guy ascent 偏大),補回後 Δ ≤ 0.5px。',
+      '跑馬燈膠囊由 w-[270px] 改 w-full max-w-[270px],360 寬時整列(270+10+69)剛好落在內容區 350 內。',
+    ],
+    decisions: [
+      '四張大廳稿(16:9 1:153 / 20:9 1:1176 / 21:9 1:2200 / 4:3 1:3224)邏輯寬全是 432 或 576,沒有窄手機稿;窄寬只能靠等比縮。',
+      '這次用流式版面內的百分比解,沒有把房內的 --frame-w / scale-to-frame 帶進大廳(docs/RWD架構.md §一 明定房外先不混用)。但大廳現在有正式的四比例稿,「房外沒有 RWD 稿」這個前提已經過期——要不要讓大廳整個改走 432 縮放舞台,是待決定的架構題。',
+    ],
+    pitfalls: ['「字不在中間」光看行框對不出來:行框已置中,是字型 ascent 讓墨偏上;要用 measureText 的 actualBoundingBox 量墨。'],
+    evidence: ['432:三段文字墨中心 Δ 0.4 / 0.5 / 0.2;360:彩帶 421 寬置中、跑馬燈列 5.5～354.5 落在 350 內;typecheck / lint 綠。'],
+    files: ['src/views/lobby/LobbyHeader.tsx', 'src/views/lobby/LobbyMessageBar.tsx'],
+  },
+  {
+    date: '2026-09-09',
     title: '修頂欄文字被切頂、沒置中',
     branch: 'benji-dev(未 commit)',
     summary: ['暱稱與餘額文字改為行框撐滿膠囊內高 26px、垂直置中;移除照稿抄來的 pt 與 12.5px 行高。'],
