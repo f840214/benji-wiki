@@ -11,4 +11,5 @@ export const NAV = [
   { path: '/colorgame-dirs', title: 'colorgame 目錄清單', group: '專案' },
   { path: '/pixi', title: 'Pixi / Spine', group: '專案' },
   { path: '/figma-to-react', title: 'Figma → React', group: '專案' },
+  { path: '/colorgame-log', title: 'colorgame 製作歷程', group: '專案' },
 ]

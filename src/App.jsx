@@ -13,6 +13,7 @@ import NexusClientPage from './pages/NexusClientPage.jsx'
 import PixiPage from './pages/PixiPage.jsx'
 import ColorGameDirsPage from './pages/ColorGameDirsPage.jsx'
 import FigmaToReactPage from './pages/FigmaToReactPage.jsx'
+import ColorGameLogPage from './pages/ColorGameLogPage.jsx'
 
 export default function App() {
   const unlocked = useAuth((s) => s.unlocked)
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/pixi" element={<PixiPage />} />
         <Route path="/colorgame-dirs" element={<ColorGameDirsPage />} />
         <Route path="/figma-to-react" element={<FigmaToReactPage />} />
+        <Route path="/colorgame-log" element={<ColorGameLogPage />} />
       </Route>
     </Routes>
   )
