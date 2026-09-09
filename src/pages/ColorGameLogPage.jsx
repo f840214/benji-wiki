@@ -17,6 +17,28 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-09',
+    title: '桌卡對齊 Cocos 現版:愛心、玩法標題彩字、底條字圖、路書欄底與金框、視訊預設圖',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '使用者貼 Cocos 現版截圖:左上是愛心不是星星、標題是玩法名稱「SUPER WHEEL UP TO 192X」不是桌號、底條是「COLOR GAME SUPER WHEEL」、路書空格可見且最新一欄金框。',
+      '素材來源改走 cg-client:ColorGameLobby/resources/room-list/ 本來就是 2× 正式圖(愛心 on/off、PLAY、四種玩法的標題彩字與底條字、路書欄底 ×2、預設視訊圖、桌號徽章底、觀看人數圖示、維護圖示),18 支母檔進 assets-raw/lobby/card/ 轉 WebP;Figma API 被鎖不再是阻礙。',
+      'LobbyTableCard:標題與底條依 subType 換圖(doubleWheel / ultimateJackpotV4 / superDouble / bonusV2),沒對到的退回桌名文字;jackpot 桌 = JACKPOT 標籤圖 + 金額文字;限額格式改「5-100K」;維護時壓維護圖示。',
+      'LobbyRoadStrip:六欄 = 最近五局 + 一欄留給下一局,最新一欄金框欄底(luzhu_bg_2),空格由欄底圖顯示。',
+      'lobbyAssets 加 CARD_ASSET_URLS 十八支並登記進 LOBBY_ASSET_SETS,測試改成對照 Object.values。',
+    ],
+    decisions: [
+      '標題與底條在舊版就是整條彩字圖(裝飾字),直接用圖、不走 i18n——這也是 figma-to-react skill 的「先確認是不是文字」原則:稿上看似文字的東西,產品裡是圖。',
+      '同一份美術在 cg-client 已交付,就不從 Figma 重做:skill 的「稿與素材不一致先問誰的」第一條(美術已有匯出)。',
+    ],
+    pitfalls: [
+      'eslint no-array-index-key 的 disable 註解放在 JSX 上一行,prettier 把 key 換行後註解就對不到行;改成把槽包成 { id, col } 物件用 id 當 key,不需要 disable。',
+      'python 多段編輯腳本忘了 import re,前半段檔案已寫入、後半段沒跑——分段執行後要逐檔確認。',
+    ],
+    evidence: ['幾何與前一筆完全相同(卡 12.5,152.5 407×167 …);typecheck / lint 0 warning / 404 tests / build 綠。視訊預覽仍是預設圖,待接 VideoAdapter.previews。'],
+    files: ['src/views/lobby/LobbyTableCard.tsx', 'src/views/lobby/LobbyRoadStrip.tsx', 'src/views/lobby/lobbyAssets.ts', 'src/views/lobby/lobbyAssets.test.ts', 'assets-raw/lobby/card/', 'public/assets/lobby/card/'],
+  },
+  {
+    date: '2026-09-09',
     title: '大廳區塊 C 落地:桌卡列表 v1 接真實 SDK 資料;cg-client 大廳功能對照表',
     branch: 'benji-dev(未 commit)',
     summary: [
