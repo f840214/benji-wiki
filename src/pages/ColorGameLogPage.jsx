@@ -17,6 +17,16 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-09',
+    title: '修頂欄文字被切頂、沒置中',
+    branch: 'benji-dev(未 commit)',
+    summary: ['暱稱與餘額文字改為行框撐滿膠囊內高 26px、垂直置中;移除照稿抄來的 pt 與 12.5px 行高。'],
+    decisions: ['稿的行高 12.5 小於字級 15 / 18,是 Figma 的排版值不是視覺目標;CSS 照抄後 truncate(overflow hidden)會把字頂切掉。視覺目標是「字在膠囊中間」,故行框撐滿再置中。spec 量測表已註明這是刻意不對稿。'],
+    pitfalls: ['stage 4 只量了 bounding box、沒看截圖裡的字,行框對到稿了但墨被切一半——「比墨不比框」這條在字型類差異一定要做。'],
+    evidence: ['432×768 重量:文字行框 y 8.8 / h 26(膠囊內高),截圖確認字完整置中;typecheck / lint / views 測試綠。'],
+    files: ['src/views/lobby/LobbyHeader.tsx', 'docs/plan/大廳-design-spec.md'],
+  },
+  {
+    date: '2026-09-09',
     title: '大廳區塊 A 落地:頁面殼 + 頂欄 + 跑馬燈列(第一個依 Figma 稿建的畫面)',
     branch: 'benji-dev(未 commit)',
     summary: [
