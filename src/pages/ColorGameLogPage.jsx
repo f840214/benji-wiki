@@ -17,6 +17,23 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-09',
+    title: '大廳改走 432 縮放舞台(zoom),彩帶還原固定尺寸',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      'LobbyView 根節點加 [zoom:var(--ui-scale,1)],整頁以 432 畫布等比縮;--ui-scale 由 platform/rwd 的 viewport 追蹤器全域發佈(main.tsx 已裝),不用另接。',
+      '彩帶改回稿上的 505.5px 置中;跑馬燈膠囊改回 270px;子孫全部寫設計 px、不再自己縮。',
+      'docs/RWD架構.md §一 補「大廳是例外」段,原本「房外流式」只剩登入／載入頁。',
+    ],
+    decisions: [
+      '上一筆只把彩帶改百分比是半套:彩帶縮、膠囊與跑馬燈列不縮,窄機種彩帶下擺蓋到跑馬燈列,使用者截圖「連大小跟著變、很怪」。四張大廳稿沒有窄機種稿,唯一一致的做法是整頁縮。',
+      '用 zoom 不用 transform scale:zoom 參與版面,w-full / h-full / 捲動 / 置中都在縮放後的座標系解析,不用做寬度補償(RWD架構 §軸1 消費方式 2)。',
+    ],
+    pitfalls: ['getBoundingClientRect 回的是螢幕 px(已乘 zoom),對稿時要除回 --ui-scale 才是設計 px;360 寬量到 header 79.2 = 95 × 0.833 才是對的。'],
+    evidence: ['360 / 405 / 432 三寬度所有元素座標 = 設計值 × (寬/432),誤差 ≤ 0.2;405×400 截圖:彩帶、膠囊、跑馬燈列、底板一起縮,不再互蓋;typecheck / lint / views+rwd 測試綠。'],
+    files: ['src/views/LobbyView.tsx', 'src/views/lobby/LobbyHeader.tsx', 'src/views/lobby/LobbyMessageBar.tsx', 'docs/RWD架構.md'],
+  },
+  {
+    date: '2026-09-09',
     title: '頂欄彩帶隨寬度縮放、文字墨心補 1px、跑馬燈膠囊改彈性寬',
     branch: 'benji-dev(未 commit)',
     summary: [
