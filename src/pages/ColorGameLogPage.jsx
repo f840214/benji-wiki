@@ -34,7 +34,7 @@ const ENTRIES = [
       '限額改成跟倍率同一列、靠右錨定(right 13):瀏覽器的 Luckiest Guy 比稿寬時,倍率變寬限額自動往左讓,不再壓到。',
       '觀看人數膠囊的 x 也是同一個基準錯(相對視訊框 11.38 當成相對卡片),修正後圖示與稿的重合。PLAY 鈕由 Cocos 圖換回稿的兩層圓 SVG(1:296 / 1:297)+ 文字;底條字描邊改金色(原棕色描邊讓字偏橘)。',
       '限額改成「稿的位置 + 被倍率推開」:限額以稿上倍率右緣到限額左緣的距離接在倍率後面(UJP 9.5 / 192x 39 / 108x 35.5 / bonus 8.5),字寬相同就落在稿的位置,倍率變寬才被推開。',
-      '幣別符號 ₱ 要粗:頂欄的用真字重(載 @fontsource/baloo-2/500 + font-medium,不用假粗或描邊);底條金額的 ₱ 稿本來就是另一套字(Baloo Bhaijaan 22.5 vs 數字 Luckiest Guy 18),Luckiest Guy 沒有 ₱ 字形會退回 Inter 變細 → LobbyStripText 加 symbol prop,三層各自用 font-baloo font-medium text-[1.25em] 畫符號。',
+      '幣別符號 ₱ 要粗:頂欄的用真字重(載 @fontsource/baloo-2/500 + font-medium,不用假粗或描邊);底條金額的 ₱ 稿本來就是另一套字(Baloo Bhaijaan 22.5 vs 數字 Luckiest Guy 18),Luckiest Guy 沒有 ₱ 字形會退回 Inter 變細 → LobbyStripText 加 symbol prop,三層各自畫符號。符號 1.25 倍字級會撐高行框、把數字擠出漸層帶(下半截變暗);改 transform 縮放又讓三層各自從不同起點縮、疊出鬼影;最後是 1.25 倍字級 + line-height 0(inline-block 高度為 0 不撐行框)+ 漸層帶起點改 0 蓋住符號頂端。',
       '底條字「鋸齒」:前層 0.5px 的 -webkit-text-stroke 沒有字型抗鋸齒(專案字型平滑又是 grayscale),2× 上有階梯;前層改不描邊,外框由後層 1px 描邊提供;隨之外框與陰影變淡,後層描邊改深金 #C96F08、填色加深、陰影層 0 1.5 2 35%。',
       '底條字頂被切成平頭:Luckiest Guy 大寫頂端比 leading-none 行框高 0.014em,超出盒子的部分沒有背景可裁;行框放大到 1.2、漸層改 em 定位到字身(0.086em–0.80em)。「很糊」:後層 1.15 的小數位移與 0.47 / 1.06 的小數描邊讓兩層邊緣疊出半透明帶;全部對齊 0.5 的像素格(1 / 1 / 0.5)。',
       '底條金字終於對上的關鍵是使用者貼的 Figma CSS:填色漸層是 darken 疊在 50% #FFD900 上(照抄漸層必偏淡),且 leading-trim: CAP_HEIGHT 代表漸層鋪在大寫字高、不是行框。做法:每個停止點算成 mix(stop, min(stop, #FFD900)) 的實色、停止點百分比照抄(含 −0.41% 與 146%),background-size 100% 70%(canvas 量 Luckiest Guy 18.9px 基線 13、cap 13.27 → 字身占行框 70%)貼上緣。',
