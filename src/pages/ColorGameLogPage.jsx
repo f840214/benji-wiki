@@ -16,6 +16,32 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-10',
+    title: '桌卡逐像素對稿:官方 Figma MCP 授權、room 偏移 1.47、標題改純文字逐字漸層、愛心照稿',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '官方 figma MCP 用 OAuth 授權成功(配額與 REST 分開),拿到 1:289 的 2× 截圖、metadata、整卡匯出與素材(愛心 on/idle SVG、桌號徽章底 SVG、觀看圖示 PNG);打到第 6 次就撞 View 席次上限。',
+      '用 CDP 把 app 的 UJP 桌卡裁成 2× 圖,與 Figma 匯出圖做 50% 疊圖 + 左右拼接,逐像素比。',
+      '找到系統性偏差:稿的元素都在 room 子框裡,room 相對卡片下移 2.95÷2=1.47px;之前全部掛在卡片根上,整批高 1.5px。改成 room 容器包住頂列/視訊/路書/底條。',
+      '標題改成純文字:稿本來就是文字,ULTIMATE / SUPER / BONUS 逐字獨立漸層 + 描邊 + 落影(bg-clip-text),主句白漸層字,倍率紅字黃描邊;四變體座標各自照稿。文案走 t(),倍率是產品常數。',
+      '愛心:on = 金色漸層圓 30 + 稿的心形 SVG(inset 20%/12.24%/10.55%/12%);idle = 稿整鈕 SVG 68(含陰影外溢)→ 34。',
+      '限額改左錨 x=298.5、格式「5 - 100K」;觀看膠囊照稿:圖示 16.5 圓凸出膠囊上緣 1.65、文字 x 19.8。bonus 變體頂列藍底 #5DAAF1、限額 #2545B7。',
+    ],
+    decisions: [
+      '使用者疊圖標了五處差異,我先前只比 bounding box 覺得「數字一樣」——差在座標基準(room 框)與字形來源(圖 vs 文字)。教訓:對稿要疊像素圖,不能只比框。',
+      '標題從 Cocos 圖改回文字:稿是文字、可 i18n、字形跟稿一致;Cocos 的整條圖字形比稿大。底條字圖暫時保留。',
+      'Tailwind 不會生成 runtime 拼出來的 class(text-[${fill}]、[text-shadow:…${shadow}]),100X 因此變黑字;動態顏色一律走 inline style(動態值是 inline style 的合法例外)。',
+    ],
+    pitfalls: [
+      'Figma 匯出的愛心 PNG 帶不透明底,壓縮腳本判成「不透明簡單圖」——匯 frame 要看有沒有背景填色,向量鈕直接拿 SVG。',
+      'get_screenshot 的 original_width 含陰影外溢(838 vs 814),疊圖時要以外溢後的尺寸對齊,不然差 12px。',
+      'MCP 授權後 whoami:自己的 team 是 Dev seat(Pro),但這份檔在公司 team 底下是 View seat,配額照檔案所屬 team 算,不是自己的席次。',
+    ],
+    evidence: ['疊圖:標題四段文字、路書六欄、六色比例、時間條、底條、PLAY、觀看膠囊、桌號徽章與 Figma 匯出圖重合;剩視訊縮圖(預設圖 vs 稿的截圖)與底條字圖字形略異。typecheck / lint 0 warning / 404 tests / build 綠。'],
+    todo: ['底條字改照稿文字(COLOR GAME SUPER WHEEL 等)、視訊預覽、BONUS 字母的高光遮罩層、108x / bonus 變體的疊圖驗證(dev 頻道有桌)。'],
+    files: ['src/views/lobby/LobbyCardTitle.tsx', 'src/views/lobby/lobbyCardVariant.ts', 'src/views/lobby/LobbyTableCard.tsx', 'src/views/lobby/lobbyAssets.ts', 'src/assets/icons/icon_heart_on.svg', 'src/assets/icons/icon_favorite_idle.svg', 'public/assets/lobby/card/badge_room_id.svg', 'public/assets/lobby/card/icon_viewer.webp'],
+  },
+  {
     date: '2026-09-09',
     title: '桌卡對齊 Cocos 現版:愛心、玩法標題彩字、底條字圖、路書欄底與金框、視訊預設圖',
     branch: 'benji-dev(未 commit)',
