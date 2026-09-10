@@ -32,6 +32,8 @@ const ENTRIES = [
       '標題從 Cocos 圖改回文字:稿是文字、可 i18n、字形跟稿一致;Cocos 的整條圖字形比稿大。底條字圖暫時保留。',
       'Tailwind 不會生成 runtime 拼出來的 class(text-[${fill}]、[text-shadow:…${shadow}]),100X 因此變黑字;動態顏色一律走 inline style(動態值是 inline style 的合法例外)。',
       '限額改成跟倍率同一列、靠右錨定(right 13):瀏覽器的 Luckiest Guy 比稿寬時,倍率變寬限額自動往左讓,不再壓到。',
+      '觀看人數膠囊的 x 也是同一個基準錯(相對視訊框 11.38 當成相對卡片),修正後圖示與稿的重合。PLAY 鈕由 Cocos 圖換回稿的兩層圓 SVG(1:296 / 1:297)+ 文字;底條字描邊改金色(原棕色描邊讓字偏橘)。',
+      '限額改成「稿的位置 + 被倍率推開」:限額以稿上倍率右緣到限額左緣的距離接在倍率後面(UJP 9.5 / 192x 39 / 108x 35.5 / bonus 8.5),字寬相同就落在稿的位置,倍率變寬才被推開。',
       '底條四種字(COLOR GAME SUPER WHEEL / JACKPOT / SUPER GAME WITH SPECIAL DICE / BONUS COLOR GAME)全部改成文字,與金額共用同一組雙層金色樣式(稿 1:697/1:698:後層暗金 + 棕描邊下移 1.15 當硬陰影,前層亮金 + 金描邊),Cocos 的底條字圖全部移除。',
     ],
     pitfalls: [
