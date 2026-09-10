@@ -34,6 +34,7 @@ const ENTRIES = [
       '限額改成跟倍率同一列、靠右錨定(right 13):瀏覽器的 Luckiest Guy 比稿寬時,倍率變寬限額自動往左讓,不再壓到。',
       '觀看人數膠囊的 x 也是同一個基準錯(相對視訊框 11.38 當成相對卡片),修正後圖示與稿的重合。PLAY 鈕由 Cocos 圖換回稿的兩層圓 SVG(1:296 / 1:297)+ 文字;底條字描邊改金色(原棕色描邊讓字偏橘)。',
       '限額改成「稿的位置 + 被倍率推開」:限額以稿上倍率右緣到限額左緣的距離接在倍率後面(UJP 9.5 / 192x 39 / 108x 35.5 / bonus 8.5),字寬相同就落在稿的位置,倍率變寬才被推開。',
+      '底條金字最後改成 inline SVG(LobbyStripText):使用者貼 Figma inspector 才看到描邊本身是漸層(#E6930C → #FEE9B4 → …),CSS text-stroke 只能單色所以一直對不上;SVG <text> 的 stroke 可以吃 gradient,兩層填色、描邊、y 位移全照稿值,漸層 id 用 useId 避免多卡互蓋。',
       '六色比例格：canvas 量到字的墨心比格中心高 1.8、水平 <0.1，pt-[4.6px] 推回正中；路書與比例面板的 x 改到稿值（100.27 / 275.0，欄距 4.18）；底條後層描邊回深棕（稿外框肉眼是深色，金色描邊會讓字偏橘）；Banner 鈕的輻射漸層範圍放大到 ellipse 90%×180%（Figma 的漸層 handle 比 CSS 預設 farthest-corner 大）。',
       '底條四種字(COLOR GAME SUPER WHEEL / JACKPOT / SUPER GAME WITH SPECIAL DICE / BONUS COLOR GAME)全部改成文字,與金額共用同一組雙層金色樣式(稿 1:697/1:698:後層暗金 + 棕描邊下移 1.15 當硬陰影,前層亮金 + 金描邊),Cocos 的底條字圖全部移除。',
     ],
