@@ -32,6 +32,7 @@ const ENTRIES = [
       '標題從 Cocos 圖改回文字:稿是文字、可 i18n、字形跟稿一致;Cocos 的整條圖字形比稿大。底條字圖暫時保留。',
       'Tailwind 不會生成 runtime 拼出來的 class(text-[${fill}]、[text-shadow:…${shadow}]),100X 因此變黑字;動態顏色一律走 inline style(動態值是 inline style 的合法例外)。',
       '限額改成跟倍率同一列、靠右錨定(right 13):瀏覽器的 Luckiest Guy 比稿寬時,倍率變寬限額自動往左讓,不再壓到。',
+      '底條四種字(COLOR GAME SUPER WHEEL / JACKPOT / SUPER GAME WITH SPECIAL DICE / BONUS COLOR GAME)全部改成文字,與金額共用同一組雙層金色樣式(稿 1:697/1:698:後層暗金 + 棕描邊下移 1.15 當硬陰影,前層亮金 + 金描邊),Cocos 的底條字圖全部移除。',
     ],
     pitfalls: [
       'Figma 匯出的愛心 PNG 帶不透明底,壓縮腳本判成「不透明簡單圖」——匯 frame 要看有沒有背景填色,向量鈕直接拿 SVG。',
@@ -39,6 +40,7 @@ const ENTRIES = [
       'MCP 授權後 whoami:自己的 team 是 Dev seat(Pro),但這份檔在公司 team 底下是 View seat,配額照檔案所屬 team 算,不是自己的席次。',
       'bg-clip-text 的漸層字不能用 text-shadow(Chrome 把陰影畫在漸層之上、字變暗),改 filter: drop-shadow 又把彩色字整個壓暗(使用者第二次截圖抓到)。最後解法:兩層文字——底層透明字只帶 text-shadow,上層漸層字不帶陰影。標題主句、ULTIMATE / SUPER / BONUS 字母、獎池金額全部改成這個做法。',
       '觀看人數膠囊的 y 我把「相對視訊框」的 102.25 當成相對卡片算,位置錯到徽章上面;稿是徽章在上、人數在視訊框最下面。metadata 的 locationRelativeToParent 是相對直接父層,不是相對卡片。',
+      '逐字彩字的硬陰影(下移 1.1、無模糊)用透明字 + text-shadow 畫會被上層 0.75 描邊蓋掉幾乎看不見;底層改成陰影色實心字 + 同寬描邊再 translateY,陰影才露出來。',
       'SVGR 匯入的 SVG 有自己的 width/height 屬性,容器只給 inset 不給尺寸(size-auto)會用內建尺寸撐出去——愛心點下去變成佔半張卡;要給 size-full。',
     ],
     evidence: ['疊圖:標題四段文字、路書六欄、六色比例、時間條、底條、PLAY、觀看膠囊、桌號徽章與 Figma 匯出圖重合;剩視訊縮圖(預設圖 vs 稿的截圖)與底條字圖字形略異。typecheck / lint 0 warning / 404 tests / build 綠。'],
