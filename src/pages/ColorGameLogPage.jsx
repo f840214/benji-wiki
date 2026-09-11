@@ -27,6 +27,7 @@ const ENTRIES = [
 
       '第二支錄影(17:26)使用者說動效不對,追問後定案:PLAY 待機與愛心收藏中都要「斜光掃過」(cg-client White_line1–3 圖塊),PLAY 文字與愛心本體要呼吸縮放。改成 shine-sweep(35% 寬白色斜光條在 overflow-hidden 圓內 translateX 掃過,2.2s 一輪、掃 45% 時間後停在外面)+ breathe-scale(scale 1→1.1→1,1.2s);拿掉 fav-glow / play-sheen;星光 9→12px。連拍畫格確認掃光經過、星光交替、文字與愛心大小在變。',
       '第三輪修正(使用者說「掃光不是一樣的」):PLAY 是一道白光沿粉色圓周旋轉、沒有星星 → conic-gradient 環 + radial mask 裁成 3px 環帶,ring-spin 2s 線性轉一圈;愛心只有心形本身有掃光與彈跳、金圓不動 → 心形 SVG 當 mask-image,掃光條只在心形內掃,fav-pop / breathe-scale 掛在心形容器。星光元件與 ShineSweep 元件移除。連拍畫格確認。',
+      '第四輪:使用者說原版 PLAY 是「兩條旋渦」→ 改成兩道對稱的彎曲光尾繞鈕面轉:conic-gradient 兩個漸弱扇區(頭亮尾淡、相隔 180°)+ radial 遮罩(中心 38% 透明、70–88% 亮、邊緣淡出)+ ring-spin 2s。連拍四格確認兩道光尾位置在轉。',
       'bonus 桌號徽章框色應不同(稿用另一個元件 1:8,其他三變體用 1:2):已抓的兩個 127×33 SVG 都是紅色版,Figma REST / MCP 都還在限流;依 AGENTS「三通道都不通時不目測估值」先不做,請使用者從 Figma 桌面版匯出 1:551 的 SVG。',
       '路書欄底:使用者指出特別欄底(luzhu_bg_active)是「三顆同色那一局」才有,不是最新一欄;cg-client LuShuItem.setLuShuData 確認 data.length>=3 且三個 winner 相同 → isAllSameColor。',
       '路書抽成共用元件:views/lobby/LobbyRoadStrip → views/components/RoadStrip(欄底圖改由 props columnBg / columnBgTriple 傳入,不綁 lobbyAssets),diceColors.ts 一起搬到 components;LobbyBetPercent 改路徑。房內路書之後可直接接。',
