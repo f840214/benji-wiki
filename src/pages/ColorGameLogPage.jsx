@@ -30,6 +30,7 @@ const ENTRIES = [
       '第四輪:使用者說原版 PLAY 是「兩條旋渦」→ 改成兩道對稱的彎曲光尾繞鈕面轉:conic-gradient 兩個漸弱扇區(頭亮尾淡、相隔 180°)+ radial 遮罩(中心 38% 透明、70–88% 亮、邊緣淡出)+ ring-spin 2s。連拍四格確認兩道光尾位置在轉。',
       '第五輪(使用者連降兩次亮度後給了原版近拍錄影):原版的光是貼著粉圓外緣的細長弧、亮度低、圓面內側幾乎沒有 → 遮罩改只留外緣 76–100% 細環帶,兩道光尾各拉到約 1/3 圈、峰值 0.6。',
       '第六輪(使用者說光尾不見了):兩個原因。(1) 使用者把光層 markup 改成 class play-shine 但 CSS 沒有規則 → 改為在 index.css 頂層定義 .play-shine(conic + mask + ring-spin);(2) 我上一版遮罩用 radial-gradient(circle, …) 百分比是以 farthest-corner 為 100%(半徑 ×1.41),76% 以外的環帶整個落到圓外被遮掉 → 改 circle closest-side 讓 100% = 半徑,環帶 64–100%。連拍確認兩道光尾貼邊旋轉。',
+      '定案:使用者自己調完 .play-shine(兩道光尾各約 1/3 圈、峰值 0.4 / 0.3、環帶 61–95%、1.5s 逆時針、translate -1px)並把 ring-spin keyframes 放到頂層;我把 @theme 內重複的 --animate-ring-spin 與 keyframes 移除,只留使用者那份。',
       'bonus 桌號徽章框色應不同(稿用另一個元件 1:8,其他三變體用 1:2):已抓的兩個 127×33 SVG 都是紅色版,Figma REST / MCP 都還在限流;依 AGENTS「三通道都不通時不目測估值」先不做,請使用者從 Figma 桌面版匯出 1:551 的 SVG。',
       '路書欄底:使用者指出特別欄底(luzhu_bg_active)是「三顆同色那一局」才有,不是最新一欄;cg-client LuShuItem.setLuShuData 確認 data.length>=3 且三個 winner 相同 → isAllSameColor。',
       '路書抽成共用元件:views/lobby/LobbyRoadStrip → views/components/RoadStrip(欄底圖改由 props columnBg / columnBgTriple 傳入,不綁 lobbyAssets),diceColors.ts 一起搬到 components;LobbyBetPercent 改路徑。房內路書之後可直接接。',
