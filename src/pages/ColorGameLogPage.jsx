@@ -24,7 +24,7 @@ const ENTRIES = [
       'BONUS:稿(1:529)是兩層——底層 1:530 是 21px 逐字漸層字 + 藍色柔影/硬影,上層 1:533–537 是 17.3px、字距 .13em 的淡色描邊空心字疊在每個字母中央。原實作只取了上層的 17.3px 尺寸卻套底層漸層,字太小、描邊過重。改成 BonusLetters 三層(影 / 漸層字 / 內框空心字),群組寬量到 64.92 對稿 65。',
       '倍率字(500X 等)字內透出一圈暗影:描邊字上直接掛 text-shadow 時 Chrome 把陰影畫在描邊之上、填色之下。改成底層透明字畫陰影、上層只留描邊 + 填色(與主句 / 彩字同一招)。',
     ],
-    decisions: ['稿上那顆 60% 白橢圓高光遮罩先不做;inset 高光同前(CSS 無 inset text-shadow)。'],
+    decisions: ['使用者貼稿圖比對後補上 1:538 的高光:整字「BONUS」bg-clip-text 鋪一顆白色 radial-gradient 橢圓(稿 74×12.8 / 60%,CSS 取 96×13.2 / 45%,邊字才不會被弧度壓低);底層字母無字距,整字與逐字排版剛好對齊。硬影改 0.75/1。稿的 inset 暗邊仍不做(CSS 無 inset text-shadow)。'],
     pitfalls: ['Figma 與 REST 今天都還在限流,這次靠之前抓下來的節點文字檔(card-bonus.txt + globals.txt 的 ts7–ts11 / style_ce143fbb)重建,沒有稿的截圖可疊圖;只驗了寬度與目視。'],
     evidence: ['typecheck / lint / lobby 7 tests 綠;bonus 頂列 4× 截圖目視符合稿的結構。'],
     todo: ['--ui-scale 取整(RWD 引擎)或描邊加粗,擇一處理 SUPER 相位差。', 'Figma 解限流後把 1:529 截圖疊上去對一次。'],
