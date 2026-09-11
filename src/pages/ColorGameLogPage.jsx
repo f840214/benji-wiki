@@ -17,6 +17,20 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-11',
+    title: 'BONUS 彩字改成兩層重建對稿;兩張 192x 的 SUPER 看起來不同高是光柵化相位,不是版面',
+    branch: 'master(使用者已把 benji-dev 併回;本段未 commit)',
+    summary: [
+      '使用者截圖:兩張 192x 卡的 SUPER 一大一小。CDP 量測兩張卡 DOM 幾何完全相同(字級 20.7、五個字母寬高一致、只差卡距 177),headless 2× 截圖逐像素相同 → 差異來自使用者視窗的 zoom: var(--ui-scale) 非整數,讓 0.75px 描邊落在不同半像素相位被吸附。根本解是 RWD 引擎算 --ui-scale 時把 432 畫布取整到 1/DPR;治標是描邊加粗到 1px。尚未動手,等使用者選。',
+      'BONUS:稿(1:529)是兩層——底層 1:530 是 21px 逐字漸層字 + 藍色柔影/硬影,上層 1:533–537 是 17.3px、字距 .13em 的淡色描邊空心字疊在每個字母中央。原實作只取了上層的 17.3px 尺寸卻套底層漸層,字太小、描邊過重。改成 BonusLetters 三層(影 / 漸層字 / 內框空心字),群組寬量到 64.92 對稿 65。',
+    ],
+    decisions: ['稿上那顆 60% 白橢圓高光遮罩先不做;inset 高光同前(CSS 無 inset text-shadow)。'],
+    pitfalls: ['Figma 與 REST 今天都還在限流,這次靠之前抓下來的節點文字檔(card-bonus.txt + globals.txt 的 ts7–ts11 / style_ce143fbb)重建,沒有稿的截圖可疊圖;只驗了寬度與目視。'],
+    evidence: ['typecheck / lint / lobby 7 tests 綠;bonus 頂列 4× 截圖目視符合稿的結構。'],
+    todo: ['--ui-scale 取整(RWD 引擎)或描邊加粗,擇一處理 SUPER 相位差。', 'Figma 解限流後把 1:529 截圖疊上去對一次。'],
+    files: ['src/views/lobby/LobbyCardTitle.tsx'],
+  },
+  {
+    date: '2026-09-11',
     title: '大廳顯示名單改版:拿掉逐支玩法開關,改成 colorGameSupportedSubTypes;192x NewUI 回到「切換 UI」本意',
     branch: 'benji-dev(未 commit;同時解了 merge origin/master 的 AGENTS.md 衝突)',
     summary: [
