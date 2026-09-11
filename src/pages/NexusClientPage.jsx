@@ -71,13 +71,13 @@ const DIRS = [
 ['目錄地圖(環由內到外)', [
   ['src/platform/', '最內環', '零遊戲知識、零 SDK:rwd 引擎、i18n 橋、uiManager(Toast / Modal / Loading)、sceneManager、sound、loading 進度、state(偏好 / 視訊 / 聊天 / i18n store)、dom 工具。整包自基底帶入'],
   ['src/integrations/', '外部系統', 'sdk/SdkAdapter(SDK 唯一出入口)+ sdk/queries(讀取模組)、config(fields.ts 唯一欄位清單 + ConfigManager)、elog 埋點、video/VideoAdapter、host 宿主橋'],
-  ['src/game/domain/', '純函式:遊戲知識與資料判讀', 'roulette:rouletteWheel / rouletteBetTypes / tableLimitRange / roomListSort / tableCardData。colorgame 15 支:colorGame(六色 801–806)/ betTypes(八注型)/ subType(15 子玩法鍵↔碼)/ roomVariant(11 版面)/ roomType(15 房型)/ roundResult(三同 / 二同 / 全異)/ odds(中沒中、倍率、獎池)/ lushu(路書一欄四筆)/ subGameGate(桌能不能進)/ bonusActivity(LuckyTriple 檔期)/ tableStatus / tableLimits / tableSort / currency / gameType(=31)。判準:輸出換一套視覺設計會不會變?會變就不是 domain(不回傳樣式名、命名不照畫面抄:BetArea→BetType、isLight→isWinning)。不碰 SDK 實例、全部有測試'],
+  ['src/game/domain/', '純函式:遊戲知識與資料判讀', 'roulette:rouletteWheel / rouletteBetTypes / tableLimitRange / roomListSort / tableCardData。colorgame 15 支:colorGame(六色 801–806)/ betTypes(八注型)/ subType(15 子玩法鍵↔碼)/ roomVariant(11 版面)/ roomType(15 房型)/ roundResult(三同 / 二同 / 全異)/ odds(中沒中、倍率、獎池)/ lushu(路書一欄四筆)/ subGameGate(顯示名單 + 192x 換皮)/ bonusActivity(LuckyTriple 檔期)/ tableStatus / tableLimits / tableSort / currency / gameType(=31)。判準:輸出換一套視覺設計會不會變?會變就不是 domain(不回傳樣式名、命名不照畫面抄:BetArea→BetType、isLight→isWinning)。不碰 SDK 實例、全部有測試'],
   ['src/game/store/', 'Zustand', 'roulette:useGameStore(局態)/ useBetStore(注單)/ useWalletStore(餘額)/ useUiStore(面板開關、派彩窗)/ useTutorialStore。colorgame 目前只有 Game / Ui / Wallet 三顆最小化版本,Bet / UltimateJackpot / 活動 store 在 docs/plan 設計裡等實作;一檔一 store'],
   ['src/game/actions/', '玩家寫入', 'bet / auth / navigation / video / chat / gift / favoriteBet / customChips / deposit;emit + 樂觀旗標 + elog + toast,永不寫金錢'],
   ['src/game/handlers/global/', 'App 啟動掛', 'Loading / Message / Scene / User / PageVisibility / LogMgr;名冊 globalHandlers.ts;活到關頁'],
   ['src/game/handlers/room/', '進房掛、離房拆', 'Game / Bet / Chat;名冊 roomHandlers.ts;由 SceneHandler 的 POSITION_CHANGED 驅動,不綁 React'],
   ['src/game/hooks/', '畫面讀', 'useTableLimits / useTableRoadmap / useTableSummaryRevision / useLobbyTableList / useLobbyCardLive / useLayoutWidth / useAppConfig…;回純資料,不外露 SDK 實例'],
-  ['src/views/', '畫面', 'LoadingView / LoginView / LobbyView / RoomView 四頁 + lobby/ room/ popup/ components/;可插拔總表只剩 campaigns/ 一張(skins/ 於 09-08 砍掉)'],
+  ['src/views/', '畫面', 'LoadingView / LoginView / LobbyView / RoomView 四頁 + lobby/ room/ popup/ components/;可插拔總表只剩 campaigns/ 一張(skins/ 於 09-08 砍掉)。colorgame 的 LobbyView 區塊 A + C 09-09 起是真的(views/lobby/ 十支)'],
   ['src/views/RoomView.tsx', '房間', 'roulette:五層 z-stack 的房間本體。colorgame:目前是純佔位殼(只履行 mount 時 setEntering(false) 的契約);設計上會依 subType 走 domain/roomVariant 判準 lazy 出對應版面,那條路由與 views/room/<玩法>/ 目錄都還沒建'],
   ['src/views/room/layers/', '房間分層', 'roomLayers.ts 是 z 序唯一真相(Stage 0 / ChatFloat 1 / Play 2 / UI 3 / Overlay 4 / Tutorial 5);每層一個 XxxLayer 元件'],
   ['src/views/room/betarea/', '注盤(roulette)', 'rect/(矩形盤)與 oval/(racetrack)姊妹盤,各自 Base / Label / Chip / Highlight / Click 五層 DOM,共用 store 與 actions/bet'],
@@ -802,12 +802,12 @@ npm run dev        # 之後每天`}</Code>
         </tr></thead>
         <tbody>
           {[
-            ['狀態', '功能齊全上線中:大廳、兩盤注盤、派彩 Spine、聊天送禮、面板、教學', '骨架期:工具鏈、platform / integrations / testing、登入旅程、campaigns 總表、domain 15 支與設定層是真的;Lobby / Room 是文字佔位殼,房間 handler / bet store / 注區 / 開獎演出 / 面板全部未建'],
+            ['狀態', '功能齊全上線中:大廳、兩盤注盤、派彩 Spine、聊天送禮、面板、教學', '骨架 + domain + 大廳:工具鏈、platform / integrations / testing、登入旅程、campaigns 總表、domain 15 支與設定層是真的;Lobby 區塊 A(殼 / 頂欄 / 跑馬燈列)與 C(桌卡列表接真實 SDK 資料)真的,B / D 佔位;Room 是文字佔位殼(多玩法架構 09-10 定案、spike 驗證,尚未落入 src),房間 handler / bet store / 注區 / 開獎演出 / 面板未建'],
             ['來源', '從零建、Cocos roulette-client 為行為真相', '以 nexus-roulette-client(3f0cb7b)同構複製;更早那份 baccarat 底、含 11 種玩法路由的骨架於 09-08 被取代且不保留(只剩 reflog)。漂移用 npm run base:diff 量。行為真相 ../cg-client(不含 pulaputi:另開 repo,本專案永遠只做 tableType 31)'],
-            ['RoomView', '房間本體:五層 z-stack', '純佔位殼。設計:桌 subType → domain/roomVariant.resolveRoomVariant(11 種版面)決定開哪一種畫面;能不能進由 domain/subGameGate(設定的總開關 + 桌號名單)決定,兩個問題來源不重疊。路由與 views/room/<variant>/ 尚未建'],
+            ['RoomView', '房間本體:五層 z-stack', '純佔位殼。設計:桌 subType → domain/roomVariant.resolveRoomVariant(11 種版面)決定開哪一種畫面;顯不顯示由 colorGameSupportedSubTypes 名單決定(09-11 改版,空 = 全部顯示),192x 走哪套 UI 由 NewUI 兩列決定;兩個問題來源不重疊。多玩法架構(profile / phase / RoomFrame / Room / Skin)09-10 定案於 docs/多玩法架構.md,spike/frame-rooms/ 驗證,尚未落入 src'],
             ['domain', 'rouletteWheel / rouletteBetTypes / tableLimitRange', '15 支:colorGame / betTypes / subType / roomVariant / roomType / roundResult / odds / lushu / subGameGate / bonusActivity / tableStatus / tableLimits / tableSort / currency / gameType。邊界:知識與判讀,止於畫面之前(換視覺不變才算 domain)'],
             ['可插拔總表', 'campaigns/、skins/ 兩張', '只剩 campaigns/ 一張(skins 砍了:佈景主題只是換圖路徑,要的是對照表);機制內聯在 src/platform/surfaces/。消費端只有 Lucky Draw 與 Color War'],
-            ['設定層', '輪盤欄位', 'fields.ts 多十列玩法開關(四玩法各「總開關 + 桌號名單」,192x 換皮再一組;欄位去 colorGame 前綴、jsonKey 沿用舊字串)+ Triple Bonus 五列;名單空 = 一桌都不開(fail-closed)。八列要請 SRE 補進三環境'],
+            ['設定層', '輪盤欄位', 'fields.ts:colorGameSupportedSubTypes(子玩法代碼名單,空 = 全部顯示)+ 192x NewUI 兩列(只切 UI)+ Triple Bonus 五列;09-11 前的四支玩法「總開關 + 桌號名單」八列已依負責人裁定移除。supportedSubTypes 一列要請 SRE 補進三環境'],
             ['幾何常數', '已錨定 Figma Roulette_2026', '房間幾何、RWD 基準值、roomRatioSpec 仍是輪盤的值,每處標 TODO(colorgame);大廳稿 lobby_all-size 已登記,房間 / 面板 / 注區稿待交付'],
             ['範圍', '維護 + Lark「輪盤 2.0」需求表', '四玩法:192x doubleWheel(superWheel / superWheelNew)、108x superDouble、500x bonusV2、UJP ultimateJackpotV4;四活動:Triple Bonus、Lucky Draw V4、Freeplay、Color War V2。normal 不上線(連帶 SuperGame 小遊戲加注整條不做);範圍外的桌在大廳隱藏;順序由 benji 決定'],
           ].map((r) => (

@@ -13,7 +13,7 @@ const FOLDERS = [
   ['dev/', 'dev 工具殼(獨立 entry dev.html)', '零專案耦合的框架(側欄 / iframe 裝置框 / 工具容器)+ 工具註冊表;production build 不含'],
   ['docs/', '中文文件', '規範本體、設計理由、RWD、遊戲規格、資源流程、教學系統;plan/ 放有壽命的計畫書,archive/ 放已落地的舊契約'],
   ['team-skills/', 'agent skills', '26 個專案 skill,postinstall 連進 .claude / .cursor / .agents;README.md 是索引'],
-  ['public/', '不經 bundle 的靜態檔', 'project.json / coreProject.json 兩支設定、assets/ 的 runtime 資源(目前只有 loading_bg.webp 與一堆 .gitkeep)'],
+  ['public/', '不經 bundle 的靜態檔', 'project.json / coreProject.json 兩支設定、assets/ 的 runtime 資源:loading_bg.webp + lobby/(頂欄鈕、布幔、緞帶)+ lobby/card/(桌卡的 PLAY 圓、預設視訊、維護圖示、路書欄底、徽章底、觀看圖示);其餘目錄還是 .gitkeep'],
   ['assets-raw/', '圖檔母檔', 'PNG / JPG 母檔,assets:compress 鏡射轉成 public/assets/**.webp;目前全空目錄'],
   ['.husky/ .vscode/ .mcp.json .env.example', '本機工具設定', 'pre-commit(lint-staged + typecheck + webp gate)、post-merge(重連 skills)、編輯器建議、MCP 名冊、環境變數範例'],
   ['.claude/ .cursor/ .agents/ .codex/ .gemini/', 'postinstall 生成', '各 AI 平台的 skill symlink 與 MCP 投影,gitignored(只有 .cursor/rules 進 git)'],
@@ -22,7 +22,7 @@ const FOLDERS = [
   ['src/platform/', '最內環:零遊戲知識、零 SDK', 'rwd 引擎、i18n 橋、uiManager 三件套、sceneManager、sound、loading 進度、通用 state、storage、dom 工具、surfaces 機制、assetLoading 純邏輯'],
   ['src/integrations/', '外部系統:認識協定、不認識玩法', 'config(設定管線)、elog(埋點)、sdk(SdkAdapter + queries)、video(VideoAdapter)、host(宿主 postMessage)、replayUrl'],
   ['src/game/', '遊戲領域', 'domain(純函式知識與判讀)、store(Zustand)、actions(玩家寫入)、handlers(server 鏡像)、hooks(畫面讀)、根層的 loadingMap / routes / sfx / assetScheduler / subGameGates'],
-  ['src/views/', '畫面(React + Tailwind)', 'Loading / Login 真的,Lobby / Room 佔位殼;campaigns/ 活動總表;components/ 共用元件;room/runtime 房間幾何與載入點;runtime/ 預載接線'],
+  ['src/views/', '畫面(React + Tailwind)', 'Loading / Login 真的;Lobby 區塊 A(殼 / 頂欄 / 跑馬燈列)與 C(桌卡列表)真的、B(標題 + 活動入口)/ D(頁尾)佔位;Room 佔位殼(多玩法架構 09-10 定案於 docs/多玩法架構.md,spike/ 驗證,尚未落入 src);campaigns/ 活動總表;lobby/ 大廳元件;components/ 共用元件;room/runtime 房間幾何與載入點;runtime/ 預載接線'],
 ]],
 ['src/ 環外的橫切關注', [
   ['src/testing/', '只給 vitest 用', '@toppath 四個替身 stub、toppathAbsentGuard(碰到真件就炸)、moduleGraphScan 與 surfaceRegistryGates 兩組掃原始碼的守門'],
@@ -106,19 +106,21 @@ const FILES = [
 ['docs/', [
   ['開發規範與指引.md', '規範本體', '§3 註解九原則、§6 i18n、§8 分層與資料流(含 09-08 新增的「domain 是什麼」判準)、§9 store、§10 目錄樹(輪盤原版)、§11 Pixi、§14.1 分包、§15 驗證'],
   ['設計背景與決策.md', '所有「為什麼」', '選型、保護順序、載入分段、§三可插拔 UI(面板不建總表、佈景主題不走總表、09-08 實測的適用邊界)、版本約束、原生元件去留'],
-  ['RWD架構.md', '四軸模型', '引擎通用;範例值是輪盤佔位'],
+  ['RWD架構.md', '四軸模型', '引擎通用;範例值是輪盤佔位。§一 09-09 補「大廳是例外」:大廳走 432 畫布 zoom 縮放舞台,登入 / 載入頁仍流式'],
   ['遊戲規格與畫面流程.md', '產品規格', '§一–§三、§六 還是章節骨架;§四 store↔畫面、§五 實作範圍逐項定案(四玩法四活動)已定稿'],
   ['資源規範與流程.md', '資源單一權威', 'Figma → 切圖 → 交付 → WebP 管線 → runtime 對映;§二有 MCP 存取步驟與大廳稿 key'],
   ['tutorial-system.md', '教學系統手冊', 'core 引擎在本 repo,輪盤劇本不在'],
-  ['plan/資料流與Store設計.md', '實作期計畫書(有壽命)', '§0 落點表、§1 範圍與桌號判斷、§2 四條路徑、§3 房內共用(GameHandler / useGameStore / BetHandler)、§4 玩法層、§5 活動層、§6 佈景主題、§7 離房重置、§8 store 一覽;接線完就併回 JSDoc 封存'],
+  ['plan/大廳-design-spec.md', '大廳 design-spec(有壽命)', '拆分計畫、元件樹、幾何 / 字型 / 色票 / i18n / 資產表、區塊 C 桌卡幾何、cg-client 大廳逐功能對照表、量測章(掃邊界對稿法與每次的數字、刻意分歧)'],
+  ['多玩法架構.md', '房間多玩法架構(09-10 定案)', 'profile / phase / RoomFrame / Room / Skin 五概念;以 spike/frame-rooms/ 驗證,尚未落入 src'],
+  ['plan/資料流與Store設計.md', '實作期計畫書(有壽命)', '§0 落點表、§1 範圍與桌號判斷(§1.1 09-11 改版:顯示名單只剩 colorGameSupportedSubTypes,NewUI 兩列只切 UI)、§2 四條路徑、§3 房內共用(GameHandler / useGameStore / BetHandler)、§4 玩法層、§5 活動層、§6 佈景主題、§7 離房重置、§8 store 一覽;接線完就併回 JSDoc 封存'],
   ['archive/svg-1x-repull.md', '已封存', '2× SVG 改 1× 的執行記錄(輪盤時期)'],
   ['archive/tutorial-howtoplay.md', '已封存', '新手教學規劃期契約,已落地;不作實作依據'],
 ]],
 ['public/ 與 assets-raw/', [
-  ['public/project.json', '渠道設定', 'gw / site_assets / infoUrl(/h5/1e3109 多遊戲共用 dev 頻道,不用換)/ 各旗標;a 欄位是編碼過的 GW 位址'],
+  ['public/project.json', '渠道設定', 'gw / site_assets / infoUrl(/h5/1e3109 多遊戲共用 dev 頻道,不用換)/ 各旗標;a 欄位是編碼過的 GW 位址。09-11 起:colorGameSupportedSubTypes(子玩法代碼名單,桌在名單內才顯示;空 = 全部顯示;dev 是 [4, 9, 12, 13])+ 192x NewUI 兩列(只切 UI,不擋桌)'],
   ['public/coreProject.json', '核心設定', 'gw、studioIdTransferMap 等跨渠道共用值;與 project.json 由 ConfigManager 合併'],
   ['public/assets/loading_bg.webp', '唯一真資源', '中性佔位背景;pre-splash 與 LoadingView 畫同一張'],
-  ['public/assets/**/.gitkeep', '目錄結構', 'audio / betarea / chips / icons/lobby / payout / popup(chat gift、message、statistics)/ room / spine/videoloading / tutorial;全是輪盤的形狀,等彩骰資源'],
+  ['public/assets/**/.gitkeep', '目錄結構', 'audio / betarea / chips / icons/lobby / payout / popup(chat gift、message、statistics)/ room / spine/videoloading / tutorial;全是輪盤的形狀,等彩骰資源。lobby/ 與 lobby/card/ 已有真檔(母檔在 assets-raw/lobby/)'],
   ['assets-raw/**/.gitkeep', '母檔目錄結構', 'betarea / payout / popup/chat/message / room / spine/videoloading / tutorial;全空'],
 ]],
 ['src/ 根', [
@@ -218,7 +220,7 @@ const FILES = [
   ['subType.ts', '15 種子玩法鍵↔碼', '本層一律傳鍵名,數值只在此檔出現一次;switch 漏一支型別會擋'],
   ['roomVariant.ts', '開哪一種房間畫面', '11 種版面;與 roomType 刻意分兩層(四種 jackpot 桌與倍率桌共用經典版面)'],
   ['roomType.ts', '房內用哪一套配置', '15 種房型 + 規則說明頁;jackpotV2 靠兩個桌台欄位再分三種;jackpotV3 套 V1 但不列規則頁'],
-  ['subGameGate.ts', '這張桌現在能不能進', '每支玩法 = 總開關 && 桌號名單,192x 換皮第三層;沒登記一律 false、名單空 = 全關'],
+  ['subGameGate.ts +test', '大廳顯示名單與 192x 換皮', '09-11 改版:isSubTypeSupported(subType 代碼 ∈ colorGameSupportedSubTypes 才顯示;名單空 = 全部顯示)+ isSuperWheelNewUi(NewUI 總開關 && 桌號名單 → 走新版 UI,不擋桌)。原本的逐支玩法開關 isSubGameOpen 已移除'],
   ['roundResult.ts', '開獎判讀', '三同 / 二同 / 全異 / 未開完 + 電子倍率命中;二同的重複色是出現兩次那色'],
   ['odds.ts', '一注的結果', '{ isWinning, rate, jackpot };基礎 1 / 2 / 3 倍,三同色才進各玩法加成;倍率是數值不是 100X 字串'],
   ['lushu.ts', '路書一欄判讀', '四筆不是三筆;第四筆:UJP 幸運物、108x 倍率、192x / 500x 小遊戲結果;回報事實(bonusKind / jackpotType / rate)不回樣式'],
@@ -229,14 +231,15 @@ const FILES = [
   ['currency.ts', '幣別 → 符號', '未知一律 $;Google Play 渠道與試玩整個不顯示是執行期條件'],
 ]],
 ['src/game/ 其餘', [
-  ['subGameGates.ts +test', '設定 → domain 形狀的接縫', 'AppConfig 十列組成 subGameGate 吃的形狀;純函式不是 hook(SceneHandler 在 React 外也要用)'],
+  ['subGameGates.ts +test', '設定 → domain 形狀的接縫', 'supportedSubTypesOf(config)/ superWheelNewUiGateOf(config);純函式不是 hook'],
   ['store/useGameStore.ts', '局態 store(最小化)', '只剩 tableCode 等登入旅程需要的欄位;彩骰局態模型見 docs/plan §3.2'],
-  ['store/useUiStore.ts', 'UI overlay 開關(最小化)', '保留 resetRoomUI 接縫'],
+  ['store/useUiStore.ts', 'UI overlay 開關(最小化)', '保留 resetRoomUI 接縫;09-09 加 isMenuOpen / openMenu / closeMenu(主選單面板本體未做)'],
   ['store/useWalletStore.ts', '餘額 / 派彩', 'UserHandler 是唯一寫入者'],
   ['actions/auth.ts', '登入', 'token / 試玩 / 帳密,emit LOGIN_TO_GW;成功由 SceneHandler 跳頁'],
   ['actions/navigation.ts', '進房 / 離房 / 大廳 / 重連', 'enterRoom 只 emit MOVE_TO_GAME_ROOM 不 navigate,等 POSITION_CHANGED;exitTable 雙驅動'],
   ['actions/video.ts', '視訊 join / leave', '取容器、回讀偏好、委派 VideoAdapter'],
   ['actions/deposit.ts', '儲值', '埋點 → 遊客擋 → hostBridge.deposit(iframe postMessage 或開新視窗)'],
+  ['actions/favorite.ts', '收藏 / 取消收藏桌台', 'emit USER_SAVE_MY_DATA,不改本地狀態;FAVORITE_TABLES_CHANGED 回來才重排'],
   ['handlers/handlerContract.ts', 'IGlobalHandler / IRoomHandler', '新 handler implements 後加名冊,漏實作編譯錯'],
   ['handlers/global/globalHandlers.ts', '全局名冊', 'App 起就掛、不 teardown;門檻:任何畫面都可能到且錯過有害'],
   ['handlers/global/SceneHandler.ts +test', '路由中樞', '登入推進、列表確認、POSITION_CHANGED 驅動路由、被踢跳登入;保留外遊戲型別的安全網分支(改成 return 會死鎖)'],
@@ -248,6 +251,10 @@ const FILES = [
   ['handlers/room/roomHandlers.ts', '房間名冊(空殼)', 'setupAll / teardownAll / resetRoomStores 三個簽名保留;GameHandler / BetHandler / ChatHandler 待建'],
   ['hooks/useAppConfig.ts', 'AppConfig 唯讀綁定', 'views 只准經這個拿設定;無 zustand'],
   ['hooks/useRetryableImage.ts +test', '圖片載入交排程器 + 失敗重試', '斷線期間掛的 img 瀏覽器不會自己重試'],
+  ['hooks/lobbyCardData.ts', 'Table → 桌卡純資料', '唯一讀 SDK 的轉換點:subType 正規化、狀態、限額聚合、路書六欄、六色百分比、jackpot 金額、isSuperWheelNewUi'],
+  ['hooks/useLobbyTableList.ts', '大廳桌台列表', 'hiddenRooms → isSubTypeSupported → sortTables;訂 LIST_INITIALIZED / 收藏變更 / 維護 / 好路 / 刪桌整列重讀'],
+  ['hooks/useLobbyCardLive.ts', '逐卡即時資料', '訂該桌事件 + tableSummary REFRESH,in-place 重讀'],
+  ['hooks/useTableCountdown.ts', '下注倒數與進度比', '給桌卡時間條;分母取第一次讀到的剩餘毫秒'],
   ['loadingMap.ts', '首屏三段進度地圖', 'shell 0–40 / bootstrap 40–70 / entry 70–100;main.tsx defineLoadingMap 註冊'],
   ['routes.ts', '路徑常數', '零依賴檔,handler / action 都引用'],
   ['sfx.ts', '音效名單', '只有 btnclick(音檔缺,點擊時良性 warn)'],
@@ -256,7 +263,18 @@ const FILES = [
 ['src/views/', [
   ['LoadingView.tsx', '首屏(真的)', '進度來源 loadingProgress,與 pre-splash 同一真相'],
   ['LoginView.tsx', '登入(真的)', '試玩 / 帳密 / token 自動登入;紅色配色是對藍本金色的刻意分歧,token 集中檔頭常數'],
-  ['LobbyView.tsx', '大廳(佔位)', '顯示暱稱與餘額證明登入旅程落地;桌列 / 桌卡 / 主選單 / 活動入口待建'],
+  ['LobbyView.tsx', '大廳(區塊 A + C 真的)', '根節點 zoom: var(--ui-scale) 整頁以 432 畫布縮放;背景 / 頂欄 / 跑馬燈列 / 桌卡列表;區塊 B(標題 + 活動入口)55px 佔位、D(頁尾)未做;跑馬燈訊息暫為固定公告'],
+  ['lobby/LobbyBackdrop.tsx', '四層背景', '輻射底色、布幔圖 ×2、房間底板純 CSS 四層漸層'],
+  ['lobby/LobbyHeader.tsx', '頂欄', 'Home(shouldShowHomeButton)/ 頭像 / 暱稱 / 餘額 / 儲值(requestDeposit)/ Menu(openMenu);行為對照 cg-client ColorGameLobbyTopBar'],
+  ['lobby/LobbyMessageBar.tsx', '跑馬燈列 + Banner 切換', '40 px/s 等速捲動,時長由量測注入 inline CSS 變數;MarqueeList 接線待做'],
+  ['lobby/LobbyTableCard.tsx', '桌卡', 'room 容器下移 1.47 且下緣超出卡框 1.47(稿 room 子框沒被裁);頂列 / 視訊 / 路書 / 六色比例 / 時間條 / 底條 + PLAY / 愛心;半像素微調一律 transform'],
+  ['lobby/LobbyCardTitle.tsx', '頂列玩法標題(純文字)', 'ULTIMATE / SUPER / BONUS 逐字漸層(兩層畫陰影)、主句、倍率 + 限額同列;四段共用一個 NUDGE 位移'],
+  ['lobby/LobbyStripText.tsx', '底條金字(純 CSS 三層)', 'Figma 的 darken 疊色算成實色停止點、漸層鋪在 cap-height(em 定位);symbol prop 畫 ₱(Baloo 2 500)'],
+  ['lobby/LobbyRoadStrip.tsx', '路書六欄', '最近五局 + 一欄留給下一局,最新一欄金框欄底;加成標籤在欄上方'],
+  ['lobby/LobbyBetPercent.tsx', '六色比例 3×2', '來源 tableSummary.getWinnerPercent;pt 補 Luckiest Guy 墨心偏高'],
+  ['lobby/lobbyAssets.ts +test', '大廳資源清單', 'CARD_ASSET_URLS + LOBBY_ASSET_SETS;測試驗清單 = 元件用的且檔案存在'],
+  ['lobby/lobbyCardVariant.ts / diceColors.ts', '變體配色 / 六色漸層', '獨立成檔是為了 Fast Refresh'],
+  ['lobby/homeButtonVisibility.ts +test', 'Home 鈕顯示規則', '自 roulette 複製:showHome / roomBack / tableCode / embedded'],
   ['RoomView.tsx', '房間(佔位)', '只履行 mount 時 setEntering(false) 的契約;版面路由待建'],
   ['entryAssets.ts +test', '進場兩頁資源清單', '兩頁都沒東西值得預載,清單分開是為了逐頁抓漏'],
   ['campaigns/registry.ts +test', '檔期活動總表(空)', '每檔活動一列;全專案唯一認識 views/campaigns/<name>/ 的地方'],
@@ -309,14 +327,14 @@ export default function ColorGameDirsPage() {
 ├─ dev/         dev 工具殼(framework/ + tools/,零專案耦合)
 ├─ docs/        規範 / 決策 / RWD / 遊戲規格 / 資源 / 教學;plan/ 有壽命計畫;archive/ 封存
 ├─ team-skills/ 26 個 agent skill
-├─ public/      project.json coreProject.json  assets/(runtime URL 資源,目前只有 loading_bg)
+├─ public/      project.json coreProject.json  assets/(runtime URL 資源:loading_bg + lobby/ + lobby/card/)
 ├─ assets-raw/  PNG 母檔(空)
 └─ src/
    ├─ main.tsx App.tsx index.css                       bootstrap / 路由 / Tailwind 入口
    ├─ platform/      最內環:rwd i18n uiManager sceneManager sound loading state storage dom surfaces assetLoading
    ├─ integrations/  config elog sdk(+queries) video host replayUrl
    ├─ game/          domain(15 支) store(3 顆) actions handlers(global 6 / room 空) hooks + loadingMap routes sfx
-   ├─ views/         Loading Login(真) Lobby Room(殼) campaigns/ components/ room/runtime runtime/
+   ├─ views/         Loading Login Lobby(A+C 真) Room(殼) lobby/ campaigns/ components/ room/runtime runtime/
    ├─ testing/       @toppath 替身、守門掃描
    ├─ tutorial/      core/ 可攜引擎 + 兩支佔位
    ├─ debug/         DevTools 頁面端
@@ -324,7 +342,7 @@ export default function ColorGameDirsPage() {
 
 環規則:views → game → integrations → platform,import 只准往內(eslint 擋);tutorial / debug / testing / assets 在環外。
 真 vs 殼:工具鏈、platform、integrations、testing、登入旅程、domain、設定層、campaigns 總表是真的;
-        Lobby / Room 畫面、房間 handler、bet store、注區、開獎演出、面板全部未建;幾何值標 TODO(colorgame)。`}</Code>
+        Lobby 區塊 A + C 已落地(09-09 / 09-10);Room 畫面、房間 handler、bet store、注區、開獎演出、面板未建;幾何值標 TODO(colorgame)。`}</Code>
 
       <h2>資料夾作用</h2>
       <DataTable sections={FOLDERS} headers={['資料夾', '角色', '放什麼']} placeholder="搜尋資料夾、角色…" />

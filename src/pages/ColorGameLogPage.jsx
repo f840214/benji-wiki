@@ -27,7 +27,7 @@ const ENTRIES = [
     ],
     decisions: [
       '這是專案負責人對 09-08 設計的裁定,不是 bug 修正:逐支玩法的 rollout 開關不是產品需求。domain 的 isGateOpen 保留給 NewUI 用。',
-      'merge origin/master(Kaden 09-11,含 192x 第一個房間與多玩法架構)只有 AGENTS.md 衝突:以對方新版為底、把大廳現況三句塞回去。使用者問能不能不留 merge 紀錄 → 可以改走 rebase,benji-dev 未推,等他決定。',
+      'merge origin/master(Kaden 09-11,含 docs/多玩法架構.md 定案與 spike/frame-rooms/ 驗證——房間尚未落入 src,RoomView 仍是殼;我昨天說「已有 192x 第一個房間」講過頭)只有 AGENTS.md 衝突:以對方新版為底、把大廳現況三句塞回去。使用者問能不能不留 merge 紀錄 → 可以改走 rebase,benji-dev 未推,等他決定。',
     ],
     pitfalls: [
       '閘門機制(domain + fields)在大廳之前就進了 master(dd02ef4 / c712d45),但沒有消費者;我做桌卡列表時是第一個消費者,照文件接了 isSubGameOpen 並補 project.json 八個 key——文件寫得很篤定,但產品意圖跟文件不同。教訓:設定層的「規則」在第一次被消費前,要跟負責人確認一次,不能只信計畫文件。',
