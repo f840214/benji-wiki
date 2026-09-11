@@ -20,7 +20,7 @@ const ENTRIES = [
     title: '大廳顯示名單改版:拿掉逐支玩法開關,改成 colorGameSupportedSubTypes;192x NewUI 回到「切換 UI」本意',
     branch: 'benji-dev(未 commit;同時解了 merge origin/master 的 AGENTS.md 衝突)',
     summary: [
-      '使用者指出昨天的理解錯了:cocos 的 isColorGameSuperWheelNewUIEnabled + colorGameSuperWheelNewUIEnabledTables 只是 192x 的 UI 切換(命中的桌在大廳標成 newUi、進房帶去決定版面),不是閘門;其他四組「總開關 + 桌號名單」不該擋桌;改成一個 colorGameSupportedSubTypes 欄位,桌的 subType 代碼在名單內才顯示。',
+      '使用者指出昨天的理解錯了:cocos 的 isColorGameSuperWheelNewUIEnabled + colorGameSuperWheelNewUIEnabledTables 只是 192x 的 UI 切換(命中的桌在大廳標成 newUi、進房帶去決定版面),不是閘門;其他四組「總開關 + 桌號名單」不該擋桌;改成一個 colorGameSupportedSubTypes 欄位,桌的 subType 代碼在名單內才顯示;空陣列＝不限制、全部顯示(使用者補充,不是 fail-closed)。',
       'domain/subGameGate.ts:isSubGameOpen → isSubTypeSupported(subType, codes);isSuperWheelNewUi 只看 NewUI 那一組。game/subGameGates.ts:supportedSubTypesOf / superWheelNewUiGateOf。',
       'config/fields.ts 八列 → supportedSubTypes(number[],jsonKey colorGameSupportedSubTypes);golden fixture 兩個 case 同步;public/project.json dev 值 [4, 9, 12, 13],NewUI 兩列保留。',
       'useLobbyTableList 改用支援名單過濾;lobbyCardData 多 isSuperWheelNewUi 欄位(也決定 isSuspend 算不算狀態);useLobbyCardLive 沿用它。資料流計畫 §1.1、design-spec、AGENTS.md、MEMORY 同步改。',
