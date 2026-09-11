@@ -17,6 +17,22 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-11',
+    title: '桌卡動效:愛心收藏進場 + 收藏中光暈、PLAY 待機星光(對照 cg-client Spine);另修倍率字陰影與 SUPER 相位差診斷',
+    branch: 'master(未 commit)',
+    summary: [
+      '使用者錄影指出 cg-client 左上愛心點下去有動效、右下 PLAY 也有常駐效果。查 cg-client:FavoriteRoomToggleButton 用 Spine cg_lobby_resources 的 in(點擊時播一次)+ Loop(收藏中持續);PlayButton 整顆是 sp.Skeleton,defaultAnimation play_btn_loop 常駐循環。Spine 檔是 3.8.99 二進位,本 repo 的 spine-core 4.3 讀不出 keyframe,改從 atlas 圖塊(金圓、Roombutton_Light 白光暈、UI_favorite_plus 白心、btn_play_add 亮面、btn_play_star_2 四角星)推結構,用 CSS 重現。',
+      'index.css @theme 加五組:fav-pop(圓與心 0.4→1.18→1 彈跳 0.45s)、fav-burst(白光暈 0.5→2 擴散淡出 0.55s)、fav-glow(收藏中金色光暈呼吸 1.6s)、star-twinkle(四角星 1.4s,第二顆 delay 0.7s 交替)、play-sheen(亮面 opacity 呼吸 2.4s)。',
+      'LobbyTableCard:favJustOn 狀態只在點擊後打開(cg-client 的 in 只在點擊時播,列表重建不播),burst 播完清掉;PLAY 鈕加 TwinkleStar 純 SVG 兩顆 + 亮面層。headless 截圖:PLAY 兩顆星交替、愛心 0.12s 時放大、0.7s 落定帶光暈。',
+      '倍率字(500X 等)字內暗影:描邊字直接掛 text-shadow 會被畫在描邊之上、填色之下 → 底層透明字畫陰影。BONUS 補上 1:538 高光層(整字 bg-clip-text 鋪白色橢圓)。',
+    ],
+    decisions: ['動效時長與曲線是推定值,不是 Spine 原 keyframe;之後若拿到 Spine JSON 匯出可再對。星光用 inline SVG 免新增資源。', 'origin/master 又多三個 commit(8f5edc5 舊皮 192x 房間第一輪、8e542ca 移除 roomVariant 相關邏輯)——後者可能碰到 lobbyCardData 的 isSuperWheelNewUi 用法,merge 時要看。team-skills 沒有內容更新,只有 base-manifest.json。'],
+    pitfalls: ['兩張 192x 的 SUPER 一大一小:DOM 幾何逐項相同、headless 2× 截圖逐像素相同,是使用者視窗 zoom(--ui-scale)非整數造成 0.75px 描邊落在不同半像素相位。根本解是引擎把 ui-scale 取整到 1/DPR,待使用者決定。', 'PLAY 文字量測其實和稿一致(墨心比外圓心高 1.9,稿本來就偏高);使用者看到的偏低同樣疑似相位或瀏覽器差異。'],
+    evidence: ['typecheck / lint / lobby 7 tests 綠;fx-all.png、fx-heart.png 兩張驗證圖在 scratchpad。'],
+    todo: ['--ui-scale 取整。', 'merge origin/master 後確認 isSuperWheelNewUi 消費端還在。'],
+    files: ['src/index.css', 'src/views/lobby/LobbyTableCard.tsx', 'src/views/lobby/LobbyCardTitle.tsx'],
+  },
+  {
+    date: '2026-09-11',
     title: 'BONUS 彩字改成兩層重建對稿;兩張 192x 的 SUPER 看起來不同高是光柵化相位,不是版面',
     branch: 'master(使用者已把 benji-dev 併回;本段未 commit)',
     summary: [
