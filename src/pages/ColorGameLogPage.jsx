@@ -16,6 +16,28 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-11',
+    title: '大廳顯示名單改版:拿掉逐支玩法開關,改成 colorGameSupportedSubTypes;192x NewUI 回到「切換 UI」本意',
+    branch: 'benji-dev(未 commit;同時解了 merge origin/master 的 AGENTS.md 衝突)',
+    summary: [
+      '使用者指出昨天的理解錯了:cocos 的 isColorGameSuperWheelNewUIEnabled + colorGameSuperWheelNewUIEnabledTables 只是 192x 的 UI 切換(命中的桌在大廳標成 newUi、進房帶去決定版面),不是閘門;其他四組「總開關 + 桌號名單」不該擋桌;改成一個 colorGameSupportedSubTypes 欄位,桌的 subType 代碼在名單內才顯示。',
+      'domain/subGameGate.ts:isSubGameOpen → isSubTypeSupported(subType, codes);isSuperWheelNewUi 只看 NewUI 那一組。game/subGameGates.ts:supportedSubTypesOf / superWheelNewUiGateOf。',
+      'config/fields.ts 八列 → supportedSubTypes(number[],jsonKey colorGameSupportedSubTypes);golden fixture 兩個 case 同步;public/project.json dev 值 [4, 9, 12, 13],NewUI 兩列保留。',
+      'useLobbyTableList 改用支援名單過濾;lobbyCardData 多 isSuperWheelNewUi 欄位(也決定 isSuspend 算不算狀態);useLobbyCardLive 沿用它。資料流計畫 §1.1、design-spec、AGENTS.md、MEMORY 同步改。',
+    ],
+    decisions: [
+      '這是專案負責人對 09-08 設計的裁定,不是 bug 修正:逐支玩法的 rollout 開關不是產品需求。domain 的 isGateOpen 保留給 NewUI 用。',
+      'merge origin/master(Kaden 09-11,含 192x 第一個房間與多玩法架構)只有 AGENTS.md 衝突:以對方新版為底、把大廳現況三句塞回去。使用者問能不能不留 merge 紀錄 → 可以改走 rebase,benji-dev 未推,等他決定。',
+    ],
+    pitfalls: [
+      '閘門機制(domain + fields)在大廳之前就進了 master(dd02ef4 / c712d45),但沒有消費者;我做桌卡列表時是第一個消費者,照文件接了 isSubGameOpen 並補 project.json 八個 key——文件寫得很篤定,但產品意圖跟文件不同。教訓:設定層的「規則」在第一次被消費前,要跟負責人確認一次,不能只信計畫文件。',
+      '同一批 python 多段取代第 N 段失敗時前面的檔案已寫入、後面沒跑;之後改成逐檔獨立 assert、失敗就印出實際段落再重試。',
+    ],
+    evidence: ['typecheck / lint 0 warning / 411 tests / build 綠;大廳仍顯示 dev 頻道 16 桌(4 / 9 / 12 / 13 四種 subType)。'],
+    todo: ['進房時把 isSuperWheelNewUi 餵給 resolveRoomVariant(enterRoom 目前只帶 tableCode;Kaden 的 RoomView 尚未消費 resolveRoomVariant);大廳桌卡對 newUi 的桌要不要有標示,等設計。', 'colorGameSupportedSubTypes 一列要請 SRE 進三環境 project.json。'],
+    files: ['src/game/domain/subGameGate.ts', 'src/game/domain/subGameGate.test.ts', 'src/game/subGameGates.ts', 'src/game/subGameGates.test.ts', 'src/integrations/config/fields.ts', 'src/integrations/config/__fixtures__/golden.json', 'src/game/hooks/useLobbyTableList.ts', 'src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyCardLive.ts', 'public/project.json', 'docs/plan/資料流與Store設計.md', 'docs/plan/大廳-design-spec.md', 'AGENTS.md', 'MEMORY.md'],
+  },
+  {
     date: '2026-09-10',
     title: '桌卡逐像素對稿:官方 Figma MCP 授權、room 偏移 1.47、標題改純文字逐字漸層、愛心照稿',
     branch: 'benji-dev(未 commit)',
