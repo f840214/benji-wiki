@@ -16,6 +16,21 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-14',
+    title: '底條金字超寬時等比縮小（108x 被裁）；收藏愛心換成使用者提供的 CSS 動效',
+    branch: 'master(未 commit)',
+    summary: [
+      '108x「SUPER GAME WITH SPECIAL DICE」在底條被裁掉。LobbyStripText 改為量自然寬（inline-block offsetWidth）對外框 clientWidth，比例 <1 就 transform: scale（cg-client TableJackpotUltimateAmount 同法）；字型載入完成與外框 ResizeObserver 時重算。108x 量到 288 / 252 → scale 0.875，截圖完整顯示。',
+      '第一版縮放原點用中心，結果左緣往右跑 18px：字比框寬時 inline-block 靠左貼齊，以中心縮放會往內收；改 transform-origin 左緣，縮到等於框寬即自然置中。',
+      '愛心：使用者提供一套 .favorite-button / .favorite-pop / .favorite-art 的 CSS（is-selected 時外層回彈 560ms、內層呼吸 1.8s、::before 白金閃光 380ms、::after 金色光圈 520ms、:active 縮 0.9、reduced-motion 關閉），原樣放進 index.css 頂層；markup 改成 button.favorite-button(34×34) > .favorite-pop > .favorite-art > 金圓 + 心形 / idle 圖。舊的 fav-pop / fav-burst / shine-sweep keyframes、favJustOn 狀態、心形遮罩掃光一併移除。點擊後連拍：閃光 + 光圈擴散 → 呼吸。',
+    ],
+    decisions: ['is-selected 綁 isFavorite：已收藏的桌在列表初次渲染時也會播一次回彈 + 光圈（cg-client 的 in 只在點擊時播）；先照使用者的版本，看過再決定要不要加 is-fresh 之類的閘。'],
+    pitfalls: ['index.css 新增 @media (prefers-reduced-motion) 時要跑 src/platform/rwd 的繞道測試（只擋 matchMedia / 斷點，reduced-motion 沒被擋）。', 'scratchpad 的 measure.mjs 不見了（可能被清），從 fxprobe.mjs 的開頭重建 measure-head.mjs 當底。'],
+    evidence: ['typecheck / lint / lobby 7 tests / rwd 23 tests 綠；strip-108.png、fx-heart2.png。'],
+    todo: ['bonus 桌號徽章藍色版仍等 Figma 1:551 SVG。', '若不要初次渲染就播回彈，加一個只在點擊後打開的 class。'],
+    files: ['src/views/lobby/LobbyStripText.tsx', 'src/views/lobby/LobbyTableCard.tsx', 'src/index.css'],
+  },
+  {
     date: '2026-09-11',
     title: '桌卡動效:愛心進場、收藏中與 PLAY 待機的斜光掃過 + 呼吸縮放(對照 cg-client Spine);路書三同色欄底並抽成共用 RoadStrip',
     branch: 'master(未 commit)',
