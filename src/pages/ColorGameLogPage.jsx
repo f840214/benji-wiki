@@ -380,7 +380,104 @@ function Entry({ e, open, onToggle }) {
   )
 }
 
+
+// ─── Store 與 Hook 清單（第二個 tab）：每支的作用、誰寫、誰讀 ───────────────────────
+// 規則（AGENTS.md）：寫 → actions；讀 → hooks；伺服器鏡射／一次性事件 → handler；
+// store 只存 SDK 拿不回來、或多個畫面必須一致的東西，有 SDK getter 的一律用 hook 讀。
+const STATE_INVENTORY = [
+  {
+    group: 'game/store（遊戲層 Zustand）',
+    items: [
+      { name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
+      { name: 'useBetStore', path: 'src/game/store/useBetStore.ts', role: '注單與籌碼列的鏡射：已確認注、待確認注、選中籌碼、可下注旗標。', writer: 'BetHandler（唯一寫入者，訂 BetInfoCollection / ChipSelector）', reader: '只准經 useBetAmounts / useBetControlSlots 讀，不准直接讀 confirmedBets' },
+      { name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
+      { name: 'useWalletStore', path: 'src/game/store/useWalletStore.ts', role: '餘額與本局派彩金額。餘額一律來自 SYNC_MONEY。', writer: 'UserHandler（SYNC_MONEY）、派彩 handler', reader: 'LobbyHeader 餘額膠囊、房內餘額列' },
+    ],
+  },
+  {
+    group: 'platform/state（平台層，零遊戲知識）',
+    items: [
+      { name: 'useAuthStore', path: 'src/platform/state/useAuthStore.ts', role: '初次登入流程狀態（AUTHENTICATING → 成功／失敗），不存 token。', writer: 'actions/auth、SceneHandler（LOGIN_FAILED 只在初次登入寫）', reader: 'LoginView、LoadingView' },
+      { name: 'useUserStore', path: 'src/platform/state/useUserStore.ts', role: '玩家身分：userId（GW 數字 ID）、userName（user.nick）、avatar、currency、isTourist、myDataReady（myData 撈回來沒，未就緒一律不動）。', writer: 'UserHandler（LOGIN_SUCCESS、NICK_NAME_CHANGED、GET_MY_DATA）', reader: 'LobbyView → LobbyHeader（暱稱／Tourist／頭像／幣別）、教學狀態、個人資料彈窗' },
+      { name: 'useVideoStore', path: 'src/platform/state/useVideoStore.ts', role: '視訊連線狀態鏡像（framework VideoManager 的 UI 面）：status、畫質、靜音、容器元素（setContainerElement 要登記視訊框本身）。', writer: 'VideoAdapter', reader: 'VideoBand、AmbientBackdrop、VideoFadeOverlay、useStreamPending' },
+      { name: 'useChatStore', path: 'src/platform/state/useChatStore.ts', role: '聊天列 UI：輸入列開關、可否輸入、遊客旗標、冷卻倒數。', writer: 'ChatHandler、聊天 actions', reader: '聊天列元件' },
+      { name: 'useChatMessages', path: 'src/platform/state/useChatMessages.ts', role: '聊天飄字訊息佇列（Tier 2）。', writer: 'ChatHandler（消費 SDK 兩個訊息池）', reader: '飄字層' },
+      { name: 'useGiftStore', path: 'src/platform/state/useGiftStore.ts', role: '收禮浮動橫幅佇列。', writer: 'ChatHandler（GIFT 型訊息轉發）', reader: 'GiftReceivedBanner' },
+      { name: 'useI18nStore', path: 'src/platform/state/useI18nStore.ts', role: 'react-intl 的 locale / messages 單一來源（遠端 CSV 語言表）；runtime 動態鍵（桌名、注型名）直接讀它，固定文案走 t()。', writer: 'LanguageManager 下載完成', reader: 'IntlProvider、MessageHandler.tr、useTableInfo' },
+      { name: 'usePreferencesStore', path: 'src/platform/state/usePreferencesStore.ts', role: '玩家偏好（RoomPreferences 四欄）的運行時真相，與 storage 同步。', writer: '偏好 actions / 選單彈窗', reader: '房內對應設定' },
+    ],
+  },
+  {
+    group: 'game/hooks（讀：訂閱 SDK／store，餵一個畫面）',
+    items: [
+      { name: 'lobbyCardData（toLobbyCardData）', path: 'src/game/hooks/lobbyCardData.ts', role: '不是 hook 而是轉換函式：SDK Table → 桌卡純資料（狀態、相位、人數、限額、路書欄含 tag / bonusMatch / hasBonus / isLuckyBall、六色比例、jackpot、isSuperWheelNewUi）。唯一讀 SDK 的轉換點，路書判讀交 domain/lushu。', writer: '—', reader: 'useLobbyTableList、useLobbyCardLive' },
+      { name: 'useLobbyTableList', path: 'src/game/hooks/useLobbyTableList.ts', role: '大廳桌台列表：hiddenRooms 過濾 → colorGameSupportedSubTypes 名單 → sortTables；訂列表層事件（初始化、收藏變更）。DEV 下掛 window.__cgLuShu 除錯入口。', writer: '—', reader: 'LobbyView' },
+      { name: 'useLobbyCardLive', path: 'src/game/hooks/useLobbyCardLive.ts', role: '一張桌卡的即時資料：訂該桌事件、變更時重讀 toLobbyCardData；列表帶來的新快照以 initial 覆蓋。', writer: '—', reader: 'LobbyTableCard' },
+      { name: 'useTableCountdown', path: 'src/game/hooks/useTableCountdown.ts', role: '一張桌的下注倒數秒數與進度比例（時間條）；不在倒數相位不起 timer。', writer: '—', reader: 'LobbyTableCard' },
+      { name: 'useAdBanners', path: 'src/game/hooks/useAdBanners.ts', role: '大廳廣告清單：進大廳 emit GET_AD_BANNER、訂 UPDATE_AD_BANNER；轉成畫面用的圖片網址／停留毫秒／點擊目標；清單簽名沒變就不 setState、不記 log。', writer: '—', reader: 'LobbyView → LobbyAdBanner / LobbyMessageBar' },
+      { name: 'useDirectGames', path: 'src/game/hooks/useDirectGames.ts', role: '頁尾跳轉面板的 Live / E-Game 清單（SDK DirectGameInfo），imgUrl 接上 site_assets。', writer: '—', reader: 'DirectGamePanel' },
+      { name: 'useFormFactor', path: 'src/game/hooks/useFormFactor.ts', role: 'RWD 軸 3：版面形態 phone / wide，訂 viewport 單一廣播。JS 端「掛不掛」用它，CSS 端走 wide-frame: 前綴，同一處只能擇一。', writer: '—', reader: 'LobbyView（wide 旗標）、房內留白填補' },
+      { name: 'useLayoutWidth', path: 'src/game/hooks/useLayoutWidth.ts', role: 'RWD 軸 1：版面基準寬（不是 uiScale，寬框時 uiScale 夾 1）。', writer: '—', reader: '房內幾何' },
+      { name: 'useAppConfig', path: 'src/game/hooks/useAppConfig.ts', role: '部署設定 AppConfig 的唯讀綁定（config 載入後凍結）。', writer: '—', reader: 'LobbyHeader（showHome / roomBack / tableCode）、useLobbyTableList 等' },
+      { name: 'useIsTourist', path: 'src/game/hooks/useIsTourist.ts', role: '是不是遊客（SDK User.isTourist，登入後固定）。', writer: '—', reader: '選單、儲值擋' },
+      { name: 'useUserProfile', path: 'src/game/hooks/useUserProfile.ts', role: '個人資料彈窗的玩家資料：掛載時 emit GET_USER_PERSONAL_INFO，訂更新。', writer: '—', reader: 'ProfilePanel' },
+      { name: 'useTableInfo', path: 'src/game/hooks/useTableInfo.ts', role: '底列桌名與荷官名：桌名查遠端語言表（table_<桌號>），沒有就顯示桌號。', writer: '—', reader: '房內底列' },
+      { name: 'useTableLimits', path: 'src/game/hooks/useTableLimits.ts', role: '桌台各注型限額表與子玩法，訂 RANGE_LIST_CHANGED。', writer: '—', reader: '限額彈窗、注區' },
+      { name: 'useBetAmounts', path: 'src/game/hooks/useBetAmounts.ts', role: '注額的通道無關選擇器（現金／免費投注一致介面）；注區、注單摘要、籌碼列只准讀這裡。', writer: '—', reader: '注區、注單摘要、籌碼列' },
+      { name: 'useBetControlSlots', path: 'src/game/hooks/useBetControlSlots.ts', role: '籌碼列 UNDO／重下／加倍與確認／取消的 enable 條件，純衍生。', writer: '—', reader: '籌碼列' },
+      { name: 'useEditChipList', path: 'src/game/hooks/useEditChipList.ts', role: '可編輯籌碼列表（EDITCHIP）：SDK 取得、排序、可選常用籌碼。', writer: '—', reader: 'Custom Chips 子面板' },
+      { name: 'useSuperWheelRate', path: 'src/game/hooks/useSuperWheelRate.ts', role: '192x 倍率揭示要不要出現、目前跳到幾倍（從 useGameStore 本局結果現算，domain/superWheel）。', writer: '—', reader: 'superWheel 房的倍率揭示' },
+      { name: 'useHistoryList', path: 'src/game/hooks/useHistoryList.ts', role: '歷史紀錄頁：依頁籤打一次 GTS，回列與總計。', writer: '—', reader: 'HistoryPanel' },
+      { name: 'useFreePlayRecords', path: 'src/game/hooks/useFreePlayRecords.ts', role: '免費投注紀錄（近兩週）。', writer: '—', reader: 'FreePlayRecord 面板' },
+      { name: 'useHasFreePlay', path: 'src/game/hooks/useHasFreePlay.ts', role: '系統選單「Free Play Record」列要不要顯示（domain/freeBetRecord 規則）。', writer: '—', reader: 'MenuLayer' },
+      { name: 'useGameRulePages', path: 'src/game/hooks/useGameRulePages.ts', role: '規則頁要列的分頁（讀 TableCollection 一次，餵 domain/gameRules）。', writer: '—', reader: 'GameRulesPanel' },
+      { name: 'useShareButtonVisible', path: 'src/game/hooks/useShareButtonVisible.ts', role: '房內分享鈕：canShareInfo ＋ 嵌在宿主 ＋ 手機 UA 三條件。', writer: '—', reader: '房內頂列' },
+      { name: 'useStreamPending', path: 'src/game/hooks/useStreamPending.ts', role: '串流是否尚未 playing：留白環境背景與載入動效共用同一時機。', writer: '—', reader: 'VideoBand、AmbientBackdrop' },
+      { name: 'useRetryableImage', path: 'src/game/hooks/useRetryableImage.ts', role: '圖片載入排隊與失敗重試（斷線期間掛的 img 在「情況變好」時再抓）；RetryableImage 元件包它。', writer: '—', reader: '所有 RetryableImage' },
+    ],
+  },
+  {
+    group: 'views/components（純畫面工具 hook）',
+    items: [
+      { name: 'useFitToWidth', path: 'src/views/components/useFitToWidth.ts', role: '文字比框寬時等比縮小（transform: scale）而不裁切：量 inner 自然寬對 outer 的 clientWidth 扣掉左右 padding；字型 ready 與 ResizeObserver 時重算。', writer: '—', reader: 'LobbyStripText（底條）、LobbyTableCard 桌號徽章' },
+      { name: 'useShrinkToFit', path: 'src/views/components/useShrinkToFit.ts', role: '一行字超出容器時整串等比縮小（量 Range 墨跡寬）。', writer: '—', reader: '房內窄欄位' },
+    ],
+  },
+]
+
+function StateInventory() {
+  return (
+    <div>
+      <p className="text-muted mb-4 max-w-[62ch]">
+        目前專案裡的 Zustand store 與 React hook，各自負責什麼、誰寫、誰讀。分層規則：寫走 <code>game/actions</code>、讀走 <code>game/hooks</code>、伺服器鏡射走 handler；
+        store 只存 SDK 拿不回來或多個畫面要一致的東西。
+      </p>
+      {STATE_INVENTORY.map((g) => (
+        <section key={g.group} className="mb-6">
+          <h2>{g.group}</h2>
+          <div className="overflow-x-auto">
+            <table className="text-[.85rem] w-full">
+              <thead><tr className="text-muted text-left"><th className="pr-3 py-1">名稱</th><th className="pr-3 py-1">作用</th><th className="pr-3 py-1">誰寫</th><th className="py-1">誰讀</th></tr></thead>
+              <tbody>
+                {g.items.map((it) => (
+                  <tr key={it.name} className="border-t border-line align-top">
+                    <td className="pr-3 py-1.5 whitespace-nowrap"><code>{it.name}</code><div className="text-[.7rem] text-muted">{it.path}</div></td>
+                    <td className="pr-3 py-1.5 min-w-[22ch]">{it.role}</td>
+                    <td className="pr-3 py-1.5 min-w-[14ch]">{it.writer}</td>
+                    <td className="py-1.5 min-w-[14ch]">{it.reader}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
+    </div>
+  )
+}
+
 export default function ColorGameLogPage() {
+  const [tab, setTab] = useState('log')
   const [q, setQ] = useState('')
   const [openSet, setOpenSet] = useState(() => new Set([0]))
   const term = q.trim().toLowerCase()
@@ -391,6 +488,13 @@ export default function ColorGameLogPage() {
   return (
     <div>
       <h1>colorgame 製作歷程</h1>
+      <div className="flex gap-2 mb-4">
+        {[['log', '歷程'], ['state', 'Store 與 Hook']].map(([k, label]) => (
+          <button key={k} type="button" onClick={() => setTab(k)}
+            className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
+        ))}
+      </div>
+      {tab === 'state' ? <StateInventory /> : (<>
       <p className="text-muted mb-5 max-w-[62ch]">
         <code>nexus-colorgame-client</code> 每個工作段落的紀錄:做了什麼、做了哪些決定、踩到什麼坑、拿什麼證據說做完了、留下什麼。
         最新在最上面。repo 內的正式紀錄是 <code>MEMORY.md</code> 的重大變更記錄,這頁是自己看的、可以更囉嗦。
@@ -427,6 +531,7 @@ export default function ColorGameLogPage() {
   links:     [['文字', '#/route']],
 }
 跟 agent 說「把這次的紀錄補到 benji-wiki 製作歷程」就會照這個格式加。`}</Code>
+      </>)}
     </div>
   )
 }
