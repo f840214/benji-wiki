@@ -16,6 +16,22 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-16',
+    title: '跑馬燈接 SDK、廣告彈窗、大廳雜修（頁尾以舞台寬算格數、捲軸、遊客暱稱、預設頭像）',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '跑馬燈（對照 cg-client ColorGameMarquee）：useMarqueeList 訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已依大廳／房內、tableType、時間窗過濾並依 weight 排序；未來 24h 內會開的由 SDK 排 timeout）。輪播規則抽成純函式 marqueeQueue（未讀優先、插回已讀表時照清單位次、後台更新不打斷正在捲的那一則、目前那則被撤就退到已讀表尾）+4 測試。LobbyMessageBar 改成「捲一次、animationend 回報」，速度＝後台 scrollSpeed（整段捲過視窗的毫秒）→ 視窗寬 ÷ 秒，沒填 40 px/s；一則捲完 LobbyView 停 2s 換下一則；整條膠囊可點，actions/marquee.openMarquee：埋點 Lobby.Marquee（外連帶 url、進桌帶桌號／局號／主注型最小注、其餘只 name+balance），預設公告不跳轉，enableRedirect 才看 targetTable → url，兩者皆空跳活動中心 News（未接，先記錄）。',
+      '廣告彈窗（對照 cg-client LobbyAdPopup + NavigationHandler.openLobbyAdPopup）：useAdPopup 每工作階段第一次進大廳 emit GET_H5_POP_UP（GTS specInfo.getH5PopUp，callback 回清單），挑「時間窗內、tableType 31、id 最大」一則；useUiStore.adPopupDone 記已彈過，從房間回來不再彈。LobbyAdPopup：圖載好才連遮罩一起出現，停 popUpDuration 秒（沒填 5）後 0.5s 淡出縮小收掉，收掉送 Lobby.LuckyTriplePopup { time }（名字沿用舊版）。舊版沒有點擊關閉／點圖跳轉，這裡也不加；舊版收掉時飛向 BANNER 鈕，這裡用縮小代替。稿上沒畫這個彈窗，尺寸先取舞台寬 90% 置中，等設計補稿。',
+    ],
+    decisions: [
+      '跑馬燈輪播狀態放 LobbyView 的 ref（不進 store）：只有大廳這一個畫面用，離開即丟；SDK 才是清單真相。',
+      '廣告彈窗只做「每工作階段一次」：cg-client 是看 gameMap 上一個位置有沒有 tableCode，語意就是「第一次進大廳」，用 store 旗標更直接。',
+    ],
+    evidence: ['typecheck / lint / views+game 777 tests / build 首屏預載閘門皆綠。實機要看：後台有跑馬燈與彈窗資料的渠道。'],
+    todo: ['活動中心 News 落點（跑馬燈與 banner 共用）等 views/campaigns registry。', '廣告彈窗的稿（尺寸、關閉方式）等設計。'],
+    files: ['src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
+  },
+  {
     date: '2026-09-15',
     title: '背景收尾：用 Figma 整幀（只留背景三層）匯圖當底圖；廣告 banner 與底板同步、跑馬燈淡出',
     branch: 'master(未 commit)',
@@ -390,7 +406,7 @@ const STATE_INVENTORY = [
     items: [
       { name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
       { name: 'useBetStore', path: 'src/game/store/useBetStore.ts', role: '注單與籌碼列的鏡射：已確認注、待確認注、選中籌碼、可下注旗標。', writer: 'BetHandler（唯一寫入者，訂 BetInfoCollection / ChipSelector）', reader: '只准經 useBetAmounts / useBetControlSlots 讀，不准直接讀 confirmedBets' },
-      { name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
+      { name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）、廣告彈窗本工作階段出過沒（adPopupDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
       { name: 'useWalletStore', path: 'src/game/store/useWalletStore.ts', role: '餘額與本局派彩金額。餘額一律來自 SYNC_MONEY。', writer: 'UserHandler（SYNC_MONEY）、派彩 handler', reader: 'LobbyHeader 餘額膠囊、房內餘額列' },
     ],
   },
@@ -415,6 +431,8 @@ const STATE_INVENTORY = [
       { name: 'useLobbyCardLive', path: 'src/game/hooks/useLobbyCardLive.ts', role: '一張桌卡的即時資料：訂該桌事件、變更時重讀 toLobbyCardData；列表帶來的新快照以 initial 覆蓋。', writer: '—', reader: 'LobbyTableCard' },
       { name: 'useTableCountdown', path: 'src/game/hooks/useTableCountdown.ts', role: '一張桌的下注倒數秒數與進度比例（時間條）；不在倒數相位不起 timer。', writer: '—', reader: 'LobbyTableCard' },
       { name: 'useAdBanners', path: 'src/game/hooks/useAdBanners.ts', role: '大廳廣告清單：進大廳 emit GET_AD_BANNER、訂 UPDATE_AD_BANNER；轉成畫面用的圖片網址／停留毫秒／點擊目標；清單簽名沒變就不 setState、不記 log。', writer: '—', reader: 'LobbyView → LobbyAdBanner / LobbyMessageBar' },
+      { name: 'useMarqueeList', path: 'src/game/hooks/useMarqueeList.ts', role: '大廳跑馬燈清單：訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已過濾排序），轉成 text / scrollMs / 落點；簽名沒變不 setState。', writer: '—', reader: 'LobbyView（marqueeQueue 輪播 → LobbyMessageBar）' },
+      { name: 'useAdPopup', path: 'src/game/hooks/useAdPopup.ts', role: '大廳廣告彈窗要顯示哪一則：每工作階段第一次進大廳 emit GET_H5_POP_UP，挑時間窗內、本遊戲、id 最大；沒有就標記已處理。', writer: '—', reader: 'LobbyView → LobbyAdPopup' },
       { name: 'useDirectGames', path: 'src/game/hooks/useDirectGames.ts', role: '頁尾跳轉面板的 Live / E-Game 清單（SDK DirectGameInfo），imgUrl 接上 site_assets。', writer: '—', reader: 'DirectGamePanel' },
       { name: 'useFormFactor', path: 'src/game/hooks/useFormFactor.ts', role: 'RWD 軸 3：版面形態 phone / wide，訂 viewport 單一廣播。JS 端「掛不掛」用它，CSS 端走 wide-frame: 前綴，同一處只能擇一。', writer: '—', reader: 'LobbyView（wide 旗標）、房內留白填補' },
       { name: 'useLayoutWidth', path: 'src/game/hooks/useLayoutWidth.ts', role: 'RWD 軸 1：版面基準寬（不是 uiScale，寬框時 uiScale 夾 1）。', writer: '—', reader: '房內幾何' },
