@@ -458,8 +458,9 @@ const STATE_INVENTORY = [
     ],
   },
   {
-    group: 'views/components（純畫面工具 hook）',
+    group: 'views/components（純畫面工具 hook 與共用元件）',
     items: [
+      { name: 'RollingText（元件）', path: 'src/views/components/RollingText.tsx', role: '數字滾輪（cg-client LabelRollerComponent）：吃一段排好版的字串，數字位各自上下滾到新值（變大往上、變小往下，每列 120ms、越左越慢 8%），逗號／小數點／符號不動；WAAPI 動畫，列表重排不重跑。父層字型、顏色、描邊、text-shadow 直接繼承；background-clip: text 的漸層字要把漸層經 glyphClassName 套到每個字元盒。rowEm 要等於父層 line-height。', writer: '—', reader: '目前只有 LobbyStripText（roll）→ UJP 桌卡獎池金額；房內餘額／派彩／獎池要滾直接掛它' },
       { name: 'useFitToWidth', path: 'src/views/components/useFitToWidth.ts', role: '文字比框寬時等比縮小（transform: scale）而不裁切：量 inner 自然寬對 outer 的 clientWidth 扣掉左右 padding；字型 ready 與 ResizeObserver 時重算。', writer: '—', reader: 'LobbyStripText（底條）、LobbyTableCard 桌號徽章' },
       { name: 'useShrinkToFit', path: 'src/views/components/useShrinkToFit.ts', role: '一行字超出容器時整串等比縮小（量 Range 墨跡寬）。', writer: '—', reader: '房內窄欄位' },
     ],
