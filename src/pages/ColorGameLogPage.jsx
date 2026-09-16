@@ -17,7 +17,7 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-16',
-    title: '跑馬燈接 SDK、廣告彈窗、大廳雜修（頁尾以舞台寬算格數、捲軸、遊客暱稱、預設頭像）',
+    title: '跑馬燈接 SDK、廣告彈窗、UJP 獎池與滾輪、維護桌對稿、大廳雜修',
     branch: 'benji-dev(未 commit)',
     summary: [
       '跑馬燈（對照 cg-client ColorGameMarquee）：useMarqueeList 訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已依大廳／房內、tableType、時間窗過濾並依 weight 排序；未來 24h 內會開的由 SDK 排 timeout）。輪播規則抽成純函式 marqueeQueue（未讀優先、插回已讀表時照清單位次、後台更新不打斷正在捲的那一則、目前那則被撤就退到已讀表尾）+4 測試。LobbyMessageBar 改成「捲一次、animationend 回報」，速度＝後台 scrollSpeed（整段捲過視窗的毫秒）→ 視窗寬 ÷ 秒，沒填 40 px/s；一則捲完 LobbyView 停 2s 換下一則；整條膠囊可點，actions/marquee.openMarquee：埋點 Lobby.Marquee（外連帶 url、進桌帶桌號／局號／主注型最小注、其餘只 name+balance），預設公告不跳轉，enableRedirect 才看 targetTable → url，兩者皆空跳活動中心 News（未接，先記錄）。',
@@ -27,12 +27,16 @@ const ENTRIES = [
       'UJP 桌卡獎池金額抓錯（使用者）：cg-client TableJackpotUltimateAmount 是 ultimate + major + mini 三段相加、各段先無條件捨去到小數 2 位，PAYOUT 中若該局有預扣（round.getWithholdingJackpotAmount）該段先用預扣值鎖住；我們原本只取 grand／ultimate 第一個有值的。lobbyCardData.readJackpot 依 subType 分：UJP 三段相加、其餘 grand；useLobbyCardLive 多訂 JACKPOT_BALL_PAYOUT。',
       '金額變動要有滾輪（使用者：「齒輪效果」，cg-client LabelRollerComponent）：新元件 components/RollingText——每個數字位是 1.2em 高的 overflow-hidden 盒，裡面 0–9 兩輪 20 列直條，translateY 定位；變動時 WAAPI 從舊列滾到新列（變大往上、變小往下，往下從 old+10 起算不露底），每列 120ms、每往左一位多 8%（cg-client speed/8/位數 的位差）。LobbyStripText 加 roll prop，三層同字各一份滾輪同時動；父層 background-clip: text 漸層照常有效。位數變了直接換內容不滾。',
       '跑馬燈：去按鈕音（data-no-sfx）、字 700、真資料到時不先播預設字、文字 top 80% → 90%、換則間隔 2s → 0.5s（下一則從右緣外捲進來本身就要 6s）。banner：多張時 setPointerCapture 讓 click 落不到圖片按鈕，改在 pointerup 沒滑動就當點擊；頁點疊進圖片內距下緣 4；回大廳不重播展開（useAdBanners 初值同步讀 SDK）；進桌前 canEnterTargetTable 守衛（桌存在且不維護，cg-client moveToTargetGameRoom 同）。頂欄：膠囊描邊改 inset shadow、列頂 6.8 → 7、opacity 0.9 烤進顏色 alpha（去鋸齒三步）、暱稱不轉大寫（稿 UPPER，Cocos 顯示 Tourist）。',
+      '維護桌卡對稿（使用者：「維護的桌怪怪的 對一下設計稿」）：稿 298:2292 維護裝態——整卡不壓透明度、頂列單色 #E9AB53、限額字 #8D483C，路書／六色比例／時間條／底條／PLAY／觀看人數全部不畫，中間吉祥物 108.6×86.1 @(187.1,47.1)（與舊版 icon_maintenance 同一張）+ MAINTENANCE 字（Baloo Bhaijaan 19.9、#B8362F，中心 x 241.8）；縮圖、徽章、愛心照常，仍不可點。原本是整卡 60% 透明再蓋一張圖。',
+      '維護桌要能收藏（使用者）：愛心本來沒被擋，卡在 SDK UserSaveMyDataCommand 對 isMaintain 走 setMyDataWithoutChangeEmitter（存但不發 FAVORITE_TABLES_CHANGED，註解說 maintain 情況下列表不動），列表收不到事件愛心不亮。actions/favorite 對維護桌補發同一個事件讓 useLobbyTableList 重讀。',
+      '桌號徽章跨螢幕上下偏 1px 的根因與解法（使用者問「改 SVG 會不會好一點」）：不是字型或 SVG，是三個小數疊在一起——容器 top 120.6、行框半行距 (17−11.5)/2=2.75、字只有 11.5px；Mac 2× 貼到 0.5 格、Dell 1× 貼到整數格，各自取整就差 1。改用 CSS text-box-trim（trim-both cap alphabetic，Chrome 133+）把行框裁到字身，flex 置中就是幾何置中，translateY 從 2.1 降到 0.5 當微調；不支援的瀏覽器退回原行為。build 確認 Tailwind 有輸出。SVG 之前試過字會變軟，不採。',
+      '4:3 對稿微調：桌列整體下 1（標題區佔位 wide 55）、桌號徽章與人數膠囊各下 1（121.6 / 102）。稿的 4:3 桌卡 472 本來就比底板 450 寬、左右各露約 10，不是偏差。',
       '跑馬燈輪播狀態放 LobbyView 的 ref（不進 store）：只有大廳這一個畫面用，離開即丟；SDK 才是清單真相。',
       '廣告彈窗只做「每工作階段一次」：cg-client 是看 gameMap 上一個位置有沒有 tableCode，語意就是「第一次進大廳」，用 store 旗標更直接。',
     ],
     evidence: ['typecheck / lint / views+game 777 tests / build 首屏預載閘門皆綠。實機要看：後台有跑馬燈與彈窗資料的渠道。'],
     todo: ['活動中心 News 落點（跑馬燈與 banner 共用）等 views/campaigns registry。', '廣告彈窗的稿（尺寸、關閉方式）等設計。'],
-    files: ['src/views/components/RollingText.tsx', 'src/views/lobby/LobbyStripText.tsx', 'src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/lobby/LobbyAdBanner.tsx', 'src/views/lobby/LobbyHeader.tsx', 'src/game/actions/navigation.ts', 'src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
+    files: ['src/game/actions/favorite.ts', 'src/views/components/RollingText.tsx', 'src/views/lobby/LobbyStripText.tsx', 'src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/lobby/LobbyAdBanner.tsx', 'src/views/lobby/LobbyHeader.tsx', 'src/game/actions/navigation.ts', 'src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
   },
   {
     date: '2026-09-15',
