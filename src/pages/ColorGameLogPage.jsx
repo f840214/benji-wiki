@@ -24,12 +24,15 @@ const ENTRIES = [
       '廣告彈窗（對照 cg-client LobbyAdPopup + NavigationHandler.openLobbyAdPopup）：useAdPopup 每工作階段第一次進大廳 emit GET_H5_POP_UP（GTS specInfo.getH5PopUp，callback 回清單），挑「時間窗內、tableType 31、id 最大」一則；useUiStore.adPopupDone 記已彈過，從房間回來不再彈。LobbyAdPopup：圖載好才連遮罩一起出現，停 popUpDuration 秒（沒填 5）後 0.5s 淡出縮小收掉，收掉送 Lobby.LuckyTriplePopup { time }（名字沿用舊版）。舊版沒有點擊關閉／點圖跳轉，這裡也不加；舊版收掉時飛向 BANNER 鈕，這裡用縮小代替。稿上沒畫這個彈窗，尺寸先取舞台寬 90% 置中，等設計補稿。',
     ],
     decisions: [
+      'UJP 桌卡獎池金額抓錯（使用者）：cg-client TableJackpotUltimateAmount 是 ultimate + major + mini 三段相加、各段先無條件捨去到小數 2 位，PAYOUT 中若該局有預扣（round.getWithholdingJackpotAmount）該段先用預扣值鎖住；我們原本只取 grand／ultimate 第一個有值的。lobbyCardData.readJackpot 依 subType 分：UJP 三段相加、其餘 grand；useLobbyCardLive 多訂 JACKPOT_BALL_PAYOUT。',
+      '金額變動要有滾輪（使用者：「齒輪效果」，cg-client LabelRollerComponent）：新元件 components/RollingText——每個數字位是 1.2em 高的 overflow-hidden 盒，裡面 0–9 兩輪 20 列直條，translateY 定位；變動時 WAAPI 從舊列滾到新列（變大往上、變小往下，往下從 old+10 起算不露底），每列 120ms、每往左一位多 8%（cg-client speed/8/位數 的位差）。LobbyStripText 加 roll prop，三層同字各一份滾輪同時動；父層 background-clip: text 漸層照常有效。位數變了直接換內容不滾。',
+      '跑馬燈：去按鈕音（data-no-sfx）、字 700、真資料到時不先播預設字、文字 top 80% → 90%、換則間隔 2s → 0.5s（下一則從右緣外捲進來本身就要 6s）。banner：多張時 setPointerCapture 讓 click 落不到圖片按鈕，改在 pointerup 沒滑動就當點擊；頁點疊進圖片內距下緣 4；回大廳不重播展開（useAdBanners 初值同步讀 SDK）；進桌前 canEnterTargetTable 守衛（桌存在且不維護，cg-client moveToTargetGameRoom 同）。頂欄：膠囊描邊改 inset shadow、列頂 6.8 → 7、opacity 0.9 烤進顏色 alpha（去鋸齒三步）、暱稱不轉大寫（稿 UPPER，Cocos 顯示 Tourist）。',
       '跑馬燈輪播狀態放 LobbyView 的 ref（不進 store）：只有大廳這一個畫面用，離開即丟；SDK 才是清單真相。',
       '廣告彈窗只做「每工作階段一次」：cg-client 是看 gameMap 上一個位置有沒有 tableCode，語意就是「第一次進大廳」，用 store 旗標更直接。',
     ],
     evidence: ['typecheck / lint / views+game 777 tests / build 首屏預載閘門皆綠。實機要看：後台有跑馬燈與彈窗資料的渠道。'],
     todo: ['活動中心 News 落點（跑馬燈與 banner 共用）等 views/campaigns registry。', '廣告彈窗的稿（尺寸、關閉方式）等設計。'],
-    files: ['src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
+    files: ['src/views/components/RollingText.tsx', 'src/views/lobby/LobbyStripText.tsx', 'src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/lobby/LobbyAdBanner.tsx', 'src/views/lobby/LobbyHeader.tsx', 'src/game/actions/navigation.ts', 'src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
   },
   {
     date: '2026-09-15',
