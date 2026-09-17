@@ -16,6 +16,24 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-17',
+    title: '500x 房間骨架：bonus 流程、八格注區、倒數圈與得獎歷史鈕（靜態殼，不碰下注線）',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '掃 cg-client：bonusV1／bonusV2 共用 ColorGameBonusRoomView（多處註解「兩個僅出現的倍率不同」），差異只有倍率數字、高倍中獎榜 V2 三欄對調、規則頁。500x 專屬：8 格注區（六色 + 807 anyDouble / 808 anyTriple 走一般下注通道）、BonusRateGroup 停注後依 round.rateDetail 逐格翻電子倍率（807→808 間隔 0.2s）、ColorGameBonusUtil.getBonusDetail 判中獎（matchColors 2/3 同 + bonusColor）、派彩 PayoutBonusV1 / PayoutRank。',
+      '本專案房間現況：RoomFrame 六個洞、四比例幾何、進房載入鏈、GameHandler、192x 橫幅與倍率揭示都通；shared 十一件是靜態殼，BetBoard 六格 disabled 不送 ADD_BET；profile 只有 doubleWheel。下注 pipeline 的 game 層（actions/bet、BetHandler、useBetStore、ChipRow）其實已在，缺的是 BetBoard／SelfBetSummary／確認鈕接線——使用者說那條別人在做、不碰。',
+      '拿到 500x 稿 CG_RWD (Copy) ud0q7CoQ3LAkmqTXq5i00P：13 個狀態 × 4 比例；16:9 基本畫面 105:179853。量出與 192x 的差異只有三個洞：沒有橫幅（洞改放倒數圈 + 得獎歷史鈕，y 244–320）、按鈕列 top 275、注區 233 高八格；賠率列／籌碼列／路書／聊天／底列同位。',
+      '實作：subTypeProfile 加 bonusV2 → { flow: bonus, skin: wheelClassic, board: sixColorPlusPairs }；roundFlow 加 bonus（COMMON）；useGameStore 加 rateDetail（IRoundSnapshot 可省略，其他人的 debug 指令不用改）、GameHandler 整份重讀順手帶；types LayoutVariant 加 bonus；roomGeometry 加 ROOM_POS_BY_LAYOUT（bonus 只覆寫 bandButtons / banner / board 三格，標準版原表不動、既有幾何測試照過）；RoomFrame 依 layout 查表。rooms/bonus：BonusRoom（layout bonus、topBanner 洞放 BonusBandTop、board 放 BonusBoard）、BonusBoard（兩格組合注：conic 彩虹邊 + 藍漸層底 + 標題／金額人數／兩列示意骰；六色沿用 BET_CELL，全部 disabled 靜態殼）、BonusBandTop（倒數圈 conic 環吃 useTableCountdown、得獎歷史鈕圖示匯出 winner_history.webp + 字）、assets、測試 3 條。',
+    ],
+    decisions: [
+      '注區非 betting 相位先沿用「藏起來」；稿與架構文件的 shrunk（只縮不藏、上面翻倍率）留下一輪，要連 roomGeometry 的 shrunk 字面 class 一起做。',
+      '共用檔只碰了三處加法：useGameStore / GameHandler 的 rateDetail、roomGeometry 的第二張洞表、RoomFrame 查表；BetBoard、bet actions、BetHandler、ChipRow 都沒動。',
+    ],
+    evidence: ['typecheck 0、lint 綠、全量 1071 tests、build 首屏預載閘門綠（rooms 仍 lazy）。實機未看（要有 bonusV2 桌的渠道）。'],
+    todo: ['注區 shrunk 態與電子倍率翻牌（rateDetail）、命中高亮', '派彩層：YOU WIN／未中獎、Top3 高倍率中獎榜（V2 欄位對調）', '下注接線等別人那條完成後把 BonusBoard 的八格接 addBet', '20:9／21:9／4:3 對稿', 'Spine（開彩氛圍、小怪物、翻牌）等美術 4.3 重匯'],
+    files: ['docs/plan/500x房間設計規格.md', 'src/game/domain/subTypeProfile.ts', 'src/game/domain/roundFlow.ts', 'src/game/store/useGameStore.ts', 'src/game/handlers/room/GameHandler.ts', 'src/views/room/types.ts', 'src/views/room/runtime/roomGeometry.ts', 'src/views/room/RoomFrame.tsx', 'src/views/room/rooms/index.ts', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/BonusBoard.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/BonusRoom.test.tsx', 'public/assets/room/bonus/winner_history.webp'],
+  },
+  {
     date: '2026-09-16',
     title: '跑馬燈接 SDK、廣告彈窗、UJP 獎池與滾輪、維護桌對稿、大廳雜修',
     branch: 'benji-dev(未 commit)',
@@ -415,7 +433,7 @@ const STATE_INVENTORY = [
   {
     group: 'game/store（遊戲層 Zustand）',
     items: [
-      { name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
+      { name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果、500x 電子倍率 rateDetail。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
       { name: 'useBetStore', path: 'src/game/store/useBetStore.ts', role: '注單與籌碼列的鏡射：已確認注、待確認注、選中籌碼、可下注旗標。', writer: 'BetHandler（唯一寫入者，訂 BetInfoCollection / ChipSelector）', reader: '只准經 useBetAmounts / useBetControlSlots 讀，不准直接讀 confirmedBets' },
       { name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）、廣告彈窗本工作階段出過沒（adPopupDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
       { name: 'useWalletStore', path: 'src/game/store/useWalletStore.ts', role: '餘額與本局派彩金額。餘額一律來自 SYNC_MONEY。', writer: 'UserHandler（SYNC_MONEY）、派彩 handler', reader: 'LobbyHeader 餘額膠囊、房內餘額列' },
