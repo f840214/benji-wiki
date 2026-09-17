@@ -435,9 +435,9 @@ const STATE_INVENTORY = [
   {
     group: 'game/store（遊戲層 Zustand）',
     items: [
-      { name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果、500x 電子倍率 rateDetail。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
+      { origin: '500x+', name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果、500x 電子倍率 rateDetail。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
       { name: 'useBetStore', path: 'src/game/store/useBetStore.ts', role: '注單與籌碼列的鏡射：已確認注、待確認注、選中籌碼、可下注旗標。', writer: 'BetHandler（唯一寫入者，訂 BetInfoCollection / ChipSelector）', reader: '只准經 useBetAmounts / useBetControlSlots 讀，不准直接讀 confirmedBets' },
-      { name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）、廣告彈窗本工作階段出過沒（adPopupDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
+      { origin: 'lobby+', name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）、廣告彈窗本工作階段出過沒（adPopupDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
       { name: 'useWalletStore', path: 'src/game/store/useWalletStore.ts', role: '餘額與本局派彩金額。餘額一律來自 SYNC_MONEY。', writer: 'UserHandler（SYNC_MONEY）、派彩 handler', reader: 'LobbyHeader 餘額膠囊、房內餘額列' },
     ],
   },
@@ -445,7 +445,7 @@ const STATE_INVENTORY = [
     group: 'platform/state（平台層，零遊戲知識）',
     items: [
       { name: 'useAuthStore', path: 'src/platform/state/useAuthStore.ts', role: '初次登入流程狀態（AUTHENTICATING → 成功／失敗），不存 token。', writer: 'actions/auth、SceneHandler（LOGIN_FAILED 只在初次登入寫）', reader: 'LoginView、LoadingView' },
-      { name: 'useUserStore', path: 'src/platform/state/useUserStore.ts', role: '玩家身分：userId（GW 數字 ID）、userName（user.nick）、avatar、currency、isTourist、myDataReady（myData 撈回來沒，未就緒一律不動）。', writer: 'UserHandler（LOGIN_SUCCESS、NICK_NAME_CHANGED、GET_MY_DATA）', reader: 'LobbyView → LobbyHeader（暱稱／Tourist／頭像／幣別）、教學狀態、個人資料彈窗' },
+      { origin: 'lobby+', name: 'useUserStore', path: 'src/platform/state/useUserStore.ts', role: '玩家身分：userId（GW 數字 ID）、userName（user.nick）、avatar、currency、isTourist、myDataReady（myData 撈回來沒，未就緒一律不動）。', writer: 'UserHandler（LOGIN_SUCCESS、NICK_NAME_CHANGED、GET_MY_DATA）', reader: 'LobbyView → LobbyHeader（暱稱／Tourist／頭像／幣別）、教學狀態、個人資料彈窗' },
       { name: 'useVideoStore', path: 'src/platform/state/useVideoStore.ts', role: '視訊連線狀態鏡像（framework VideoManager 的 UI 面）：status、畫質、靜音、容器元素（setContainerElement 要登記視訊框本身）。', writer: 'VideoAdapter', reader: 'VideoBand、AmbientBackdrop、VideoFadeOverlay、useStreamPending' },
       { name: 'useChatStore', path: 'src/platform/state/useChatStore.ts', role: '聊天列 UI：輸入列開關、可否輸入、遊客旗標、冷卻倒數。', writer: 'ChatHandler、聊天 actions', reader: '聊天列元件' },
       { name: 'useChatMessages', path: 'src/platform/state/useChatMessages.ts', role: '聊天飄字訊息佇列（Tier 2）。', writer: 'ChatHandler（消費 SDK 兩個訊息池）', reader: '飄字層' },
@@ -457,15 +457,15 @@ const STATE_INVENTORY = [
   {
     group: 'game/hooks（讀：訂閱 SDK／store，餵一個畫面）',
     items: [
-      { name: 'lobbyCardData（toLobbyCardData）', path: 'src/game/hooks/lobbyCardData.ts', role: '不是 hook 而是轉換函式：SDK Table → 桌卡純資料（狀態、相位、人數、限額、路書欄含 tag / bonusMatch / hasBonus / isLuckyBall、六色比例、jackpot、isSuperWheelNewUi）。唯一讀 SDK 的轉換點，路書判讀交 domain/lushu。', writer: '—', reader: 'useLobbyTableList、useLobbyCardLive' },
-      { name: 'useLobbyTableList', path: 'src/game/hooks/useLobbyTableList.ts', role: '大廳桌台列表：hiddenRooms 過濾 → colorGameSupportedSubTypes 名單 → sortTables；訂列表層事件（初始化、收藏變更）。DEV 下掛 window.__cgLuShu 除錯入口。', writer: '—', reader: 'LobbyView' },
-      { name: 'useLobbyCardLive', path: 'src/game/hooks/useLobbyCardLive.ts', role: '一張桌卡的即時資料：訂該桌事件、變更時重讀 toLobbyCardData；列表帶來的新快照以 initial 覆蓋。', writer: '—', reader: 'LobbyTableCard' },
-      { name: 'useTableCountdown', path: 'src/game/hooks/useTableCountdown.ts', role: '一張桌的下注倒數秒數與進度比例（時間條）；不在倒數相位不起 timer。', writer: '—', reader: 'LobbyTableCard' },
-      { name: 'useAdBanners', path: 'src/game/hooks/useAdBanners.ts', role: '大廳廣告清單：進大廳 emit GET_AD_BANNER、訂 UPDATE_AD_BANNER；轉成畫面用的圖片網址／停留毫秒／點擊目標；清單簽名沒變就不 setState、不記 log。', writer: '—', reader: 'LobbyView → LobbyAdBanner / LobbyMessageBar' },
-      { name: 'useMarqueeList', path: 'src/game/hooks/useMarqueeList.ts', role: '大廳跑馬燈清單：訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已過濾排序），轉成 text / scrollMs / 落點；簽名沒變不 setState。', writer: '—', reader: 'LobbyView（marqueeQueue 輪播 → LobbyMessageBar）' },
-      { name: 'useAdPopup', path: 'src/game/hooks/useAdPopup.ts', role: '大廳廣告彈窗要顯示哪一則：每工作階段第一次進大廳 emit GET_H5_POP_UP，挑時間窗內、本遊戲、id 最大；沒有就標記已處理。', writer: '—', reader: 'LobbyView → LobbyAdPopup' },
-      { name: 'useTableSnapshot', path: 'src/game/hooks/useTableSnapshot.ts（網址規則在 integrations/video/snapshotUrl.ts）', role: '桌卡未播預覽時的快照網址：TRTC 快照 → video-replay → null（預設圖），Image 預載確認後才回；掛載與 refreshKey 變動時重抓，維護桌不抓。', writer: '—', reader: 'LobbyTableCard 縮圖區' },
-      { name: 'useDirectGames', path: 'src/game/hooks/useDirectGames.ts', role: '頁尾跳轉面板的 Live / E-Game 清單（SDK DirectGameInfo），imgUrl 接上 site_assets。', writer: '—', reader: 'DirectGamePanel' },
+      { origin: 'lobby', name: 'lobbyCardData（toLobbyCardData）', path: 'src/game/hooks/lobbyCardData.ts', role: '不是 hook 而是轉換函式：SDK Table → 桌卡純資料（狀態、相位、人數、限額、路書欄含 tag / bonusMatch / hasBonus / isLuckyBall、六色比例、jackpot、isSuperWheelNewUi）。唯一讀 SDK 的轉換點，路書判讀交 domain/lushu。', writer: '—', reader: 'useLobbyTableList、useLobbyCardLive' },
+      { origin: 'lobby', name: 'useLobbyTableList', path: 'src/game/hooks/useLobbyTableList.ts', role: '大廳桌台列表：hiddenRooms 過濾 → colorGameSupportedSubTypes 名單 → sortTables；訂列表層事件（初始化、收藏變更）。DEV 下掛 window.__cgLuShu 除錯入口。', writer: '—', reader: 'LobbyView' },
+      { origin: 'lobby', name: 'useLobbyCardLive', path: 'src/game/hooks/useLobbyCardLive.ts', role: '一張桌卡的即時資料：訂該桌事件、變更時重讀 toLobbyCardData；列表帶來的新快照以 initial 覆蓋。', writer: '—', reader: 'LobbyTableCard' },
+      { origin: 'lobby', name: 'useTableCountdown', path: 'src/game/hooks/useTableCountdown.ts', role: '一張桌的下注倒數秒數與進度比例（時間條）；不在倒數相位不起 timer。', writer: '—', reader: 'LobbyTableCard' },
+      { origin: 'lobby', name: 'useAdBanners', path: 'src/game/hooks/useAdBanners.ts', role: '大廳廣告清單：進大廳 emit GET_AD_BANNER、訂 UPDATE_AD_BANNER；轉成畫面用的圖片網址／停留毫秒／點擊目標；清單簽名沒變就不 setState、不記 log。', writer: '—', reader: 'LobbyView → LobbyAdBanner / LobbyMessageBar' },
+      { origin: 'lobby', name: 'useMarqueeList', path: 'src/game/hooks/useMarqueeList.ts', role: '大廳跑馬燈清單：訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已過濾排序），轉成 text / scrollMs / 落點；簽名沒變不 setState。', writer: '—', reader: 'LobbyView（marqueeQueue 輪播 → LobbyMessageBar）' },
+      { origin: 'lobby', name: 'useAdPopup', path: 'src/game/hooks/useAdPopup.ts', role: '大廳廣告彈窗要顯示哪一則：每工作階段第一次進大廳 emit GET_H5_POP_UP，挑時間窗內、本遊戲、id 最大；沒有就標記已處理。', writer: '—', reader: 'LobbyView → LobbyAdPopup' },
+      { origin: 'lobby', name: 'useTableSnapshot', path: 'src/game/hooks/useTableSnapshot.ts（網址規則在 integrations/video/snapshotUrl.ts）', role: '桌卡未播預覽時的快照網址：TRTC 快照 → video-replay → null（預設圖），Image 預載確認後才回；掛載與 refreshKey 變動時重抓，維護桌不抓。', writer: '—', reader: 'LobbyTableCard 縮圖區' },
+      { origin: 'lobby', name: 'useDirectGames', path: 'src/game/hooks/useDirectGames.ts', role: '頁尾跳轉面板的 Live / E-Game 清單（SDK DirectGameInfo），imgUrl 接上 site_assets。', writer: '—', reader: 'DirectGamePanel' },
       { name: 'useFormFactor', path: 'src/game/hooks/useFormFactor.ts', role: 'RWD 軸 3：版面形態 phone / wide，訂 viewport 單一廣播。JS 端「掛不掛」用它，CSS 端走 wide-frame: 前綴，同一處只能擇一。', writer: '—', reader: 'LobbyView（wide 旗標）、房內留白填補' },
       { name: 'useLayoutWidth', path: 'src/game/hooks/useLayoutWidth.ts', role: 'RWD 軸 1：版面基準寬（不是 uiScale，寬框時 uiScale 夾 1）。', writer: '—', reader: '房內幾何' },
       { name: 'useAppConfig', path: 'src/game/hooks/useAppConfig.ts', role: '部署設定 AppConfig 的唯讀綁定（config 載入後凍結）。', writer: '—', reader: 'LobbyHeader（showHome / roomBack / tableCode）、useLobbyTableList 等' },
@@ -489,12 +489,14 @@ const STATE_INVENTORY = [
   {
     group: 'views/components（純畫面工具 hook 與共用元件）',
     items: [
-      { name: 'RollingText（元件）', path: 'src/views/components/RollingText.tsx', role: '數字滾輪（cg-client LabelRollerComponent）：吃一段排好版的字串，數字位各自上下滾到新值（變大往上、變小往下，每列 120ms、越左越慢 8%），逗號／小數點／符號不動；WAAPI 動畫，列表重排不重跑。父層字型、顏色、描邊、text-shadow 直接繼承；background-clip: text 的漸層字要把漸層經 glyphClassName 套到每個字元盒。rowEm 要等於父層 line-height。', writer: '—', reader: '目前只有 LobbyStripText（roll）→ UJP 桌卡獎池金額；房內餘額／派彩／獎池要滾直接掛它' },
-      { name: 'useFitToWidth', path: 'src/views/components/useFitToWidth.ts', role: '文字比框寬時等比縮小（transform: scale）而不裁切：量 inner 自然寬對 outer 的 clientWidth 扣掉左右 padding；字型 ready 與 ResizeObserver 時重算。', writer: '—', reader: 'LobbyStripText（底條）、LobbyTableCard 桌號徽章' },
+      { origin: 'lobby', name: 'RollingText（元件）', path: 'src/views/components/RollingText.tsx', role: '數字滾輪（cg-client LabelRollerComponent）：吃一段排好版的字串，數字位各自上下滾到新值（變大往上、變小往下，每列 120ms、越左越慢 8%），逗號／小數點／符號不動；WAAPI 動畫，列表重排不重跑。父層字型、顏色、描邊、text-shadow 直接繼承；background-clip: text 的漸層字要把漸層經 glyphClassName 套到每個字元盒。rowEm 要等於父層 line-height。', writer: '—', reader: '目前只有 LobbyStripText（roll）→ UJP 桌卡獎池金額；房內餘額／派彩／獎池要滾直接掛它' },
+      { origin: 'lobby', name: 'useFitToWidth', path: 'src/views/components/useFitToWidth.ts', role: '文字比框寬時等比縮小（transform: scale）而不裁切：量 inner 自然寬對 outer 的 clientWidth 扣掉左右 padding；字型 ready 與 ResizeObserver 時重算。', writer: '—', reader: 'LobbyStripText（底條）、LobbyTableCard 桌號徽章' },
       { name: 'useShrinkToFit', path: 'src/views/components/useShrinkToFit.ts', role: '一行字超出容器時整串等比縮小（量 Range 墨跡寬）。', writer: '—', reader: '房內窄欄位' },
     ],
   },
 ]
+
+const ORIGIN_LABEL = { lobby: '大廳新增', 'lobby+': '大廳加欄位', '500x+': '500x 加欄位', other: '藍本／同事' }
 
 function StateInventory() {
   return (
@@ -503,16 +505,26 @@ function StateInventory() {
         目前專案裡的 Zustand store 與 React hook，各自負責什麼、誰寫、誰讀。分層規則：寫走 <code>game/actions</code>、讀走 <code>game/hooks</code>、伺服器鏡射走 handler；
         store 只存 SDK 拿不回來或多個畫面要一致的東西。
       </p>
+      <div className="mb-6 rounded-lg border border-line bg-panel p-3 text-[.85rem]">
+        <div className="font-semibold mb-1">我在大廳與 500x 加的</div>
+        <ul className="list-disc pl-5 text-muted">
+          <li><b>大廳新增的 hook</b>：lobbyCardData、useLobbyTableList、useLobbyCardLive、useTableCountdown、useAdBanners、useAdPopup、useMarqueeList、useTableSnapshot、useDirectGames；畫面工具 useFitToWidth 與 RollingText 元件。</li>
+          <li><b>大廳沒有新開 store</b>，只在既有 store 加欄位：useUiStore 的 isAdBannerOpen／adBannerIntroDone／adPopupDone；useUserStore 的 isTourist。</li>
+          <li><b>500x 目前沒有新 hook／store</b>，只在 useGameStore 加 rateDetail（電子倍率明細）；房間元件在 views/room/rooms/bonus/。</li>
+          <li>其餘（useBetStore、BetHandler 相關 hook、房內與彈窗的 hook、platform/state 各 store）是 roulette 藍本或同事的工作。</li>
+        </ul>
+      </div>
       {STATE_INVENTORY.map((g) => (
         <section key={g.group} className="mb-6">
           <h2>{g.group}</h2>
           <div className="overflow-x-auto">
             <table className="text-[.85rem] w-full">
-              <thead><tr className="text-muted text-left"><th className="pr-3 py-1">名稱</th><th className="pr-3 py-1">作用</th><th className="pr-3 py-1">誰寫</th><th className="py-1">誰讀</th></tr></thead>
+              <thead><tr className="text-muted text-left"><th className="pr-3 py-1">名稱</th><th className="pr-3 py-1">來源</th><th className="pr-3 py-1">作用</th><th className="pr-3 py-1">誰寫</th><th className="py-1">誰讀</th></tr></thead>
               <tbody>
                 {g.items.map((it) => (
                   <tr key={it.name} className="border-t border-line align-top">
                     <td className="pr-3 py-1.5 whitespace-nowrap"><code>{it.name}</code><div className="text-[.7rem] text-muted">{it.path}</div></td>
+                    <td className="pr-3 py-1.5 whitespace-nowrap text-[.75rem]">{ORIGIN_LABEL[it.origin ?? 'other']}</td>
                     <td className="pr-3 py-1.5 min-w-[22ch]">{it.role}</td>
                     <td className="pr-3 py-1.5 min-w-[14ch]">{it.writer}</td>
                     <td className="py-1.5 min-w-[14ch]">{it.reader}</td>
