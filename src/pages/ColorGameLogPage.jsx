@@ -25,10 +25,12 @@ const ENTRIES = [
       '使用者要求「只要會動到其他桌的都先問我」；先讀多玩法架構 md §6.1／§6.5——boardClosed: shrunk 本來就寫著「500x 給 shrunk、落地時再開」，確認後才動四個共用檔（全是加法）：types.ts 的 BoardClosedMode／BoardState 加 shrunk；boardState.ts 只改註解；index.css 加 @custom-variant board-shrunk（做法同 board-hidden）與 bonus-tag-pop keyframe；roomGeometry 共用表的賠率列／籌碼列／路書加 board-shrunk:hidden，bonus 專屬表加 BONUS_STACK 資料版 + 字面版的 shrunk 位置（按鈕列 bottom 463 → 281、視訊帶下緣洞 448 → 266、注區洞 bottom 215.6 → 35.1 並 scale 0.84 origin-top：縮完 350×196、頂 499.9、底 695.6 對稿 696）。標準版面永遠不進 shrunk，192x／108x／UJP 行為不變，測試釘住。',
       '稿：CG_RWD 105:184193（電子抽取加乘倍率）、105:185987（面板縮小）、105:187785（縮小中獎）。cg-client 三支規則合成純函式 rooms/bonus/bonusCellView：betting／closed／cancelled 不畫；停注未開：有 rateDetail[注型] 翻一般樣式標（組合注顆數固定 2／3、色＝bonusColor；六色顆數＝matchColors、色＝自己）、沒下注壓暗、組合注格點亮 bonusColor 那一框其餘壓暗；開完三顆：evaluateBetType.hasRateBonus 的格留派彩樣式標、其餘收掉，壓暗＝不是「有下注且中獎」，組合注型態符合就點亮開獎重複色。+7 測試。',
       'BonusRateTag：一般樣式金框膠囊（radial #7D7747→#191407、內陰影、金邊用兩層 box-shadow 擬合、上緣白高光、示意骰 + Luckiest Guy 漸層字）兩個尺寸 lg 120×35.4／sm 79.8×23.5；派彩樣式只有漸層字 + 描邊（兩層字疊）。BonusBoard 讀 useGameStore 的 phase／srcResults／rateDetail／roundCode 與 useBetStore.confirmedBets，每格套 bonusCellView：標的位置（組合注格左 +22.6／頂 −18.5、六色置中／頂 −1.1）、黑 40% 壓暗層、示意骰框改成各色深底漸層、點亮框 1.18 倍亮邊 #67F66B 其餘 0.55；翻牌 0 → 1.15 → 0.95 → 1（0.4s）依 807 → 808（+0.2s）→ 六色（各 +0.1s）延遲，以局號 key 每局重播。',
+      '使用者看實機後三條修正：(1) 得獎歷史鈕先拿掉（BonusBandTop 只留倒數圈）；(2) 500x 沒有收合鈕與 BET 膠囊——共用件 BandButtons 兩顆加 [[data-layout=bonus]_&]:hidden，只認 token；(3) 組合注格顏色：重讀稿 105:180123，開局就是彩虹角度漸層 95%（之前記成藍底是量錯），停注後沒下注換暗版 60% 疊亮版 40%（105:184330），黑 40% 壓暗只留六色格。',
+      '停注後改成兩段收合（使用者：時間到先跳到底下沒籌碼的位置、翻完倍率再縮一次；cg-client prefab CGBonusBetAreaStateController 三態 CLOSE/OPEN/BETSTOP：注區 y −420/−87.5/−390、scale .85/1/1，按鈕列 tween 0.5 linear）：BoardState 加第四個值 lowered（只能由房間經 RoomFrame.boardState 覆寫給，resolveBoardState 不算它）、index.css 加 board-lowered variant、BONUS_STACK 加 bottomLowered（注區 71.5＝頂 463.5、按鈕列 322.5、下緣洞 307.5）、共用表三帶加 board-lowered:hidden；lowered／shrunk 態的 class 帶 0.5s linear 的 transition，open 態沒有所以開局直接跳。useBoardLowered：只有掛著時看到 betting → dealing 才進，明細到了 1.4s（最後一格延遲 800 + 翻出 400 + 收尾 200）、等不到最多 1.5s，換局或離開 dealing 立刻退。BonusRoom 測試用假時鐘驗 lowered → shrunk → open。',
       '實機（dev 渠道 CGD19A 是 500x 桌）：payout 相位 data-board=shrunk、注區 349.4×195.7、距底 72.4、視訊帶下緣洞距底 266，全對稿；該局結果紅二同、rateDetail 只有白三同 10X → 沒有標、全格壓暗、Double 的紅框點亮，符合規則。',
     ],
     decisions: [
-      '刻意分歧：cg-client 停注分兩步（BETSTOP 原尺寸下移翻牌 → 動畫完才 CLOSE 縮小），這裡停注直接 shrunk、翻牌在縮小後的注區上播，少一個外殼狀態；要補回得加第四個 data-board 值。記在 500x 規格 §6。',
+      '先前「停注直接 shrunk」的分歧已被使用者否決，改回兩段（見 summary）；多玩法架構 §6.1 註記第四態。',
       '翻牌音效 bonus500xFlipCard 與 frame_dice_in Spine 未接（名單／4.3 重匯未到）。',
       'lint 的 check-doc-links 紅是 MEMORY.md 裡別人的 8 條 design-spec-*.md 失效路徑，不是這次的。',
     ],
