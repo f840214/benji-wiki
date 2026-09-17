@@ -39,7 +39,7 @@ const ENTRIES = [
       '廣告彈窗只做「每工作階段一次」：cg-client 是看 gameMap 上一個位置有沒有 tableCode，語意就是「第一次進大廳」，用 store 旗標更直接。',
     ],
     evidence: ['typecheck / lint / views+game 777 tests / build 首屏預載閘門皆綠。實機要看：後台有跑馬燈與彈窗資料的渠道。'],
-    todo: ['大廳剩餘：區塊 B（遊戲標題 + 活動中心／Color War 入口，走 campaigns registry）、活動中心 News 落點（跑馬燈／banner 共用）、桌台大賽人數、免費投注狀態、大廳視訊校正常數實機校、新手教學觸發、GameLobby elog、SRE 在 staging／正式 project.json 填快照三欄位（trtcScreenshotHosts_https、trtcScreenshotFormats、videoReplayUrls_https）。'],
+    todo: ['大廳剩餘：區塊 B（遊戲標題 + 活動中心／Color War 入口，走 campaigns registry）、活動中心 News 落點（跑馬燈／banner 共用）、免費投注狀態、大廳視訊校正常數實機校、新手教學觸發、GameLobby elog。'],
     files: ['src/game/hooks/useTableCountdown.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/components/RoadStrip.tsx', 'src/game/hooks/useTableSnapshot.ts', 'src/integrations/config/fields.ts', 'public/project.json', 'src/game/actions/favorite.ts', 'src/views/components/RollingText.tsx', 'src/views/lobby/LobbyStripText.tsx', 'src/game/hooks/lobbyCardData.ts', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/lobby/LobbyAdBanner.tsx', 'src/views/lobby/LobbyHeader.tsx', 'src/game/actions/navigation.ts', 'src/game/hooks/useMarqueeList.ts', 'src/game/hooks/useAdPopup.ts', 'src/game/actions/marquee.ts', 'src/views/lobby/marqueeQueue.ts', 'src/views/lobby/marqueeQueue.test.ts', 'src/views/lobby/LobbyMessageBar.tsx', 'src/views/lobby/LobbyAdPopup.tsx', 'src/views/LobbyView.tsx', 'src/game/store/useUiStore.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/integrations/elog/eLogBehavior.ts', 'src/index.css'],
   },
   {
@@ -235,7 +235,7 @@ const ENTRIES = [
       '16 張卡真實資料:路書顏色、3x 加成標籤、六色百分比、限額 5 - 100k、桌號都來自 SDK。typecheck / lint 0 warning / 404 tests / build 綠。',
     ],
     todo: [
-      '四變體頂列彩字(逐字漸層 ULTIMATE / BONUS)、108x / 192x 的 UP TO 標語、jackpot 預扣與滾動數字、桌台大賽人數、免費投注狀態、視訊預覽、路書新欄閃爍、語言表桌名。',
+      '四變體頂列彩字(逐字漸層 ULTIMATE / BONUS)、108x / 192x 的 UP TO 標語、jackpot 預扣與滾動數字、免費投注狀態、視訊預覽、路書新欄閃爍、語言表桌名。',
       '四支小圖等 Figma API 解鎖後匯出換回;區塊 B(標題 + 活動入口)、D(頁尾)。',
       'MarqueeList handler、主選單面板、Banner 本體。',
     ],
