@@ -3,6 +3,7 @@ import Code from '../components/Code.jsx'
 
 // nexus-colorgame-client 製作歷程:一筆一個工作段落,最新在最上面。
 // 加新紀錄:在 ENTRIES 最前面加一個物件就好,欄位都可省略(空的不會畫出來)。
+//   topic    分頁：'500x'＝500x 房間 tab；省略＝大廳／共用（歷程 tab）
 //   date     日期
 //   title    一句話標題
 //   branch   分支 / commit(未 commit 就寫 branch 名 + 未 commit)
@@ -17,6 +18,7 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-17',
+    topic: '500x',
     title: '500x 房間骨架：bonus 流程、八格注區、倒數圈與得獎歷史鈕（靜態殼，不碰下注線）',
     branch: 'benji-dev(未 commit)',
     summary: [
@@ -531,22 +533,25 @@ export default function ColorGameLogPage() {
   const [openSet, setOpenSet] = useState(() => new Set([0]))
   const term = q.trim().toLowerCase()
   const flat = (e) => [e.date, e.title, e.branch, ...(e.summary || []), ...(e.decisions || []), ...(e.pitfalls || []), ...(e.evidence || []), ...(e.todo || []), ...(e.files || [])].join(' ').toLowerCase()
-  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => !term || flat(e).includes(term))
+  const topicOf = (e) => e.topic ?? 'log'
+  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => topicOf(e) === (tab === 'b500' ? '500x' : 'log')).filter(([e]) => !term || flat(e).includes(term))
   const toggle = (i) => setOpenSet((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n })
 
   return (
     <div>
-      <h1>colorgame 製作歷程</h1>
+      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : 'colorgame 製作歷程'}</h1>
       <div className="flex gap-2 mb-4">
-        {[['log', '歷程'], ['state', 'Store 與 Hook']].map(([k, label]) => (
+        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
         ))}
       </div>
       {tab === 'state' ? <StateInventory /> : (<>
       <p className="text-muted mb-5 max-w-[62ch]">
-        <code>nexus-colorgame-client</code> 每個工作段落的紀錄:做了什麼、做了哪些決定、踩到什麼坑、拿什麼證據說做完了、留下什麼。
-        最新在最上面。repo 內的正式紀錄是 <code>MEMORY.md</code> 的重大變更記錄,這頁是自己看的、可以更囉嗦。
+        {tab === 'b500'
+          ? <>500x（bonusV2）房間的每個工作段落。稿 <code>CG_RWD (Copy)</code>、量測值在 <code>docs/plan/500x房間設計規格.md</code>；行為對照 cg-client <code>ColorGameBonusRoomView</code>。</>
+          : <><code>nexus-colorgame-client</code> 每個工作段落的紀錄:做了什麼、做了哪些決定、踩到什麼坑、拿什麼證據說做完了、留下什麼。
+        最新在最上面。repo 內的正式紀錄是 <code>MEMORY.md</code> 的重大變更記錄,這頁是自己看的、可以更囉嗦。</>}
       </p>
 
       <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -568,6 +573,7 @@ export default function ColorGameLogPage() {
       <h2>怎麼加一筆</h2>
       <Code>{`src/pages/ColorGameLogPage.jsx 的 ENTRIES 最前面加一個物件(欄位都可省略):
 {
+  topic: '500x',        // 500x 房間 tab 用；大廳／共用省略
   date: '2026-09-10',
   title: '一句話',
   branch: 'benji-dev(未 commit)| commit abc1234',
