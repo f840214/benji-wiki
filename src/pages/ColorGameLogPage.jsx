@@ -564,6 +564,96 @@ function StateInventory() {
   )
 }
 
+// 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
+const GOTCHAS = [
+  {
+    date: '2026-09-18',
+    title: '同一段字在不同螢幕上下差 0.5–1px',
+    symptom: '房內底列桌名／局號、大廳桌卡徽章的字，在兩台機器（或不同 DPR）上下位置不一樣，量 computed style 都一樣。',
+    cause: '位置是「多層小數運算」疊出來的：top-1/2 + -translate-y-1/2 兩個一半、items-center 置中行框、leading-none 把行框壓成字級後墨跡靠字型 ascent／descent 決定落點。每一層都是小數，瀏覽器在不同 DPR 各自貼齊像素、方向不一定相同。',
+    fix: '把置中／位移換成單一固定頂距：top-[calc(5*var(--upx))] + items-start + leading-[normal]（baseline＝行框頂 + ascent，字型內建關係），只剩一個乘 --upx 的值要貼齊。同類的大廳徽章用 text-box-trim: trim-both cap alphabetic 直接裁到大寫字高。',
+    where: 'src/views/room/shared/BottomInfoBar.tsx（Kaden 05ac022）、src/views/lobby/LobbyTableCard.tsx 徽章',
+  },
+  {
+    date: '2026-09-15',
+    title: '路書格子看起來歪（各欄骰子貼齊到不同像素）',
+    symptom: '六欄路書每欄的小方塊左右偏移不一致，放大看有的貼左有的貼右；使用者連說三次「歪」。',
+    cause: '欄寬 24.4、格子 15.5 置中 → 每欄的格子 x 落在不同小數（4.7、5.1、5.4…），光柵化各自貼齊到不同像素。固定 left 也一樣，只要欄距不是整數就會逐欄漂。',
+    fix: '全取整：欄 25、格子 15 靠左 5、細框 21 @2；欄距 3.58 維持節距 28.58。格子邊與欄邊的小數部分相同就會往同一邊貼齊。',
+    where: 'src/views/components/RoadStrip.tsx',
+  },
+  {
+    date: '2026-09-18',
+    title: '注區縮小看起來「先往中間縮再往下移」',
+    symptom: '500x 停注後注區從原尺寸縮到 0.84，動畫像兩段：先縮、再掉下去。',
+    cause: 'transform-origin 在頂邊中央、同時又改 bottom：scale 把內容往頂邊收，bottom 讓整個框往下走，兩條路徑疊起來就是先縮後移。cg-client 的節點錨點在中心、位置與縮放同一條 tween。',
+    fix: '洞留在原位不改 bottom，只動 transform：以中心為原點 translateY(18) scale(0.84)，一條 transition 就是「整塊往下縮」。',
+    where: 'src/views/room/runtime/roomGeometry.ts BONUS_POS.board',
+  },
+  {
+    date: '2026-09-18',
+    title: '要「進去有動畫、出來直接跳」：transition 看的是切換後的樣式',
+    symptom: '停注進 lowered 要直接跳、翻完進 shrunk 要 0.5s 移動、開局回 open 要直接跳。',
+    cause: 'CSS transition 由「切換後」元素身上的 transition 屬性決定要不要過渡，不是切換前的。',
+    fix: 'transition 只掛在 shrunk 態的 class（board-shrunk:transition-[bottom,transform]），open／lowered 態沒有，於是只有進 shrunk 那一段會動。',
+    where: 'src/views/room/runtime/roomGeometry.ts CLOSING_MOTION',
+  },
+  {
+    date: '2026-09-17',
+    title: '在瀏覽器 console 用 import() 拿到的 store 不是畫面用的那一個',
+    symptom: 'await import("/src/game/store/useGameStore.ts") 後 setState，DOM 沒反應。',
+    cause: 'Vite dev 只要編輯過檔案，HMR 會讓後續模組請求帶 ?t=時間戳，畫面用的是 /src/…/useGameStore.ts?t=xxx 這個 URL 的實例；沒帶 query 的 import 會再建一份。',
+    fix: '從 performance.getEntriesByType("resource") 找出實際載入的 URL（含 ?t=）再 import 那個；或重整頁面後再 import 無 query 的路徑。',
+    where: '模擬相位／rateDetail 時用；debug 指令 setPhase 不帶 rateDetail 會把它清掉，別用它。',
+  },
+  {
+    date: '2026-09-18',
+    title: '自動化 Chrome 的載入頁卡在 43% 不動',
+    symptom: '載入任務 log 全部完成、已送 move2login，畫面卻停在 LOADING…43%，JS 評估還會逾時。',
+    cause: '那個 Chrome 視窗被擋在後面，document.visibilityState 是 hidden，Chrome 把 requestAnimationFrame 停掉；載入頁的進度條是 rAF 補間，永遠跑不到 100%。',
+    fix: '把視窗拉到前面（或別在後台開自動化視窗）；程式面不用改，正常使用不會遇到。',
+    where: '只影響 Claude in Chrome 的驗證流程',
+  },
+  {
+    date: '2026-09-16',
+    title: '廣告 banner 多張時點了不會跳轉',
+    symptom: '單張廣告點得到，兩張以上點不動。',
+    cause: '多張時容器 setPointerCapture 做拖曳，指標被擷取後 pointerup 的目標是容器，圖片按鈕收不到 click。',
+    fix: '在 onPointerUp 判斷「沒滑動且不是 pointercancel」就當作點擊中間那張；單張沒擷取，走原生 click。',
+    where: 'src/views/lobby/LobbyAdBanner.tsx',
+  },
+  {
+    date: '2026-09-18',
+    title: '測試本地綠、CI 紅：載入鏈觸達 @toppath 真件',
+    symptom: 'vitest 拋「測試載入鏈觸達了 @toppath/* 真件」，錯誤只說被撞、不說誰撞。',
+    cause: 'CI 剝掉 @toppath 後才 install；共用件新加的 hook（例：PayoutPanel → usePayoutResult）在載入期 import SDK，房間測試沒替身就整條鏈拉進來。',
+    fix: '從 FAIL 那支測試往下追 import；帶業務值的 SDK 依賴在測試裡 vi.mock 那支 hook（照 192x 房測試的替身清單抄）。',
+    where: 'src/views/room/rooms/*/*.test.tsx、vitest.config.ts alias、src/testing/toppathAbsentGuard.ts',
+  },
+]
+
+function Gotchas() {
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-muted max-w-[62ch]">不是功能、也不算 bug，但下次再遇到會再花半天的題目：症狀 → 原因 → 解法 → 落點。新的放最上面。</p>
+      {GOTCHAS.map((g) => (
+        <section key={g.title} className="bg-panel border border-line rounded-xl p-4">
+          <div className="flex items-baseline gap-3 mb-2">
+            <span className="text-[.75rem] text-muted font-mono">{g.date}</span>
+            <h3 className="m-0 text-[1rem]">{g.title}</h3>
+          </div>
+          <dl className="grid grid-cols-[4.5em_1fr] gap-x-3 gap-y-1.5 text-[.85rem] m-0">
+            <dt className="text-muted">症狀</dt><dd className="m-0">{g.symptom}</dd>
+            <dt className="text-muted">原因</dt><dd className="m-0">{g.cause}</dd>
+            <dt className="text-muted">解法</dt><dd className="m-0">{g.fix}</dd>
+            <dt className="text-muted">落點</dt><dd className="m-0 font-mono text-[.75rem]">{g.where}</dd>
+          </dl>
+        </section>
+      ))}
+    </div>
+  )
+}
+
 export default function ColorGameLogPage() {
   const [tab, setTab] = useState('log')
   const [q, setQ] = useState('')
@@ -576,14 +666,14 @@ export default function ColorGameLogPage() {
 
   return (
     <div>
-      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : 'colorgame 製作歷程'}</h1>
+      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : 'colorgame 製作歷程'}</h1>
       <div className="flex gap-2 mb-4">
-        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook']].map(([k, label]) => (
+        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
         ))}
       </div>
-      {tab === 'state' ? <StateInventory /> : (<>
+      {tab === 'state' ? <StateInventory /> : tab === 'gotchas' ? <Gotchas /> : (<>
       <p className="text-muted mb-5 max-w-[62ch]">
         {tab === 'b500'
           ? <>500x（bonusV2）房間的每個工作段落。稿 <code>CG_RWD (Copy)</code>、量測值在 <code>docs/plan/500x房間設計規格.md</code>；行為對照 cg-client <code>ColorGameBonusRoomView</code>。</>
