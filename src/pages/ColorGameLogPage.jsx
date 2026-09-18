@@ -568,6 +568,14 @@ function StateInventory() {
 const GOTCHAS = [
   {
     date: '2026-09-18',
+    title: '明明沒掛 transition，停注那一刻注區還是先動一下才跳',
+    symptom: 'lowered 態刻意沒有 transition，但 betting → dealing 時注區仍先滑一小段再跳到下面。',
+    cause: 'lowered 是在 useEffect 裡依相位邊沿 setState 的：相位變成 dealing 的第一幀，effect 還沒跑，data-board 先落在 resolveBoardState 算出的 shrunk（帶 0.5s transition）畫了一幀，下一幀才變 lowered。那一幀的過渡已經啟動。',
+    fix: '相位邊沿改在 render 期推導（React「render 期 setState 推導狀態」：useState 存上一個相位，不同就同步 setState），第一幀就是 lowered，沒有中間態被畫出來。凡是「切換態要瞬間、不能被帶動畫」的推導都不能放 effect。',
+    where: 'src/views/room/rooms/bonus/useBoardLowered.ts',
+  },
+  {
+    date: '2026-09-18',
     title: '同一段字在不同螢幕上下差 0.5–1px',
     symptom: '房內底列桌名／局號、大廳桌卡徽章的字，在兩台機器（或不同 DPR）上下位置不一樣，量 computed style 都一樣。',
     cause: '位置是「多層小數運算」疊出來的：top-1/2 + -translate-y-1/2 兩個一半、items-center 置中行框、leading-none 把行框壓成字級後墨跡靠字型 ascent／descent 決定落點。每一層都是小數，瀏覽器在不同 DPR 各自貼齊像素、方向不一定相同。',
