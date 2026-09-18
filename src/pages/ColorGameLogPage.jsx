@@ -640,6 +640,76 @@ const GOTCHAS = [
   },
 ]
 
+// Console 速查：在瀏覽器 console 拿當下狀態、打指令、直接寫 store 的做法（DEV／staging 才有 __GAME_DEVTOOLS__）
+const CONSOLE_TIPS = [
+  {
+    title: '看當下這一局（相位、局號、骰子、電子倍率）',
+    code: `JSON.parse(__GAME_DEVTOOLS__.snapshotJSON()).stores.GameStore`,
+    note: '常用欄位：phase（betting／dealing／payout／closed／cancelled）、roundCode、srcResults（三顆色碼 801–806）、rateDetail（500x 電子倍率：注型 → { rate, matchColors?, bonusColor? }）、gameState（SDK 原值）。函式欄位會印成 "[Function …]"，忽略。',
+  },
+  {
+    title: '其他 store',
+    code: `const snap = JSON.parse(__GAME_DEVTOOLS__.snapshotJSON()).stores
+snap.BetStore        // pendingBets / confirmedBets / lastRoundBets / chipList / selectedChipValue
+snap.UserStore       // userId / userName / currency / isTourist
+snap.UiStore         // boardOverride / adPopupDone …
+snap.VideoStore      // status / provider / quality / signal
+snap.AuthStore snap.ChatStore snap.GiftStore snap.PreferencesStore snap.I18nStore`,
+    note: 'snapshotJSON 是一次性快照，不會自動更新；要看變化就再叫一次。',
+  },
+  {
+    title: '打 dev 指令（灰色只改前端、紅色會送 Server）',
+    code: `__GAME_DEVTOOLS__.run('game.phase.dealing')   // 也有 game.phase.betting / game.phase.payout
+__GAME_DEVTOOLS__.run('game.wheel.triple')    // 開三同色(黃)、轉盤歸零
+__GAME_DEVTOOLS__.run('game.wheel.spin')      // 轉盤翻倍 +1
+__GAME_DEVTOOLS__.run('bet.add')              // 下注（黃）；bet.confirm / bet.cancel / bet.undo / bet.double / bet.rebet
+__GAME_DEVTOOLS__.run('menu.toggle')          // menu.profile / roomPopup.customChipAmount / menu.freePlay
+__GAME_DEVTOOLS__.run('assets.audit')         // 資產抓漏`,
+    note: '⚠ game.phase.* 是整份 syncRound 但沒帶 rateDetail，切完 500x 的電子倍率會被清成 {}；要保留 rateDetail 用下面「直接寫 store」。指令清單在 src/debug/*Commands.ts。',
+  },
+  {
+    title: '直接寫 store（模擬相位／結果／電子倍率）',
+    code: `// 1. 找畫面實際載入的模組 URL（Vite dev 編輯過檔案後會帶 ?t=，直接 import 無 query 的路徑會拿到另一個實例）
+const url = performance.getEntriesByType('resource').map(e => e.name).find(n => /useGameStore/.test(n))
+const { useGameStore } = await import(url)
+// 2. 停注 + 電子倍率
+useGameStore.setState({ phase: 'dealing', gameState: 3, srcResults: [], roundCode: 'SIM-1',
+  rateDetail: { 807: { rate: 15, matchColors: 2, bonusColor: 806 }, 808: { rate: 500, matchColors: 3, bonusColor: 801 }, 802: { rate: 5, matchColors: 2 } } })
+// 3. 派彩（綠二同 → 807 命中）
+useGameStore.setState({ phase: 'payout', gameState: 5, srcResults: [806, 801, 806] })
+// 下注額：同法 import useBetStore，setState({ confirmedBets: { anyTriple: 10 } })`,
+    note: '下一個 SDK 事件會把 store 整份覆蓋回真值，模擬只撐到那時；用 dev 桌（沒荷官、局不動）最穩。',
+  },
+  {
+    title: '看外殼現在的狀態（不用 store）',
+    code: `const f = document.querySelector('[data-testid="room-frame"]')
+f.dataset.phase   // 相位
+f.dataset.board   // open / hidden / shrunk / lowered
+f.dataset.layout  // standard / bonus`,
+    note: '注區格：button[data-bet-type]（801–806 六色、807 anyDouble、808 anyTriple），data-dim 壓暗、[data-lit] 點亮的示意骰框、[data-testid=bonus-rate-tag][data-style=normal|payout] 倍率標。',
+  },
+  {
+    title: '大廳：路書原始資料',
+    code: `window.__cgLuShu   // useLobbyTableList 在 DEV 掛的，每張桌的 SDK 路書`,
+    note: '只有 DEV 有；用來對 108x／500x 倍率與 UJP JP 局。',
+  },
+]
+
+function ConsoleTips() {
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-muted max-w-[62ch]">瀏覽器 console 拿當下狀態、打指令、直接寫 store 的做法。<code>__GAME_DEVTOOLS__</code> 只在 DEV／staging 注入（<code>src/debug/devConsole.ts</code>）。</p>
+      {CONSOLE_TIPS.map((c) => (
+        <section key={c.title} className="bg-panel border border-line rounded-xl p-4">
+          <h3 className="m-0 mb-2 text-[1rem]">{c.title}</h3>
+          <pre className="m-0 mb-2 p-3 rounded-lg bg-black/30 text-[.78rem] overflow-x-auto whitespace-pre"><code>{c.code}</code></pre>
+          <p className="m-0 text-[.85rem] text-muted">{c.note}</p>
+        </section>
+      ))}
+    </div>
+  )
+}
+
 function Gotchas() {
   return (
     <div className="flex flex-col gap-4">
@@ -674,14 +744,14 @@ export default function ColorGameLogPage() {
 
   return (
     <div>
-      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : 'colorgame 製作歷程'}</h1>
+      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : tab === 'console' ? 'colorgame Console 速查' : 'colorgame 製作歷程'}</h1>
       <div className="flex gap-2 mb-4">
-        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症']].map(([k, label]) => (
+        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症'], ['console', 'Console 速查']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
         ))}
       </div>
-      {tab === 'state' ? <StateInventory /> : tab === 'gotchas' ? <Gotchas /> : (<>
+      {tab === 'state' ? <StateInventory /> : tab === 'gotchas' ? <Gotchas /> : tab === 'console' ? <ConsoleTips /> : (<>
       <p className="text-muted mb-5 max-w-[62ch]">
         {tab === 'b500'
           ? <>500x（bonusV2）房間的每個工作段落。稿 <code>CG_RWD (Copy)</code>、量測值在 <code>docs/plan/500x房間設計規格.md</code>；行為對照 cg-client <code>ColorGameBonusRoomView</code>。</>
