@@ -571,6 +571,14 @@ function StateInventory() {
 const GOTCHAS = [
   {
     date: '2026-09-18',
+    title: 'WAAPI 動 transform，元素卻整顆跑到格子頂',
+    symptom: '籌碼加注彈跳做完後不在格中心，跑到格頂（往左上各偏半顆）。',
+    cause: 'Tailwind v4 的 -translate-x-1/2 / -translate-y-1/2 寫的是 CSS `translate` 屬性，不是 `transform`；WAAPI 關鍵影格寫 `transform: translate(-50%, …)` 是另一條軸，兩者相加就多平移了半顆。',
+    fix: '關鍵影格改動 `translate` 屬性（`translate: "-50% calc(-50% + dy)"`），跟 Tailwind 同一條軸；或把動畫掛在沒有 Tailwind 位移的內層元素上。',
+    where: 'src/views/room/rooms/bonus/BonusChipStack.tsx',
+  },
+  {
+    date: '2026-09-18',
     title: '明明沒掛 transition，停注那一刻注區還是先動一下才跳',
     symptom: 'lowered 態刻意沒有 transition，但 betting → dealing 時注區仍先滑一小段再跳到下面。',
     cause: 'lowered 是在 useEffect 裡依相位邊沿 setState 的：相位變成 dealing 的第一幀，effect 還沒跑，data-board 先落在 resolveBoardState 算出的 shrunk（帶 0.5s transition）畫了一幀，下一幀才變 lowered。那一幀的過渡已經啟動。',
