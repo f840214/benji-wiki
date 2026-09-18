@@ -541,16 +541,17 @@ function StateInventory() {
         <section key={g.group} className="mb-6">
           <h2>{g.group}</h2>
           <div className="overflow-x-auto">
-            <table className="text-[.85rem] w-full">
+            <table className="text-[.85rem] w-full table-fixed">
+              <colgroup><col className="w-[24%]" /><col className="w-[8%]" /><col className="w-[40%]" /><col className="w-[14%]" /><col className="w-[14%]" /></colgroup>
               <thead><tr className="text-muted text-left"><th className="pr-3 py-1">名稱</th><th className="pr-3 py-1">來源</th><th className="pr-3 py-1">作用</th><th className="pr-3 py-1">誰寫</th><th className="py-1">誰讀</th></tr></thead>
               <tbody>
                 {g.items.map((it) => (
                   <tr key={it.name} className="border-t border-line align-top">
-                    <td className="pr-3 py-1.5 whitespace-nowrap"><code>{it.name}</code><div className="text-[.7rem] text-muted">{it.path}</div></td>
-                    <td className="pr-3 py-1.5 whitespace-nowrap text-[.75rem]">{ORIGIN_LABEL[it.origin ?? 'other']}</td>
-                    <td className="pr-3 py-1.5 min-w-[22ch]">{it.role}</td>
-                    <td className="pr-3 py-1.5 min-w-[14ch]">{it.writer}</td>
-                    <td className="py-1.5 min-w-[14ch]">{it.reader}</td>
+                    <td className="pr-3 py-1.5 align-top break-words"><code className="break-all">{it.name}</code><div className="text-[.7rem] text-muted break-all">{it.path}</div></td>
+                    <td className="pr-3 py-1.5 align-top text-[.75rem]">{ORIGIN_LABEL[it.origin ?? 'other']}</td>
+                    <td className="pr-3 py-1.5 align-top">{it.role}</td>
+                    <td className="pr-3 py-1.5 align-top">{it.writer}</td>
+                    <td className="py-1.5 align-top">{it.reader}</td>
                   </tr>
                 ))}
               </tbody>
