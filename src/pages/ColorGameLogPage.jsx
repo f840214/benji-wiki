@@ -17,6 +17,24 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-21',
+    title: '房內路書接上：與大廳共用 RoadStrip（兩張皮）、useRoadSummary',
+    branch: 'master(未 commit)',
+    summary: [
+      '使用者問房內路書能不能跟大廳共用：掃 cg-client ColorGameLushuItem（房）與 RoomListItemLuShuItem（大廳），一欄的規則完全同一套（bgSpecial 三同框、_setLightBorder 依第一顆骰色、superDouble 不標、500x updateBonusEffect、第四筆 ${winner}x、閃爍），只差長相與外殼（統計格、展開箭、虛擬列表）。決定：同一個 RoadStrip 兩張皮。',
+      'RoadStrip 加 skin（lobby／room）與 dotSurface：幾何改成資料表 GEO（lobby 欄 25×61 米色底、格 15；room 欄 19×54 半透明黑、點 15 邊 1.5 + gloss），單位大廳是舞台 px、房內乘 --upx（同一個 u() 產生）；框改成 boxShadow 字串（glow／colored 的描邊與光暈兩皮同值）；ring 的框位置各皮一組。大廳 45 條測試不動照過。',
+      '資料：lobbyCardData 的 readRoad／readPercents 匯出，新 game/hooks/useRoadSummary(tableCode) 訂 TableSummary.REFRESH（blink 序號）／REFRESH_ONE，subType 自己從 store 讀、回 tripleMark token。「標什麼」進 domain：lushu.tripleMarkOf(subType) → triple／bonusMatch／firstColor／none（概念層命名，怎麼畫歸 views/components/roadTripleFrame 的 FRAME_BY_MARK）；大廳桌卡也改用它。',
+      '共用件 shared/LushuStrip：統計格印 getWinnerPercent、路書欄換 <RoadStrip skin="room" dotSurface={GLOSS}>，可見欄數用 ResizeObserver 量容器寬（讀元素 --upx 換回設計 px：floor((w+2.5)/21.5)，16:9 11、4:3 17；jsdom 沒 RO 就量一次）；資料靠左、右留一欄給下一局（同大廳）。展開箭仍是殼（完整路書面板另一輪）。',
+      '撞到兩道閘門：roomIsolation「共用件不出現 subType」——LushuStrip 一開始讀 store.subType 傳給 hook，改成 hook 內部讀、共用件只拿 tripleMark；sharedAssets 的 chips 組被測試釘死只能一張 → JP 圖另開 room.shared.lushu 組。三支房間測試（SuperWheel／UJP／Bonus）補 useRoadSummary 替身，不然載入鏈撞 @toppath。',
+    ],
+    decisions: [
+      '動到的共用檔：domain/lushu.ts（加 tripleMarkOf）、hooks/lobbyCardData.ts（匯出兩個函式）、shared/LushuStrip.tsx、shared/sharedAssets.ts、shared/shared.test.tsx、SuperWheelRoom.test／UltimateJackpotRoom.test（各加一行替身）、components/RoadStrip.tsx（大廳自己的）。',
+    ],
+    evidence: ['typecheck 0、eslint 0、全量 139 檔 1445 tests 綠（含新 LushuStrip 測試與 tripleMarkOf 測試）。實機待看。'],
+    todo: ['實機看 16:9／4:3 的欄數與點的樣式', '展開箭 → 完整路書面板（cg-client ColorGameLuShuVirtualList）', '192x 第四列倍率格的銀框'],
+    files: ['src/views/components/RoadStrip.tsx', 'src/views/components/roadTripleFrame.ts', 'src/game/hooks/useRoadSummary.ts', 'src/game/hooks/lobbyCardData.ts', 'src/game/domain/lushu.ts', 'src/views/room/shared/LushuStrip.tsx', 'src/views/room/shared/sharedAssets.ts', 'src/views/lobby/LobbyTableCard.tsx'],
+  },
+  {
     date: '2026-09-17',
     topic: '500x',
     title: '500x 停注後：注區只縮不藏（shrunk 三態）、電子倍率翻牌、命中高亮與壓暗',
