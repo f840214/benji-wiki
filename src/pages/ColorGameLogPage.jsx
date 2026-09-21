@@ -571,6 +571,14 @@ function StateInventory() {
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
   {
+    date: '2026-09-21',
+    title: '用模板字串拼出來的 Tailwind class 完全沒生效',
+    symptom: '組合注格的派彩字該貼右上，卻跑到左上；改 left／right 數字都沒反應。',
+    cause: 'class 是執行期用模板字串拼的（`right-[calc(${n}*var(--upx))]`），Tailwind 掃描原始碼時看不到完整字面，不會產生那條 CSS；元素沒有 right/left 就落在靜態位置（左邊）。之前寫 left-[…] 版本「看起來對」只是剛好落在左邊。',
+    fix: '位置要動態就用 inline style；Tailwind 任意值 class 必須是完整的字面字串（roomGeometry 的字面版／資料版並存也是同一個原因）。',
+    where: 'src/views/room/rooms/bonus/BonusBoard.tsx PairPayoutSlot',
+  },
+  {
     date: '2026-09-18',
     title: 'WAAPI 動 transform，元素卻整顆跑到格子頂',
     symptom: '籌碼加注彈跳做完後不在格中心，跑到格頂（往左上各偏半顆）。',
