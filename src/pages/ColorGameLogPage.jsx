@@ -599,7 +599,7 @@ const GOTCHAS = [
     title: '同一段字在不同螢幕上下差 0.5–1px',
     symptom: '房內底列桌名／局號、大廳桌卡徽章的字，在兩台機器（或不同 DPR）上下位置不一樣，量 computed style 都一樣。',
     cause: '位置是「多層小數運算」疊出來的：top-1/2 + -translate-y-1/2 兩個一半、items-center 置中行框、leading-none 把行框壓成字級後墨跡靠字型 ascent／descent 決定落點。每一層都是小數，瀏覽器在不同 DPR 各自貼齊像素、方向不一定相同。',
-    fix: '把置中／位移換成單一固定頂距：top-[calc(5*var(--upx))] + items-start + leading-[normal]（baseline＝行框頂 + ascent，字型內建關係），只剩一個乘 --upx 的值要貼齊。同類的大廳徽章用 text-box-trim: trim-both cap alphabetic 直接裁到大寫字高。',
+    fix: '把置中／位移換成單一固定頂距：top-[calc(5*var(--upx))] + items-start + leading-[normal]（baseline＝行框頂 + ascent，字型內建關係），只剩一個乘 --upx 的值要貼齊。大廳桌號徽章與 500x 籌碼金額膠囊（2026-09-21）也改成同一招：字 absolute 從容器頂量固定距離，Luckiest Guy 用 leading-none（行框頂≈大寫字頂）、Inter 用 leading-[normal]；先前徽章用的 text-box-trim 已拿掉（裁到大寫字高後 bg-clip／溢出會切字）。',
     where: 'src/views/room/shared/BottomInfoBar.tsx（Kaden 05ac022）、src/views/lobby/LobbyTableCard.tsx 徽章',
   },
   {
