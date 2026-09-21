@@ -573,6 +573,14 @@ function StateInventory() {
 const GOTCHAS = [
   {
     date: '2026-09-21',
+    title: '同一畫面上兩顆籌碼的金額字，一顆偏上一顆正常',
+    symptom: '同一個元件、同一組 CSS，落在不同格子的籌碼，膠囊裡的數字上下差 1px。固定頂距那招沒解掉。',
+    cause: 'Chrome 把 HTML 文字的基線貼到整數裝置像素，膠囊底圖（div 背景）卻停在小數位置反鋸齒。兩個格子的 y（84.1／159.8 × --upx）小數部分不同，字與底圖各自貼齊的方向就不同。固定頂距只能消掉「層層疊加」的漂，消不掉底圖與文字分開貼齊。',
+    fix: '底圖與字放進同一張 SVG（rect + text 共用 viewBox），SVG 內的文字不另外貼齊像素，相對位置固定。凡是「小底圖上印一個數字」都適用；純文字對純文字（同一行）沒這問題。',
+    where: 'src/views/room/rooms/bonus/BonusChipStack.tsx',
+  },
+  {
+    date: '2026-09-21',
     title: '用模板字串拼出來的 Tailwind class 完全沒生效',
     symptom: '組合注格的派彩字該貼右上，卻跑到左上；改 left／right 數字都沒反應。',
     cause: 'class 是執行期用模板字串拼的（`right-[calc(${n}*var(--upx))]`），Tailwind 掃描原始碼時看不到完整字面，不會產生那條 CSS；元素沒有 right/left 就落在靜態位置（左邊）。之前寫 left-[…] 版本「看起來對」只是剛好落在左邊。',
