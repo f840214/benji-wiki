@@ -694,7 +694,15 @@ __GAME_DEVTOOLS__.run('game.wheel.spin')      // 轉盤翻倍 +1
 __GAME_DEVTOOLS__.run('bet.add')              // 下注（黃）；bet.confirm / bet.cancel / bet.undo / bet.double / bet.rebet
 __GAME_DEVTOOLS__.run('menu.toggle')          // menu.profile / roomPopup.customChipAmount / menu.freePlay
 __GAME_DEVTOOLS__.run('assets.audit')         // 資產抓漏`,
-    note: '⚠ game.phase.* 是整份 syncRound 但沒帶 rateDetail，切完 500x 的電子倍率會被清成 {}；要保留 rateDetail 用下面「直接寫 store」。指令清單在 src/debug/*Commands.ts。',
+    note: 'game.phase.* 現在會帶 rateDetail（2026-09-21 修）；500x 專用的四段在下一格。指令清單在 src/debug/*Commands.ts。',
+  },
+  {
+    title: '500x 四段狀態（在 500x 桌內，逐段打）',
+    code: `__GAME_DEVTOOLS__.run('game.bonus.betting')   // 開局：注區展開、清結果、換局號
+__GAME_DEVTOOLS__.run('game.bonus.stop')      // 停注：注區直接跳到下面、翻電子倍率，1.4s 後自動縮小
+__GAME_DEVTOOLS__.run('game.bonus.results')   // 開出綠二同：縮小態，Double 15X、綠 2X、黃 1X
+__GAME_DEVTOOLS__.run('game.bonus.payout')    // 派彩相位（同上結果）`,
+    note: '明細固定：807 15X 鎖綠、808 500X 鎖黃、白 5X 二同、綠 100X 三同。要看下注額先用 bet.add 或直接寫 useBetStore。真桌下一個 SDK 事件會覆蓋回去，用 dev 桌最穩。',
   },
   {
     title: '直接寫 store（模擬相位／結果／電子倍率）',
