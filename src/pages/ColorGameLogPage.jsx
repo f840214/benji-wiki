@@ -604,6 +604,14 @@ function StateInventory() {
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
   {
+    date: '2026-09-22',
+    title: '照稿畫出來的漸層多了一條斷層',
+    symptom: '房內膠囊／路書點畫出來上半部有一塊較亮的區域、55% 處一條硬邊，稿上沒有。',
+    cause: 'Figma REST 回傳的 fills 陣列含 visible=false 的圖層（設計師關掉但沒刪）。我第一次 dump 用 paint() 有濾掉，第二次為了看漸層方向另寫的 dump 沒濾，就把那層「上半內光」放射漸層（54%→55% 硬停）照抄進 CSS。',
+    fix: '讀 fills／strokes／effects 一律先過 visible !== false；抄圖層前對一下兩次 dump 的層數。這次把該層整個拿掉，膠囊與點回到三層（角落白光、頂部高光帶、底色）。',
+    where: 'src/views/room/shared/colorStyles.ts ROAD_DOT_LAYERS',
+  },
+  {
     date: '2026-09-21',
     title: '同一畫面上兩顆籌碼的金額字，一顆偏上一顆正常',
     symptom: '同一個元件、同一組 CSS，落在不同格子的籌碼，膠囊裡的數字上下差 1px。固定頂距那招沒解掉。',
