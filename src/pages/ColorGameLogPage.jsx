@@ -17,6 +17,20 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-22',
+    title: '大路書面板：路書列箭頭拉出六色膠囊＋大路書（新稿「房內路書」）',
+    branch: 'master(未 commit)',
+    summary: [
+      '使用者給新副本 yahO4X8R0Q5FIoIA0Z0wPn 的「房內路書」群組：一開始以為是底部堆疊改版（沒有聊天列），問了才知道那是點綠色箭頭由下拉上來的統計面板，套全部房間。cg-client 是 ColorGameArrowButton 切 bottomLushuPanel.active（即切、沒動畫），埋點 GameRoom.RoadBook open／close（close 帶開著的秒數）；列表 LuShuVirtualListBase：[...luShu, ...補到 8 的空欄].reverse()（新 → 舊由左往右、空欄在左）、可橫捲。',
+      '實作：useUiStore.isRoadPanelOpen（resetRoomUI 收）、actions/lushu.toggleRoadPanel（切旗標＋埋點，elog 登錄表加 GameRoom.RoadBook）、roomGeometry 加 roadPanel 帶（bottom 23.5 h 159.2＝箭頭頂 585.5 到底列頂 744.7，sheet-open 藏）、RoomFrame 開著才掛 shared/RoadPanel（收合箭、六色膠囊等寬撐滿、暗底板、大路書可橫捲）、LushuStrip 的箭頭接上。RoadStrip 加第三張皮 panel（欄 33×83、點 20.8 gloss、欄內黃細框 Y_Frame 當三同／UJP／500x 分段框、倍率字 Inter 900 黃紅描邊、JP 徽章兩張切圖含光點）＋ reverse prop；readRoad／useRoadSummary 加 limit（面板取 60 局）。',
+      '撞閘門：actions/lushu 經 elog 接 SDK → shared.test 與三支房間測試補替身（只切 store）。測試：RoadPanel 兩條（百分比、反向排列、收合）。',
+    ],
+    decisions: ['排列照 cg-client（新在左、空欄在左），稿只是示意（空欄畫在右）；使用者要改再翻。', '動到的共用檔：eLogBehavior（加事件）、useUiStore（加旗標）、roomGeometry（加帶）、RoomFrame（掛面板）、LushuStrip、sharedAssets、shared.test 與三支房間測試（替身）。'],
+    evidence: ['typecheck 0、eslint 0、全量 1448 tests 綠。實機待看（自動化視窗仍被擋）。'],
+    todo: ['實機看 16:9／4:3 面板位置與捲動', '面板開著時要不要跟著相位自動關（cg-client 不關）', '4:3 膠囊 77.9 寬用等寬撐滿近似'],
+    files: ['src/views/room/shared/RoadPanel.tsx', 'src/views/room/shared/LushuStrip.tsx', 'src/views/components/RoadStrip.tsx', 'src/game/actions/lushu.ts', 'src/game/store/useUiStore.ts', 'src/views/room/runtime/roomGeometry.ts', 'src/views/room/RoomFrame.tsx', 'src/integrations/elog/eLogBehavior.ts', 'src/game/hooks/useRoadSummary.ts', 'src/game/hooks/lobbyCardData.ts', 'src/views/room/shared/sharedAssets.ts', 'public/assets/room/lushu/'],
+  },
+  {
     date: '2026-09-21',
     title: '房內路書接上：與大廳共用 RoadStrip（兩張皮）、useRoadSummary',
     branch: 'master(未 commit)',
