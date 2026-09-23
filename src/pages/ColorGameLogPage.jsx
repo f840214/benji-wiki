@@ -17,6 +17,32 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    topic: 'shared',
+    date: '2026-09-23',
+    title: '房內路書收尾：底圖切圖化、框置中、倍率字、大小 JP、4:3 面板',
+    branch: 'master(未 commit)',
+    summary: [
+      '膠囊／路書點的底圖從 CSS 漸層改成稿的切圖：REST 匯 12 個節點（Y_s 等六色膠囊 57.4×44、dot_*_s 六色點）縮成 4× 設計 px → WebP，background-size 100% 100% 鋪滿；colorStyles 的 ROAD_DOT_LAYERS／roomSurface 整段拿掉（先試過「填色鋪滿＋邊用 mask 環罩上」與調 alpha，都對不上稿，使用者一句「不能跟稿的一樣嗎」就換切圖）。4:3 面板膠囊是 77.86 寬、比例不同，另匯一套 pillWide 由 useFormFactor 挑（先試 border-image 九宮格，接縫露黑線）。',
+      '三同框沒在中間：房內皮框 17 寬線 1.5 內側只剩 14 卻裝 15 的點，兩邊各壓 0.5，不同 DPR 一邊進位一邊捨去就偏；先改 −0.5／20 還是偏（半格值同樣的坑），最後框＝欄本身（left 0、寬 19、線 1）全整數設計 px，且框與點都改 left/right 從欄兩邊量、不給寬（點 aspect-square 撐高），右邊界綁欄的右邊界。用 headless Chrome 畫同樣幾何驗證。',
+      '倍率字：col.tag 的 x 改大寫 X（稿 6X／24X；cg-client 小寫，大廳 Luckiest Guy 沒小寫看不出，房內 Inter 才露餡）；小路書列的規格在 UJP 畫布 349:51920：Inter 900 7.2、外描邊 0.9（CSS 1.8）、行框 15 頂 −10.6；框一律黃 #FFE100 不依骰色。統計格文字：使用者開的稿是 Inter Black 900、數字 13 ／ % 10.44（字元覆寫 26／20.9 ÷2）、陰影是隱藏層不畫；我 REST 讀到的副本那格是 Arial 700，以使用者那份為準。',
+      '大小 JP：UJP V4 的 ultimate 與 mini 都帶最大倍率 100x，用「有倍率」挑皇冠版會兩個都皇冠 → readRoad 加 isUltimate（jackpotType === ultimate），三處一致：面板皇冠 49.25×39.75 頂 −32.5／一般 37.5×22 頂 −17.85（之前把 2× 切圖尺寸當設計 px 沒 ÷2，畫成 84.5 寬橫跨三欄）；小路書列另一組小版切圖 349:51981／51929（25×14.7 頂 −12.5、30×26.9 頂 −23.5）；大廳稿沒有 JP，小 JP 沿用 cg-client luzhu_icon_jackpot、大 JP 用 luzhu_icon_ultimate_jackpot 24×24。',
+      '小路書列改可橫捲：拿最近 60 局、超過可見欄數往左捲、預設捲到最右（cg-client 虛擬列表）；容器往上多留 24 容納徽章，本身 pointer-events none、只有欄內容吃指標，才不會擋到上面的籌碼列。面板路書容器預留 26 → 33（皇冠被切）。4:3 面板：膠囊列左右 6.71%／8.2% 走百分比，路書帶與箭頭邊距跟 16:9 不成比例 → wide-frame: 三處，登記到 platform/rwd/wideFrameUsage.test.ts（之前是空清單）。',
+    ],
+    decisions: [
+      '外觀對不上稿時先換切圖，不再堆 CSS 近似（漸層層數、alpha、mask 環都試過）。',
+      '疊在一起要對齊的兩個盒子（框／點、膠囊／字）：位置尺寸全整數設計 px，右邊界用 right 綁父容器；已補進定位規則的記憶。',
+      '房內兩張皮 JP 局只畫徽章不畫字（大 JP 皇冠、小 JP 一般），大廳維持 JP 圖與倍率字交替。',
+    ],
+    pitfalls: [
+      'Figma REST 副本之間不同步：同一格文字一份 Inter 900、一份 Arial 700，一律以使用者當下開的面板截圖為準。',
+      'Figma 匯出的圖含 effects／子層探出的範圍（render bounds），不等於 absoluteBoundingBox；尺寸要用匯出 px ÷ scale ÷ 2 回推，不能拿節點框。',
+      'border-image 九宮格在小數像素會露接縫線；比例不同就另切一套圖。',
+    ],
+    evidence: ['typecheck 0、eslint 0、views 529 ＋ rwd／hooks 綠、assets:check 綠；使用者實機看 16:9／4:3 面板、UJP 大小 JP、大廳桌卡確認 OK。'],
+    files: ['src/views/components/RoadStrip.tsx', 'src/views/room/shared/RoadPanel.tsx', 'src/views/room/shared/LushuStrip.tsx', 'src/views/room/shared/sharedAssets.ts', 'src/views/room/shared/colorStyles.ts', 'src/game/hooks/lobbyCardData.ts', 'src/views/lobby/lobbyAssets.ts', 'src/views/lobby/LobbyTableCard.tsx', 'src/platform/rwd/wideFrameUsage.test.ts', 'public/assets/room/lushu/', 'public/assets/lobby/card/road_icon_jp_ultimate.webp'],
+  },
+  {
+    topic: 'shared',
     date: '2026-09-22',
     title: '大路書面板：路書列箭頭拉出六色膠囊＋大路書（新稿「房內路書」）',
     branch: 'master(未 commit)',
@@ -31,6 +57,7 @@ const ENTRIES = [
     files: ['src/views/room/shared/RoadPanel.tsx', 'src/views/room/shared/LushuStrip.tsx', 'src/views/components/RoadStrip.tsx', 'src/game/actions/lushu.ts', 'src/game/store/useUiStore.ts', 'src/views/room/runtime/roomGeometry.ts', 'src/views/room/RoomFrame.tsx', 'src/integrations/elog/eLogBehavior.ts', 'src/game/hooks/useRoadSummary.ts', 'src/game/hooks/lobbyCardData.ts', 'src/views/room/shared/sharedAssets.ts', 'public/assets/room/lushu/'],
   },
   {
+    topic: 'shared',
     date: '2026-09-21',
     title: '房內路書接上：與大廳共用 RoadStrip（兩張皮）、useRoadSummary',
     branch: 'master(未 commit)',
@@ -816,14 +843,14 @@ export default function ColorGameLogPage() {
   const term = q.trim().toLowerCase()
   const flat = (e) => [e.date, e.title, e.branch, ...(e.summary || []), ...(e.decisions || []), ...(e.pitfalls || []), ...(e.evidence || []), ...(e.todo || []), ...(e.files || [])].join(' ').toLowerCase()
   const topicOf = (e) => e.topic ?? 'log'
-  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => topicOf(e) === (tab === 'b500' ? '500x' : 'log')).filter(([e]) => !term || flat(e).includes(term))
+  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => topicOf(e) === (tab === 'b500' ? '500x' : tab === 'shared' ? 'shared' : 'log')).filter(([e]) => !term || flat(e).includes(term))
   const toggle = (i) => setOpenSet((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n })
 
   return (
     <div>
-      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : tab === 'console' ? 'colorgame Console 速查' : 'colorgame 製作歷程'}</h1>
+      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'shared' ? 'colorgame 共用件製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : tab === 'console' ? 'colorgame Console 速查' : 'colorgame 製作歷程'}</h1>
       <div className="flex gap-2 mb-4">
-        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症'], ['console', 'Console 速查']].map(([k, label]) => (
+        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['shared', '共用件'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症'], ['console', 'Console 速查']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
         ))}
@@ -832,6 +859,8 @@ export default function ColorGameLogPage() {
       <p className="text-muted mb-5 max-w-[62ch]">
         {tab === 'b500'
           ? <>500x（bonusV2）房間的每個工作段落。稿 <code>CG_RWD (Copy)</code>、量測值在 <code>docs/plan/500x房間設計規格.md</code>；行為對照 cg-client <code>ColorGameBonusRoomView</code>。</>
+          : tab === 'shared'
+          ? <>所有房間共用的東西：<code>views/room/shared/</code>（路書列、大路書面板、底部資訊列…）、跨大廳與房間的 <code>views/components/RoadStrip</code>、<code>game/hooks/useRoadSummary</code>。動到這些會影響每一桌，改之前先問。稿「房內路書」<code>yahO4X8R0Q5FIoIA0Z0wPn</code>。</>
           : <><code>nexus-colorgame-client</code> 每個工作段落的紀錄:做了什麼、做了哪些決定、踩到什麼坑、拿什麼證據說做完了、留下什麼。
         最新在最上面。repo 內的正式紀錄是 <code>MEMORY.md</code> 的重大變更記錄,這頁是自己看的、可以更囉嗦。</>}
       </p>
@@ -855,7 +884,7 @@ export default function ColorGameLogPage() {
       <h2>怎麼加一筆</h2>
       <Code>{`src/pages/ColorGameLogPage.jsx 的 ENTRIES 最前面加一個物件(欄位都可省略):
 {
-  topic: '500x',        // 500x 房間 tab 用；大廳／共用省略
+  topic: '500x',        // '500x' 500x 房間 tab、'shared' 共用件 tab；大廳省略
   date: '2026-09-10',
   title: '一句話',
   branch: 'benji-dev(未 commit)| commit abc1234',
