@@ -19,6 +19,29 @@ const ENTRIES = [
   {
     topic: 'shared',
     date: '2026-09-23',
+    title: '共用帶位置照 0923 副本、路書列換新樣式、文字定位全面改固定頂距',
+    branch: 'master(未 commit)',
+    summary: [
+      '版面：使用者給兩份新副本（108x 畫布 bBcTQ… 423:82229、192x 畫布 r2KK2… 423:129032），同一份稿裡四間房的底部帶各不相同（192x／108x／500x／UJP 賠率列 bottom 192／211.7／202.5／206）。使用者決定共用 STACK 直接採 108x → 再對一次改採 192x 畫布：注區 244.5／188（inset 2.199%）、賠率 208.5、籌碼 147.5、路書 74.5／61.05（左 5.845% 右 5.46%，稿本身不對稱）、聊天 30.84；倒數圈原本套了 108x 的左上角 (5.5,55)，使用者要 192x／UJP 維持原位（475.5 置中），108x 沒有房間先留註記。暗底板一度改 122 蓋到注單摘要倍率字，改回 113。',
+      '路書列「0923」樣式：統計格 36.55×28.02 距 5、欄 26×59 距 2、點 14 @6,7、框 18 寬線 1.5 圓角 4（第一版忘了 cornerRadius 是 2× 值沒 ÷2，框畫成圓角 8 太圓）、倍率字 9.5、JP 徽章依欄高重算；LushuStrip 版面 119.65 ＋ 10.35 ＋ 路書 ＋ 6 ＋ 箭 25。500x 新副本 X5Ban… 上排上移（按鈕列 468.5、倒數 460、歷史鈕帶 453.5）也一併套。',
+      '文字漂移三連發（都是不同 DPR 各自捨入）：賠率列文字 grid 置中 → items-start 頂距 1 ＋ leading-normal；注單摘要金額字 flex 置中 → absolute 頂距 3 ＋ leading-normal；注單摘要倍率字先試固定 top、邊框 1.04 取整 1 都壓不掉，最後改成 WinRateTextSvg（四層描邊＋漸層字身畫在貼齊顆 border box 的 SVG 裡，與底圖同一次光柵化），基線 33.55 算出、使用者實機取 33。量了 Luckiest Guy：line-height normal 剛好 1em、基線 0.70em、大寫中心 0.344em，跟 leading-none 同位，底列那招對這個字型本身無效，差別在層數。',
+      '其他：WinRateText 字身 bg-clip-text 被 leading-none 行框截掉字頂 → py 0.15em ＋ 負 margin；摘要顆淡顯從根節點拆成底圖 35%／金額字 60%（cg-client _setFade 150/255），倍率字全亮；籌碼選中放大使用者自己調 1.295 → 1.195（兩個常數＋測試＋fxLayout 註解跟上）；大廳預覽挑卡改露出一半才算、video 等 playing 才蓋掉快照；wide-frame 閘門登記 RoadPanel 三筆；4:3 面板膠囊另切一套圖（border-image 九宮格接縫露黑線）。',
+    ],
+    decisions: [
+      '共用帶採 192x 畫布值、四間房共用；各房差幾 px 不另開 layout（108x 有房間時再開）。',
+      '「文字對盒子」跨 DPR 對齊的階梯：固定整數頂距 ＋ leading-normal → 邊框／位移取整 → 還不行就 SVG 同盒。單層 Inter 文字第一步就夠，多層描邊字要到第三步。',
+    ],
+    pitfalls: [
+      'REST 的 cornerRadius／strokeWeight 跟座標一樣都是 2× 值，圓角也要 ÷2。',
+      '同一份稿不同房的畫布數字互不一致（設計師逐張手調），對稿前先把四張畫布同一條帶列成表再決定。',
+      '把淡顯 opacity 掛在根節點會連子層的倍率字一起淡；opacity 要掛在真的要淡的那幾層。',
+    ],
+    evidence: ['typecheck 0、eslint 0、全量 2089 tests 綠；文字漂移由使用者兩台裝置實機比對。'],
+    files: ['src/views/room/runtime/roomGeometry.ts', 'src/views/components/RoadStrip.tsx', 'src/views/room/shared/LushuStrip.tsx', 'src/views/room/shared/OddsInfoBar.tsx', 'src/views/room/shared/SelfBetPill.tsx', 'src/views/room/shared/WinRateTextSvg.tsx', 'src/views/room/shared/WinRateText.tsx', 'src/views/room/shared/ChipRow.tsx', 'src/views/LobbyView.tsx', 'src/views/lobby/LobbyTableCard.tsx', 'src/platform/rwd/wideFrameUsage.test.ts'],
+  },
+  {
+    topic: 'shared',
+    date: '2026-09-23',
     title: '房內路書收尾：底圖切圖化、框置中、倍率字、大小 JP、4:3 面板',
     branch: 'master(未 commit)',
     summary: [
@@ -630,6 +653,22 @@ function StateInventory() {
 
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
+  {
+    date: '2026-09-23',
+    title: '文字對盒子在不同螢幕上下差 1px，固定頂距還是壓不掉',
+    symptom: '注單摘要顆上的倍率字（四層描邊 Luckiest Guy）在兩台裝置相對顆的位置差 1px；改成整數頂距、邊框取整都沒用。賠率列與金額字（單層 Inter）同招卻有效。',
+    cause: '瀏覽器把每個 HTML 文字盒的基線各自貼到整數像素，底圖盒停在小數位置反鋸齒；--upx 是小數時任何設計 px 乘出來都是小數，固定頂距只能減少「疊加的層數」。單層文字對一個盒子只剩一次捨入差，多層描邊字（四個 span）加底圖是五次。',
+    fix: '階梯：① 固定整數頂距 ＋ leading-normal、不用 flex/grid 置中、不用 translate；② 邊框、位移取整；③ 還不行就把字和底圖畫進同一張 SVG（相對位置不再各自捨入）。注單摘要倍率字用 ③（WinRateTextSvg），賠率列與金額字用 ①。順帶量到 Luckiest Guy 的 line-height normal 剛好 1em，跟 leading-none 同位。',
+    where: 'src/views/room/shared/WinRateTextSvg.tsx、SelfBetPill.tsx、OddsInfoBar.tsx',
+  },
+  {
+    date: '2026-09-23',
+    title: 'Figma REST 的圓角也是 2× 值',
+    symptom: '路書欄框照稿 cornerRadius 8 畫出來圓到像膠囊。',
+    cause: '稿是 2× 畫布，absoluteBoundingBox 之外 cornerRadius／strokeWeight／fontSize 全部都是 2× px。',
+    fix: '所有從 REST 抄的長度一律 ÷2，圓角、描邊、字級都算。',
+    where: 'src/views/components/RoadStrip.tsx GEO.room',
+  },
   {
     date: '2026-09-22',
     title: '照稿畫出來的漸層多了一條斷層',
