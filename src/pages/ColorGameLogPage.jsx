@@ -19,7 +19,7 @@ const ENTRIES = [
   {
     date: '2026-09-24',
     title: 'iPhone Safari 大廳卡頓排查：桌卡每幀重繪、banner 推開改 transform',
-    branch: 'master(未 commit)',
+    branch: 'master(大廳那批未 commit)',
     summary: [
       '症狀：大廳桌卡列表捲動「一直在重畫」、桌數多才卡；按廣告 banner 推開時卡一下。iPhone 17 Safari。這邊量不到手機，靠讀碼列出每幀／每事件的更新源、逐項拿掉讓使用者實測。',
       '桌卡層找到的：① 倒數時間條每 500ms setState 更新 width 加 500ms 過渡，等於每張倒數中的卡連續重排＋重繪 → 改 transform: scaleX，倒數抽成 LobbyTimeBar 子元件只重畫那一條；② 桌事件（線上人數、UJP 獎池）每次都 setData 新物件 → JSON 比對沒變沿用舊物件，LobbyTableCard 改 React.memo；③ PLAY／收藏鈕 CSS 演出每幀 transform／opacity／SVG filter＋加色混合 → 捲動中／banner 過渡中掛 data-scrolling 讓 CssFxSprite 全部 animation-play-state: paused。',
@@ -42,7 +42,7 @@ const ENTRIES = [
   {
     date: '2026-09-24',
     title: '大廳標題 Spine：跟著廣告 banner 走、沒活動入口時置中；框架補畫修一幀延遲',
-    branch: 'master(未 commit)；pixi-game-framework 三檔未 commit',
+    branch: 'master；pixi-game-framework 三檔未 commit',
     summary: [
       '標題不跟 banner 下移：LobbyFxScene 的 <Spine> 傳了 measurementMode="layout-shift"，但本機 pixi-game-framework 沒有這個模式（型別只有 event-driven／animation-frame），框架當未知值走預設 event-driven，只認框自己或父層動、banner 是叔伯節點長高推整列，標題留在原地。使用者 pull 框架（9d9434a 開放 measurementMode、含 layout-shift）並 build，node_modules 是符號連結直接吃到。順帶：game-client-framework 也落後一筆（DevCommand.visible），這邊 typecheck 紅 19 個都在 src/debug，等那邊 pull。',
       '沒活動中心入口要置中：cg-client 標題列是水平 Layout（resize container、spacing 90）＋容器 Widget 置中，入口 active=false 就不佔位、標題自然置中。這邊加部署旗標 isLobbyEventCenterEnabled（預設 false，對 cg-client 同名），LobbyGameTitle 的投影框 220×58.5 開著貼左 22.75、關著 left-1/2 置中；LobbyFxScene 的 Spine 改鋪滿框。對拍 fixture golden.json 補欄位，測試補兩條（用 vi.hoisted 替身切旗標）。',
@@ -65,7 +65,7 @@ const ENTRIES = [
     topic: 'shared',
     date: '2026-09-23',
     title: '共用帶位置照 0923 副本、路書列換新樣式、文字定位全面改固定頂距',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '版面：使用者給兩份新副本（108x 畫布 bBcTQ… 423:82229、192x 畫布 r2KK2… 423:129032），同一份稿裡四間房的底部帶各不相同（192x／108x／500x／UJP 賠率列 bottom 192／211.7／202.5／206）。使用者決定共用 STACK 直接採 108x → 再對一次改採 192x 畫布：注區 244.5／188（inset 2.199%）、賠率 208.5、籌碼 147.5、路書 74.5／61.05（左 5.845% 右 5.46%，稿本身不對稱）、聊天 30.84；倒數圈原本套了 108x 的左上角 (5.5,55)，使用者要 192x／UJP 維持原位（475.5 置中），108x 沒有房間先留註記。暗底板一度改 122 蓋到注單摘要倍率字，改回 113。',
       '路書列「0923」樣式：統計格 36.55×28.02 距 5、欄 26×59 距 2、點 14 @6,7、框 18 寬線 1.5 圓角 4（第一版忘了 cornerRadius 是 2× 值沒 ÷2，框畫成圓角 8 太圓）、倍率字 9.5、JP 徽章依欄高重算；LushuStrip 版面 119.65 ＋ 10.35 ＋ 路書 ＋ 6 ＋ 箭 25。500x 新副本 X5Ban… 上排上移（按鈕列 468.5、倒數 460、歷史鈕帶 453.5）也一併套。',
@@ -88,7 +88,7 @@ const ENTRIES = [
     topic: 'shared',
     date: '2026-09-23',
     title: '房內路書收尾：底圖切圖化、框置中、倍率字、大小 JP、4:3 面板',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '膠囊／路書點的底圖從 CSS 漸層改成稿的切圖：REST 匯 12 個節點（Y_s 等六色膠囊 57.4×44、dot_*_s 六色點）縮成 4× 設計 px → WebP，background-size 100% 100% 鋪滿；colorStyles 的 ROAD_DOT_LAYERS／roomSurface 整段拿掉（先試過「填色鋪滿＋邊用 mask 環罩上」與調 alpha，都對不上稿，使用者一句「不能跟稿的一樣嗎」就換切圖）。4:3 面板膠囊是 77.86 寬、比例不同，另匯一套 pillWide 由 useFormFactor 挑（先試 border-image 九宮格，接縫露黑線）。',
       '三同框沒在中間：房內皮框 17 寬線 1.5 內側只剩 14 卻裝 15 的點，兩邊各壓 0.5，不同 DPR 一邊進位一邊捨去就偏；先改 −0.5／20 還是偏（半格值同樣的坑），最後框＝欄本身（left 0、寬 19、線 1）全整數設計 px，且框與點都改 left/right 從欄兩邊量、不給寬（點 aspect-square 撐高），右邊界綁欄的右邊界。用 headless Chrome 畫同樣幾何驗證。',
@@ -113,7 +113,7 @@ const ENTRIES = [
     topic: 'shared',
     date: '2026-09-22',
     title: '大路書面板：路書列箭頭拉出六色膠囊＋大路書（新稿「房內路書」）',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '使用者給新副本 yahO4X8R0Q5FIoIA0Z0wPn 的「房內路書」群組：一開始以為是底部堆疊改版（沒有聊天列），問了才知道那是點綠色箭頭由下拉上來的統計面板，套全部房間。cg-client 是 ColorGameArrowButton 切 bottomLushuPanel.active（即切、沒動畫），埋點 GameRoom.RoadBook open／close（close 帶開著的秒數）；列表 LuShuVirtualListBase：[...luShu, ...補到 8 的空欄].reverse()（新 → 舊由左往右、空欄在左）、可橫捲。',
       '實作：useUiStore.isRoadPanelOpen（resetRoomUI 收）、actions/lushu.toggleRoadPanel（切旗標＋埋點，elog 登錄表加 GameRoom.RoadBook）、roomGeometry 加 roadPanel 帶（bottom 23.5 h 159.2＝箭頭頂 585.5 到底列頂 744.7，sheet-open 藏）、RoomFrame 開著才掛 shared/RoadPanel（收合箭、六色膠囊等寬撐滿、暗底板、大路書可橫捲）、LushuStrip 的箭頭接上。RoadStrip 加第三張皮 panel（欄 33×83、點 20.8 gloss、欄內黃細框 Y_Frame 當三同／UJP／500x 分段框、倍率字 Inter 900 黃紅描邊、JP 徽章兩張切圖含光點）＋ reverse prop；readRoad／useRoadSummary 加 limit（面板取 60 局）。',
@@ -128,7 +128,7 @@ const ENTRIES = [
     topic: 'shared',
     date: '2026-09-21',
     title: '房內路書接上：與大廳共用 RoadStrip（兩張皮）、useRoadSummary',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '使用者問房內路書能不能跟大廳共用：掃 cg-client ColorGameLushuItem（房）與 RoomListItemLuShuItem（大廳），一欄的規則完全同一套（bgSpecial 三同框、_setLightBorder 依第一顆骰色、superDouble 不標、500x updateBonusEffect、第四筆 ${winner}x、閃爍），只差長相與外殼（統計格、展開箭、虛擬列表）。決定：同一個 RoadStrip 兩張皮。',
       'RoadStrip 加 skin（lobby／room）與 dotSurface：幾何改成資料表 GEO（lobby 欄 25×61 米色底、格 15；room 欄 19×54 半透明黑、點 15 邊 1.5 + gloss），單位大廳是舞台 px、房內乘 --upx（同一個 u() 產生）；框改成 boxShadow 字串（glow／colored 的描邊與光暈兩皮同值）；ring 的框位置各皮一組。大廳 45 條測試不動照過。',
@@ -147,7 +147,7 @@ const ENTRIES = [
     date: '2026-09-17',
     topic: '500x',
     title: '500x 停注後：注區只縮不藏（shrunk 三態）、電子倍率翻牌、命中高亮與壓暗',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '使用者要求「只要會動到其他桌的都先問我」；先讀多玩法架構 md §6.1／§6.5——boardClosed: shrunk 本來就寫著「500x 給 shrunk、落地時再開」，確認後才動四個共用檔（全是加法）：types.ts 的 BoardClosedMode／BoardState 加 shrunk；boardState.ts 只改註解；index.css 加 @custom-variant board-shrunk（做法同 board-hidden）與 bonus-tag-pop keyframe；roomGeometry 共用表的賠率列／籌碼列／路書加 board-shrunk:hidden，bonus 專屬表加 BONUS_STACK 資料版 + 字面版的 shrunk 位置（按鈕列 bottom 463 → 281、視訊帶下緣洞 448 → 266、注區洞 bottom 215.6 → 35.1 並 scale 0.84 origin-top：縮完 350×196、頂 499.9、底 695.6 對稿 696）。標準版面永遠不進 shrunk，192x／108x／UJP 行為不變，測試釘住。',
       '稿：CG_RWD 105:184193（電子抽取加乘倍率）、105:185987（面板縮小）、105:187785（縮小中獎）。cg-client 三支規則合成純函式 rooms/bonus/bonusCellView：betting／closed／cancelled 不畫；停注未開：有 rateDetail[注型] 翻一般樣式標（組合注顆數固定 2／3、色＝bonusColor；六色顆數＝matchColors、色＝自己）、沒下注壓暗、組合注格點亮 bonusColor 那一框其餘壓暗；開完三顆：evaluateBetType.hasRateBonus 的格留派彩樣式標、其餘收掉，壓暗＝不是「有下注且中獎」，組合注型態符合就點亮開獎重複色。+7 測試。',
@@ -175,7 +175,7 @@ const ENTRIES = [
     date: '2026-09-17',
     topic: '500x',
     title: '500x 房間骨架：bonus 流程、八格注區、倒數圈與得獎歷史鈕（靜態殼，不碰下注線）',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '掃 cg-client：bonusV1／bonusV2 共用 ColorGameBonusRoomView（多處註解「兩個僅出現的倍率不同」），差異只有倍率數字、高倍中獎榜 V2 三欄對調、規則頁。500x 專屬：8 格注區（六色 + 807 anyDouble / 808 anyTriple 走一般下注通道）、BonusRateGroup 停注後依 round.rateDetail 逐格翻電子倍率（807→808 間隔 0.2s）、ColorGameBonusUtil.getBonusDetail 判中獎（matchColors 2/3 同 + bonusColor）、派彩 PayoutBonusV1 / PayoutRank。',
       '本專案房間現況：RoomFrame 六個洞、四比例幾何、進房載入鏈、GameHandler、192x 橫幅與倍率揭示都通；shared 十一件是靜態殼，BetBoard 六格 disabled 不送 ADD_BET；profile 只有 doubleWheel。下注 pipeline 的 game 層（actions/bet、BetHandler、useBetStore、ChipRow）其實已在，缺的是 BetBoard／SelfBetSummary／確認鈕接線——使用者說那條別人在做、不碰。',
@@ -193,7 +193,7 @@ const ENTRIES = [
   {
     date: '2026-09-16',
     title: '跑馬燈接 SDK、廣告彈窗、UJP 獎池與滾輪、維護桌對稿、大廳雜修',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '跑馬燈（對照 cg-client ColorGameMarquee）：useMarqueeList 訂 SDK MarqueeList.REFRESH_LIST 讀 displayDatas（SDK 已依大廳／房內、tableType、時間窗過濾並依 weight 排序；未來 24h 內會開的由 SDK 排 timeout）。輪播規則抽成純函式 marqueeQueue（未讀優先、插回已讀表時照清單位次、後台更新不打斷正在捲的那一則、目前那則被撤就退到已讀表尾）+4 測試。LobbyMessageBar 改成「捲一次、animationend 回報」，速度＝後台 scrollSpeed（整段捲過視窗的毫秒）→ 視窗寬 ÷ 秒，沒填 40 px/s；一則捲完 LobbyView 停 2s 換下一則；整條膠囊可點，actions/marquee.openMarquee：埋點 Lobby.Marquee（外連帶 url、進桌帶桌號／局號／主注型最小注、其餘只 name+balance），預設公告不跳轉，enableRedirect 才看 targetTable → url，兩者皆空跳活動中心 News（未接，先記錄）。',
       '廣告彈窗（對照 cg-client LobbyAdPopup + NavigationHandler.openLobbyAdPopup）：useAdPopup 每工作階段第一次進大廳 emit GET_H5_POP_UP（GTS specInfo.getH5PopUp，callback 回清單），挑「時間窗內、tableType 31、id 最大」一則；useUiStore.adPopupDone 記已彈過，從房間回來不再彈。LobbyAdPopup：圖載好才連遮罩一起出現，停 popUpDuration 秒（沒填 5）後 0.5s 淡出縮小收掉，收掉送 Lobby.LuckyTriplePopup { time }（名字沿用舊版）。舊版沒有點擊關閉／點圖跳轉，這裡也不加；舊版收掉時飛向 BANNER 鈕，這裡用縮小代替。稿上沒畫這個彈窗，尺寸先取舞台寬 90% 置中，等設計補稿。',
@@ -221,7 +221,7 @@ const ENTRIES = [
   {
     date: '2026-09-15',
     title: '背景收尾：用 Figma 整幀（只留背景三層）匯圖當底圖；廣告 banner 與底板同步、跑馬燈淡出',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '布幔亮度之謎解開：同一個節點群組單獨匯出（REST / MCP / app 都一樣）會把 luminosity、plus-lighter 對著透明底算，整片變暗、lighter 變灰霧；但把**整個 frame** 交給算圖器就和畫布一致。做法：用 MCP use_figma 暫時隱藏 frame 1:153 的 ui_header / scroll bar / content / footer / bg_room，開著三層背景，REST 匯出 1:153 2×（1728×3072 → webp 152KB）當底圖；之後把可見性全部恢復。CSS 只留：稿高 768 以下的輻射底色、底板（隨 --ad-banner-h 下移）。lighter 的 CSS 層與資源拿掉。',
       '使用者複製了一份 Figma 檔到自己團隊（TF8BrGiB9wnYuffmczChV1），REST 節點／匯圖與 MCP use_figma 都可用、不限流；原檔仍是 View seat 限流。',
@@ -235,7 +235,7 @@ const ENTRIES = [
   {
     date: '2026-09-14',
     title: '底條金字超寬時等比縮小（108x 被裁）；收藏愛心換成使用者提供的 CSS 動效',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '108x「SUPER GAME WITH SPECIAL DICE」在底條被裁掉。LobbyStripText 改為量自然寬（inline-block offsetWidth）對外框 clientWidth，比例 <1 就 transform: scale（cg-client TableJackpotUltimateAmount 同法）；字型載入完成與外框 ResizeObserver 時重算。108x 量到 288 / 252 → scale 0.875，截圖完整顯示。',
       '第一版縮放原點用中心，結果左緣往右跑 18px：字比框寬時 inline-block 靠左貼齊，以中心縮放會往內收；改 transform-origin 左緣，縮到等於框寬即自然置中。',
@@ -250,7 +250,7 @@ const ENTRIES = [
   {
     date: '2026-09-11',
     title: '桌卡動效:愛心進場、收藏中與 PLAY 待機的斜光掃過 + 呼吸縮放(對照 cg-client Spine);路書三同色欄底並抽成共用 RoadStrip',
-    branch: 'master(未 commit)',
+    branch: 'master',
     summary: [
       '使用者錄影指出 cg-client 左上愛心點下去有動效、右下 PLAY 也有常駐效果。查 cg-client:FavoriteRoomToggleButton 用 Spine cg_lobby_resources 的 in(點擊時播一次)+ Loop(收藏中持續);PlayButton 整顆是 sp.Skeleton,defaultAnimation play_btn_loop 常駐循環。Spine 檔是 3.8.99 二進位,本 repo 的 spine-core 4.3 讀不出 keyframe,改從 atlas 圖塊(金圓、Roombutton_Light 白光暈、UI_favorite_plus 白心、btn_play_add 亮面、btn_play_star_2 四角星)推結構,用 CSS 重現。',
       'index.css @theme 加五組:fav-pop(圓與心 0.4→1.18→1 彈跳 0.45s)、fav-burst(白光暈 0.5→2 擴散淡出 0.55s)、fav-glow(收藏中金色光暈呼吸 1.6s)、star-twinkle(四角星 1.4s,第二顆 delay 0.7s 交替)、play-sheen(亮面 opacity 呼吸 2.4s)。',
@@ -291,7 +291,7 @@ const ENTRIES = [
   {
     date: '2026-09-11',
     title: '大廳顯示名單改版:拿掉逐支玩法開關,改成 colorGameSupportedSubTypes;192x NewUI 回到「切換 UI」本意',
-    branch: 'benji-dev(未 commit;同時解了 merge origin/master 的 AGENTS.md 衝突)',
+    branch: 'benji-dev(同時解了 merge origin/master 的 AGENTS.md 衝突)',
     summary: [
       '使用者指出昨天的理解錯了:cocos 的 isColorGameSuperWheelNewUIEnabled + colorGameSuperWheelNewUIEnabledTables 只是 192x 的 UI 切換(命中的桌在大廳標成 newUi、進房帶去決定版面),不是閘門;其他四組「總開關 + 桌號名單」不該擋桌;改成一個 colorGameSupportedSubTypes 欄位,桌的 subType 代碼在名單內才顯示;空陣列＝不限制、全部顯示(使用者補充,不是 fail-closed)。',
       'domain/subGameGate.ts:isSubGameOpen → isSubTypeSupported(subType, codes);isSuperWheelNewUi 只看 NewUI 那一組。game/subGameGates.ts:supportedSubTypesOf / superWheelNewUiGateOf。',
@@ -313,7 +313,7 @@ const ENTRIES = [
   {
     date: '2026-09-10',
     title: '桌卡逐像素對稿:官方 Figma MCP 授權、room 偏移 1.47、標題改純文字逐字漸層、愛心照稿',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '官方 figma MCP 用 OAuth 授權成功(配額與 REST 分開),拿到 1:289 的 2× 截圖、metadata、整卡匯出與素材(愛心 on/idle SVG、桌號徽章底 SVG、觀看圖示 PNG);打到第 6 次就撞 View 席次上限。',
       '用 CDP 把 app 的 UJP 桌卡裁成 2× 圖,與 Figma 匯出圖做 50% 疊圖 + 左右拼接,逐像素比。',
@@ -361,7 +361,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '桌卡對齊 Cocos 現版:愛心、玩法標題彩字、底條字圖、路書欄底與金框、視訊預設圖',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '使用者貼 Cocos 現版截圖:左上是愛心不是星星、標題是玩法名稱「SUPER WHEEL UP TO 192X」不是桌號、底條是「COLOR GAME SUPER WHEEL」、路書空格可見且最新一欄金框。',
       '素材來源改走 cg-client:ColorGameLobby/resources/room-list/ 本來就是 2× 正式圖(愛心 on/off、PLAY、四種玩法的標題彩字與底條字、路書欄底 ×2、預設視訊圖、桌號徽章底、觀看人數圖示、維護圖示),18 支母檔進 assets-raw/lobby/card/ 轉 WebP;Figma API 被鎖不再是阻礙。',
@@ -383,7 +383,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '大廳區塊 C 落地:桌卡列表 v1 接真實 SDK 資料;cg-client 大廳功能對照表',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '資料流:game/hooks/lobbyCardData.ts(Table → 桌卡純資料,唯一讀 SDK 的轉換點)、useLobbyTableList(hiddenRooms → isSubGameOpen → sortTables)、useLobbyCardLive(逐卡訂閱)、useTableCountdown(時間條)、actions/favorite.ts。',
       '畫面:LobbyTableCard(卡 407×167,以稿 192x 為基準版面)、LobbyRoadStrip(六欄路書 + 加成標籤)、LobbyBetPercent(六色比例)、diceColors.ts。',
@@ -421,7 +421,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '大廳改走 432 縮放舞台(zoom),彩帶還原固定尺寸',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       'LobbyView 根節點加 [zoom:var(--ui-scale,1)],整頁以 432 畫布等比縮;--ui-scale 由 platform/rwd 的 viewport 追蹤器全域發佈(main.tsx 已裝),不用另接。',
       '彩帶改回稿上的 505.5px 置中;跑馬燈膠囊改回 270px;子孫全部寫設計 px、不再自己縮。',
@@ -438,7 +438,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '頂欄彩帶隨寬度縮放、文字墨心補 1px、跑馬燈膠囊改彈性寬',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '彩帶 bg_ribbon 由固定 505.5px 改為頂欄寬的 117.01%(505.5/432),窄機種跟著等比縮,不再被裁邊。',
       '膠囊文字加 pt-[2px]:canvas measureText 量到墨中心比膠囊中心高 1.2～1.4px(Baloo 2 / Luckiest Guy ascent 偏大),補回後 Δ ≤ 0.5px。',
@@ -458,7 +458,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '修頂欄文字被切頂、沒置中',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: ['暱稱與餘額文字改為行框撐滿膠囊內高 26px、垂直置中;移除照稿抄來的 pt 與 12.5px 行高。'],
     decisions: ['稿的行高 12.5 小於字級 15 / 18,是 Figma 的排版值不是視覺目標;CSS 照抄後 truncate(overflow hidden)會把字頂切掉。視覺目標是「字在膠囊中間」,故行框撐滿再置中。spec 量測表已註明這是刻意不對稿。'],
     pitfalls: ['stage 4 只量了 bounding box、沒看截圖裡的字,行框對到稿了但墨被切一半——「比墨不比框」這條在字型類差異一定要做。'],
@@ -468,7 +468,7 @@ const ENTRIES = [
   {
     date: '2026-09-09',
     title: '大廳區塊 A 落地:頁面殼 + 頂欄 + 跑馬燈列(第一個依 Figma 稿建的畫面)',
-    branch: 'benji-dev(未 commit)',
+    branch: 'benji-dev',
     summary: [
       '照 figma-to-react 流程走完整趟:讀 lobby_all-size node 1:153 → design-spec → 匯圖 → TSX → headless Chrome 量測。',
       '新增 views/lobby/:LobbyBackdrop(四層背景,底板純 CSS 漸層)、LobbyHeader(Home / 頭像 / 暱稱 / 餘額 / 儲值 / Menu)、LobbyMessageBar(跑馬燈 40 px/s + Banner 切換)、lobbyAssets(+測試)、homeButtonVisibility(自 roulette 複製)。',
