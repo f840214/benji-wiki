@@ -18,6 +18,29 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-24',
+    title: 'iPhone Safari 大廳卡頓排查：桌卡每幀重繪、banner 推開改 transform',
+    branch: 'master(未 commit)',
+    summary: [
+      '症狀：大廳桌卡列表捲動「一直在重畫」、桌數多才卡；按廣告 banner 推開時卡一下。iPhone 17 Safari。這邊量不到手機，靠讀碼列出每幀／每事件的更新源、逐項拿掉讓使用者實測。',
+      '桌卡層找到的：① 倒數時間條每 500ms setState 更新 width 加 500ms 過渡，等於每張倒數中的卡連續重排＋重繪 → 改 transform: scaleX，倒數抽成 LobbyTimeBar 子元件只重畫那一條；② 桌事件（線上人數、UJP 獎池）每次都 setData 新物件 → JSON 比對沒變沿用舊物件，LobbyTableCard 改 React.memo；③ PLAY／收藏鈕 CSS 演出每幀 transform／opacity／SVG filter＋加色混合 → 捲動中／banner 過渡中掛 data-scrolling 讓 CssFxSprite 全部 animation-play-state: paused。',
+      'banner 推開一路排查：拿掉圖片本體仍卡 → 佔位 height 過渡改成標題區＋桌列整組 translateY 79、底板 translateY 80 仍卡 → 真正元凶是舞台根節點上那個會繼承的 @property --ad-banner-h 在過渡：繼承的自訂屬性每幀變就整棵子樹重算樣式，跟讀它的是誰無關。拿掉變數、兩處各自 transform 過渡（共用 bannerPush.BANNER_PUSH_TRANSITION 才同步）就順了。',
+      '標題 Spine 跟推：一開始過渡期間切 measurementMode 為 animation-frame，rAF 量比畫面慢一幀、看起來跟不上；改成 Pixi 畫布跟著標題區同量 translateY，標題框相對畫布不變、不重量測，全程合成器。順帶把畫布從整頁縮到頂 0 起 240 高（縮到 50/170 時標題被畫布邊切到）。',
+      'banner 圖片：掛載就 new Image().decode() 預解碼、<img decoding=async>，避免展開那刻主執行緒同步解碼。',
+    ],
+    decisions: [
+      '排查順序：先列每幀更新源（定時器、非合成屬性的 transition／keyframes、每事件 setState），逐項拿掉實測，不猜。',
+      '版面動畫一律 transform／opacity；需要多處同步時共用一個 class 常數，不用繼承的自訂屬性去驅動。',
+    ],
+    pitfalls: [
+      '繼承的 @property 自訂屬性過渡 = 每幀整棵子樹樣式重算；子樹愈大愈卡，讀值的元素改 transform 也救不了。',
+      '大廳桌卡列表沒有虛擬化，任何「每張卡都在做」的成本都乘桌數。',
+      '切 measurementMode 到 animation-frame 會慢一幀（rAF 在樣式更新前量）；要跟著 transform 動，讓畫布一起動比重量測好。',
+    ],
+    evidence: ['typecheck 0、eslint 0；使用者 iPhone 17 Safari 實測：捲動與 banner 推開都順、標題同步。'],
+    files: ['src/views/LobbyView.tsx', 'src/views/lobby/LobbyTableCard.tsx', 'src/game/hooks/useLobbyCardLive.ts', 'src/views/lobby/LobbyAdBanner.tsx', 'src/views/lobby/LobbyBackdrop.tsx', 'src/views/lobby/bannerPush.ts', 'src/views/lobby/fx/LobbyFxScene.tsx', 'src/views/lobby/fx/lobbyFx.tsx', 'src/views/components/fx/CssFxSprite.tsx', 'src/index.css'],
+  },
+  {
+    date: '2026-09-24',
     title: '大廳標題 Spine：跟著廣告 banner 走、沒活動入口時置中；框架補畫修一幀延遲',
     branch: 'master(未 commit)；pixi-game-framework 三檔未 commit',
     summary: [
@@ -675,6 +698,22 @@ function StateInventory() {
 
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
+  {
+    date: '2026-09-24',
+    title: '用會繼承的自訂屬性做過渡，整頁每幀都在重算樣式',
+    symptom: 'banner 推開 400ms 期間 iPhone Safari 卡一下；把讀那個變數的元素從 height 改成 transform、拿掉圖片都沒用。',
+    cause: '@property --ad-banner-h { inherits: true } 掛在舞台根節點上過渡，每一幀值變一次，瀏覽器就把整棵子樹（所有桌卡）的樣式重算一遍；成本來自「繼承的變數在動」，不是誰在讀它。',
+    fix: '拿掉變數，需要同步的兩處各自寫 transform: translateY 並共用同一個 transition class 常數（bannerPush.BANNER_PUSH_TRANSITION）。',
+    where: 'src/views/lobby/bannerPush.ts、LobbyView.tsx、LobbyBackdrop.tsx',
+  },
+  {
+    date: '2026-09-24',
+    title: '桌卡時間條用 width 過渡，桌數多時整列每幀重繪',
+    symptom: '大廳捲動一直在重畫，一兩桌還好、桌多就卡。',
+    cause: '每張卡的倒數時間條每 500ms 更新 width 加 500ms 過渡 → 每張倒數中的卡連續重排＋重繪；再加上每 500ms 的 setState 在卡片層，整張卡（路書、膠囊）跟著 reconciliation。',
+    fix: 'width → transform: scaleX（origin-left）；倒數 hook 抽進 LobbyTimeBar 子元件；桌事件資料沒變不 setState、卡片 React.memo。',
+    where: 'src/views/lobby/LobbyTableCard.tsx、src/game/hooks/useLobbyCardLive.ts',
+  },
   {
     date: '2026-09-24',
     title: 'Pixi 投影跟著 DOM 過渡動，但固定慢一幀',

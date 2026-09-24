@@ -24,7 +24,7 @@ export default function ZustandPage() {
       <h1>Zustand</h1>
       <p className="text-muted mb-5 max-w-[62ch]">
         輕量全域狀態管理:一個 store 就是一個 hook,不用 Provider 包來包去。
-        這個 wiki 的密碼解鎖狀態就是一個 zustand store(src/store.js)。
+        src/store.js 留了一個解鎖狀態的 store 當範例(密碼閘已拿掉,App 不再用它)。
       </p>
 
       <DataTable sections={API} headers={['API', '用法', '說明']} placeholder="搜尋 API…" />

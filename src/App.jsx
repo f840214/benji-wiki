@@ -1,6 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import { useAuth } from './store.js'
-import Lock from './components/Lock.jsx'
 import Layout from './components/Layout.jsx'
 import Home from './pages/Home.jsx'
 import Tailwind from './pages/Tailwind.jsx'
@@ -16,9 +14,6 @@ import FigmaToReactPage from './pages/FigmaToReactPage.jsx'
 import ColorGameLogPage from './pages/ColorGameLogPage.jsx'
 
 export default function App() {
-  const unlocked = useAuth((s) => s.unlocked)
-  if (!unlocked) return <Lock />
-
   return (
     <Routes>
       <Route element={<Layout />}>
