@@ -17,6 +17,28 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-24',
+    title: '大廳標題 Spine：跟著廣告 banner 走、沒活動入口時置中；框架補畫修一幀延遲',
+    branch: 'master(未 commit)；pixi-game-framework 三檔未 commit',
+    summary: [
+      '標題不跟 banner 下移：LobbyFxScene 的 <Spine> 傳了 measurementMode="layout-shift"，但本機 pixi-game-framework 沒有這個模式（型別只有 event-driven／animation-frame），框架當未知值走預設 event-driven，只認框自己或父層動、banner 是叔伯節點長高推整列，標題留在原地。使用者 pull 框架（9d9434a 開放 measurementMode、含 layout-shift）並 build，node_modules 是符號連結直接吃到。順帶：game-client-framework 也落後一筆（DevCommand.visible），這邊 typecheck 紅 19 個都在 src/debug，等那邊 pull。',
+      '沒活動中心入口要置中：cg-client 標題列是水平 Layout（resize container、spacing 90）＋容器 Widget 置中，入口 active=false 就不佔位、標題自然置中。這邊加部署旗標 isLobbyEventCenterEnabled（預設 false，對 cg-client 同名），LobbyGameTitle 的投影框 220×58.5 開著貼左 22.75、關著 left-1/2 置中；LobbyFxScene 的 Spine 改鋪滿框。對拍 fixture golden.json 補欄位，測試補兩條（用 vi.hoisted 替身切旗標）。',
+      '慢一幀：layout-shift 靠 ResizeObserver 盯兄弟節點，回呼在每幀「排版後、繪製前」；畫布是 continuous，ticker 在 rAF 開頭已畫過舊位置，requestRender 在 continuous 是 no-op，新位置等下一幀才畫，整段 400ms 過渡 canvas 固定落後 DOM 一幀。改框架：stage.ts 加 renderNow()（不分模式立刻 app.render，守衛同 requestRender、空場只 clear），usePixiNode 的 layout-shift 回呼量完就 renderNow。只有 layout-shift 節點走這條（全專案只有大廳標題；房內 OpenRoundEffect 與輪盤都是預設模式不受影響），靜止時 RO 不觸發零成本，過渡期間每幀多一次 render，render 不改 DOM 不會迴圈。框架測試補替身與斷言（掛上時兄弟初始回報也算一次，斷言 ≥1），892 綠。',
+      '大廳預覽：挑卡改露出一半才算（PREVIEW_MIN_VISIBLE_RATIO 0.5，與 cg-client getCurrentTopVideoIndex 刻意不同）；<video> 掛上到第一幀之間是黑的，usePreviewPlaying 用 capture 接 playing 事件才顯示、MutationObserver 偵測 video 拆掉就重置。大路書面板／路書列開啟閃一輪：scrollLeft 用 useEffect 在畫完才設，改 useLayoutEffect。',
+    ],
+    decisions: [
+      '框架改動：只加方法不改既有 API；layout-shift 是 opt-in，不把補畫推到 event-driven。',
+      '標題置中照 cg-client 的 Layout 語意，不另量稿（稿只畫了有入口的版本）。',
+    ],
+    pitfalls: [
+      '鄰居 repo 落後時型別放寬不會報錯：measurementMode 給了框架不認得的字串，typecheck 綠、行為靜默退回預設。對照鄰居 git log 才發現。',
+      'requestRender 在 continuous 模式是 no-op：要「這一幀就畫」得直接 app.render()。',
+      'ResizeObserver 第一次 observe 會回報初始尺寸，任何「變化才做」的邏輯要把這一次算進去。',
+    ],
+    evidence: ['colorgame：lobby／config 測試 71 綠、lint 0；框架：892 綠、tsc -b 綠、lint 0。使用者實機看 banner 展開標題同步。'],
+    files: ['src/views/lobby/LobbyGameTitle.tsx', 'src/views/lobby/fx/LobbyFxScene.tsx', 'src/integrations/config/fields.ts', 'src/integrations/config/__fixtures__/golden.json', 'src/views/LobbyView.tsx', 'src/views/lobby/LobbyTableCard.tsx', 'src/views/room/shared/RoadPanel.tsx', 'src/views/room/shared/LushuStrip.tsx', '../pixi-game-framework/src/core/pixi/stage.ts', '../pixi-game-framework/src/core/hooks/usePixiNode.ts', '../pixi-game-framework/test/core/usePixiNode-layout-shift.test.ts'],
+  },
+  {
     topic: 'shared',
     date: '2026-09-23',
     title: '共用帶位置照 0923 副本、路書列換新樣式、文字定位全面改固定頂距',
@@ -653,6 +675,22 @@ function StateInventory() {
 
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
+  {
+    date: '2026-09-24',
+    title: 'Pixi 投影跟著 DOM 過渡動，但固定慢一幀',
+    symptom: '廣告 banner 展開時大廳標題（Spine，layout-shift 量測）跟著下移，但整段 400ms 都比 DOM 列表落後一點。',
+    cause: 'ResizeObserver 回呼在每幀排版後、繪製前；continuous 模式的 ticker 在 rAF 開頭已經畫過這一幀，requestRender() 在 continuous 下是 no-op，新位置要等下一幀 ticker。DOM 在第 N 幀、canvas 在第 N−1 幀。',
+    fix: '框架 stage 加 renderNow()（立刻 app.render），layout-shift 回呼量完版位就補畫一次。只有 layout-shift 節點走這條，靜止時 RO 不觸發零成本；render 不改 DOM 不會觸發 RO，不會迴圈。animation-frame 模式解不了：它在 rAF 量的是上一幀的排版，只會更慢。',
+    where: 'pixi-game-framework src/core/pixi/stage.ts renderNow、src/core/hooks/usePixiNode.ts layout-shift effect',
+  },
+  {
+    date: '2026-09-24',
+    title: '鄰居 repo 落後，元件傳的 prop 值框架不認得卻不報錯',
+    symptom: '標題不跟 banner 走。measurementMode="layout-shift" 寫得很篤定、typecheck 綠。',
+    cause: '本機 pixi-game-framework 沒 pull 到「開放 measurementMode」那筆，型別只有兩個值；但合併後的 @toppath/* 解析讓字串型別放寬，未知值靜默退回預設 event-driven。',
+    fix: '看到「寫得對卻沒效」先對鄰居 git log：cd ../pixi-game-framework && git fetch && git log HEAD..origin/main。node_modules/@toppath/* 是符號連結，pull 完 npm run build 就吃到，不用 npm run sync。',
+    where: '../pixi-game-framework、../game-client-framework（DevCommand.visible 同一天同樣情況）',
+  },
   {
     date: '2026-09-23',
     title: '文字對盒子在不同螢幕上下差 1px，固定頂距還是壓不掉',
