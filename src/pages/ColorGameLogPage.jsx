@@ -18,6 +18,26 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-09-29',
+    title: '文字只在 Windows 偏低：不是排版，是 Luckiest Guy 的字型度量',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '使用者：「我用 Mac 都正常，其他人 Windows 就偏掉」。用 fontTools 讀所有載入的字型：只有 Luckiest Guy 沒開 USE_TYPO_METRICS 且 hhea（1440/−608）與 OS/2 win（2006/504）不一致。Windows DirectWrite 讀 win、Mac／iOS／Android 讀 hhea，所以同一段字在 Windows 的基線低約 0.16em（20px 字約 3px）。',
+      '修法：Luckiest Guy 改自託管 @font-face（src/assets/fonts/luckiest-guy.css，檔案從 @fontsource 原樣複製），加 ascent-override 70.3125%／descent-override 29.6875%／line-gap-override 0% 鎖成 hhea 那組；main.tsx 與 dev/main.tsx 不再 import @fontsource/luckiest-guy/400.css。Safari 不支援這兩個描述子，但它本來就讀 hhea。',
+      '順手把大廳桌卡三處文字改成固定整數頂（頂列標題四變體、觀看人數膠囊、獎池條金字），並依稿的 CAP_HEIGHT 文字框定各段大寫中心（13.0／13.25／13.43）；桌號徽章與獎池條的 fit-to-width 縮放原點改到大寫字心，長桌號縮小時字不再下掉。做了 dev 工具 dev.html#lobby-card-text 量測。',
+    ],
+    decisions: [
+      '看到「某平台整體偏」先查字型度量，不要在版面補位移；新增字型時要用 fontTools 讀 hhea／OS/2 一次（資源規範 §三）。',
+      '所有以 Luckiest Guy 從行框頂推大寫中心的常數（0.3555em）都建立在 hhea 度量上，覆寫後各平台一致。',
+    ],
+    pitfalls: [
+      'Mac 上量不到這個偏移；先前多輪「換螢幕字偏移」的固定頂修法只解決小數位置吸附，跟這個是兩件事。',
+      'dev/main.tsx 也各自 import 過 @fontsource 的字型 css，改自託管時要一起拿掉，不然同一家族兩組 @font-face 並存。',
+    ],
+    evidence: ['fontTools 度量表；dev 工具 document.fonts 讀到兩個 Luckiest Guy face 都帶 ascentOverride 70.3125%；typecheck／lint／全量測試綠。'],
+    files: ['src/assets/fonts/luckiest-guy.css', 'src/index.css', 'src/main.tsx', 'dev/main.tsx', 'src/views/lobby/LobbyCardTitle.tsx', 'src/views/lobby/LobbyTableCard.tsx', 'src/views/lobby/LobbyStripText.tsx', 'dev/tools/lobbyCardText/LobbyCardTextTool.tsx', 'docs/資源規範與流程.md'],
+  },
+  {
+    date: '2026-09-29',
     topic: '500x',
     title: '500x 得獎歷史：入口鈕（Cocos 骨架轉 CSS）＋ TOP 100 BIG WINNERS 整頁面板',
     branch: 'benji-dev(未 commit)',
