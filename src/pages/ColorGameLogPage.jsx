@@ -39,6 +39,7 @@ const ENTRIES = [
       '同名節點會撞：稿裡有兩個 bg_in（頂部牌的、榜單的），用名字找第一個會拿到頂部牌那個 radial 漸層，榜單那個是線性 #2F347A→#1C1E4A。',
       'vi.mock 工廠裡引用的 vi.fn() 一定要 vi.hoisted，否則「Cannot access before initialization」。',
       'IAssetSet 是 { id, kind, tier, urls }，不是 items[]。',
+      'Figma 圖片匯出 use_absolute_bounds=true 給的是節點框（置中／外描邊探出框的部分被切掉），要完整渲染範圍反而要 false——幣圖被切成正方形就是這樣來的。',
       'fx:export 用「顯示文字」點評估台按鈕、找不到全等會退回開頭相符：新加的 dev 側欄工具若以「500x」開頭，評估台還沒載完時就會被點到、腳本跳離評估台報「找不到按鈕」——工具名不要跟 fx 分類名同開頭。',
     ],
     evidence: ['typecheck 0、eslint 0；vitest bonus 目錄＋useBonusRank＋bonusRank 全綠（32）；Chrome dev 預覽 16:9／4:3／21:9 量測對稿。'],
