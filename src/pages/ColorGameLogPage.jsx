@@ -17,6 +17,33 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-29',
+    topic: '500x',
+    title: '500x 得獎歷史：入口鈕（Cocos 骨架轉 CSS）＋ TOP 100 BIG WINNERS 整頁面板',
+    branch: 'benji-dev(未 commit)',
+    summary: [
+      '入口鈕：稿上的獎盃版美術與 Cocos spine 500x_btn_winner_history 長得不一樣，使用者決定以骨架為準 → 走 CSS fx 產線（scripts/fx/export.mjs 加 bonusWinnerHistory，需 dev server 5173）匯成 keyframes 貼圖，BonusWinnerHistoryFx 用 CssFxSprite 掛在 BonusBandTop (333, 0) 82×75.6；點了 actions/winnerHistory.openWinnerHistory：埋點 GameRoom.WinnerHistory ＋ roomSheet = bonusWinnerHistory。',
+      '面板 BonusWinnerHistorySheet（稿 2445ymEJzky7pHPw2uREgD 280:143849）：稿是整頁彈窗（黑 50% 遮罩鋪滿框），所以填 RoomFrame 的 overlay 洞而不是 UJP 那種 sheet 洞（框不進 data-sheet=open、按鈕列不搬家），開關仍看 roomSheet、封盤由共用的 useCloseSheetOnBetStop 清。內容是 412 寬的柱在框裡水平置中（16:9 左 10、4:3 左 82 都是 (框寬−412)/2），比例變高只拉長榜單底板。',
+      '切圖五張（頂部獎盃群含美術字標題、日期列底圖、Q 鈕、關閉鈕、幣圖）走 assets-raw/room/bonus/winner_history → npm run assets:compress -- winner_history；底板（漸層＋mask 挖的 5 寬漸層邊環）、內板、列、名次牌全 CSS。倍率／金額是兩層疊字（底層 text-stroke、上層字身）。',
+      '資料：GET_BONUS_RANK 是回呼式（不是 192x 的 GET_TABLE_RANK），包成 fetchBonusRank Promise ＋ 10s 逾時；V2 倍率在 winOdds／金額在 score、V1 倍率在 score／金額在 payout（domain/bonusRank）；暱稱遮罩留 7 字補 ***、時間當地 YYYY-MM-DD HH:mm。useBonusRank 掛上就查、查到前畫空清單。關閉埋 GameRoom.WinnerHistoryClose 帶秒數。',
+      'dev 預覽 dev.html#bonus-winner-history（8／100／空列），讀數列印列與列內文字框；16:9／4:3／21:9 量到列 @(30.5, 241.5) 371×50、名次牌 37×30、四組文字中心與稿相差 < 0.3。',
+    ],
+    decisions: [
+      '稿只給 rank04 一種列樣式，1–3 名沿用同樣式（cg-client 有 TOP1–3 底圖但稿沒給，不自己發明）。',
+      'TODAY & LAST 7 DAYS 是純標題不做切換；Q 鈕只畫不接（Cocos 開新手教學，教學頁未做）。',
+      '整頁彈窗放 overlay 洞、sheet 洞留給「橫幅以下」型的面板；roomSheet 仍當唯一開關真相，兩種面板共用封盤自動關。',
+      '文字照固定整數頂＋leading-normal，不用 flex 置中（上一輪 SelfBetPill／OddsInfoBar 的教訓）。',
+    ],
+    pitfalls: [
+      'Figma REST 的 getNodes 有深度上限：列內的 rank/id、road_100x、金額框第一次抓回來是空的，要單獨對那幾個 id 再抓一次（depth=8）。',
+      '同名節點會撞：稿裡有兩個 bg_in（頂部牌的、榜單的），用名字找第一個會拿到頂部牌那個 radial 漸層，榜單那個是線性 #2F347A→#1C1E4A。',
+      'vi.mock 工廠裡引用的 vi.fn() 一定要 vi.hoisted，否則「Cannot access before initialization」。',
+      'IAssetSet 是 { id, kind, tier, urls }，不是 items[]。',
+    ],
+    evidence: ['typecheck 0、eslint 0；vitest bonus 目錄＋useBonusRank＋bonusRank 全綠（32）；Chrome dev 預覽 16:9／4:3／21:9 量測對稿。'],
+    files: ['src/views/room/rooms/bonus/BonusWinnerHistorySheet.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/messages.ts', 'src/views/components/fx/BonusWinnerHistoryFx.tsx', 'src/game/actions/winnerHistory.ts', 'src/game/hooks/useBonusRank.ts', 'src/game/domain/bonusRank.ts', 'src/integrations/sdk/queries/bonusRankQueries.ts', 'src/integrations/elog/eLogBehavior.ts', 'dev/tools/bonusWinnerHistory/BonusWinnerHistoryTool.tsx', 'docs/plan/500x房間設計規格.md'],
+  },
+  {
     date: '2026-09-24',
     title: 'iPhone Safari 大廳卡頓排查：桌卡每幀重繪、banner 推開改 transform',
     branch: 'master(大廳那批未 commit)',
