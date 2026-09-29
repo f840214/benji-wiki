@@ -30,7 +30,7 @@ const ENTRIES = [
     ],
     decisions: [
       '列四種樣式照 cg-client RankStyle：稿的 rank04 其實是 TOP1 的橘；第 2 名藍、第 3 名綠、其餘米白，色值直接從 Cocos rank_list_*／rank_num_* 底圖與 userNameColorList 取（使用者指出「前三名顏色不一樣而已」）。',
-      'TODAY & LAST 7 DAYS 是純標題不做切換；Q 鈕只畫不接（Cocos 開新手教學，教學頁未做）。',
+      'TODAY & LAST 7 DAYS 是純標題不做切換；Q 鈕照 Cocos 開「單獨一頁」的 500x 教學（不是跳到 How to Play 第 3 頁）：重用共用的 HowToPlayPage 殼＋HowToPlayBonusPage 只給一頁、自己包 scale-to-frame，共用件不動；關閉埋 HowToPlay.HowToPlayClose 帶 entry_point winner_history。',
       '整頁彈窗放 overlay 洞、sheet 洞留給「橫幅以下」型的面板；roomSheet 仍當唯一開關真相，兩種面板共用封盤自動關。',
       '文字照固定整數頂＋leading-normal，不用 flex 置中（上一輪 SelfBetPill／OddsInfoBar 的教訓）。',
     ],
@@ -42,7 +42,7 @@ const ENTRIES = [
       'fx:export 用「顯示文字」點評估台按鈕、找不到全等會退回開頭相符：新加的 dev 側欄工具若以「500x」開頭，評估台還沒載完時就會被點到、腳本跳離評估台報「找不到按鈕」——工具名不要跟 fx 分類名同開頭。',
     ],
     evidence: ['typecheck 0、eslint 0；vitest bonus 目錄＋useBonusRank＋bonusRank 全綠（32）；Chrome dev 預覽 16:9／4:3／21:9 量測對稿。'],
-    files: ['src/views/room/rooms/bonus/BonusWinnerHistorySheet.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/messages.ts', 'src/views/components/fx/BonusWinnerHistoryFx.tsx', 'src/views/components/fx/BonusWinnerTopFx.tsx', 'src/game/actions/winnerHistory.ts', 'src/game/hooks/useBonusRank.ts', 'src/game/domain/bonusRank.ts', 'src/integrations/sdk/queries/bonusRankQueries.ts', 'src/integrations/elog/eLogBehavior.ts', 'dev/tools/bonusWinnerHistory/BonusWinnerHistoryTool.tsx', 'docs/plan/500x房間設計規格.md'],
+    files: ['src/views/room/rooms/bonus/BonusWinnerHistorySheet.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/BonusTutorialPopup.tsx', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/messages.ts', 'src/views/components/fx/BonusWinnerHistoryFx.tsx', 'src/views/components/fx/BonusWinnerTopFx.tsx', 'src/game/actions/winnerHistory.ts', 'src/game/hooks/useBonusRank.ts', 'src/game/domain/bonusRank.ts', 'src/integrations/sdk/queries/bonusRankQueries.ts', 'src/integrations/elog/eLogBehavior.ts', 'dev/tools/bonusWinnerHistory/BonusWinnerHistoryTool.tsx', 'docs/plan/500x房間設計規格.md'],
   },
   {
     date: '2026-09-24',
@@ -216,7 +216,7 @@ const ENTRIES = [
     ],
     evidence: ['typecheck 0、lint 綠、全量 1071 tests、build 首屏預載閘門綠（rooms 仍 lazy）。實機未看（要有 bonusV2 桌的渠道）。'],
     todo: ['注區 shrunk 態與電子倍率翻牌（rateDetail）、命中高亮', '派彩層：YOU WIN／未中獎、Top3 高倍率中獎榜（V2 欄位對調）', '下注接線等別人那條完成後把 BonusBoard 的八格接 addBet', '20:9／21:9／4:3 對稿', 'Spine（開彩氛圍、小怪物、翻牌）等美術 4.3 重匯'],
-    files: ['docs/plan/500x房間設計規格.md', 'src/game/domain/subTypeProfile.ts', 'src/game/domain/roundFlow.ts', 'src/game/store/useGameStore.ts', 'src/game/handlers/room/GameHandler.ts', 'src/views/room/types.ts', 'src/views/room/runtime/roomGeometry.ts', 'src/views/room/RoomFrame.tsx', 'src/views/room/rooms/index.ts', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/BonusBoard.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/BonusRoom.test.tsx', 'public/assets/room/bonus/winner_history.webp'],
+    files: ['docs/plan/500x房間設計規格.md', 'src/game/domain/subTypeProfile.ts', 'src/game/domain/roundFlow.ts', 'src/game/store/useGameStore.ts', 'src/game/handlers/room/GameHandler.ts', 'src/views/room/types.ts', 'src/views/room/runtime/roomGeometry.ts', 'src/views/room/RoomFrame.tsx', 'src/views/room/rooms/index.ts', 'src/views/room/rooms/bonus/BonusRoom.tsx', 'src/views/room/rooms/bonus/BonusBoard.tsx', 'src/views/room/rooms/bonus/BonusBandTop.tsx', 'src/views/room/rooms/bonus/BonusTutorialPopup.tsx', 'src/views/room/rooms/bonus/assets.ts', 'src/views/room/rooms/bonus/BonusRoom.test.tsx', 'public/assets/room/bonus/winner_history.webp'],
   },
   {
     date: '2026-09-16',
