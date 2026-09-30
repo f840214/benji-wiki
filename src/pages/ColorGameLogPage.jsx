@@ -17,6 +17,30 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-30',
+    topic: '500x',
+    title: '500x 電子倍率三支骨架：同色飛星、骰盅框、小怪物（真 Spine 畫在 baseFx）',
+    branch: 'master(未 commit)',
+    summary: [
+      '照 cg-client BetAreaColorDisplay／BonusRateItem／BonusAnimationItem 接三支 4.3 骨架，全部真 Spine 畫在帶上的 canvas（ROOM_BASE_FX_CANVAS_ID），錨點放在 BonusBoard 的格裡（BonusSpine：以骨架原點為中心的盒、1 骨架單位 ＝ 0.5 設計 px），座標由 prefab ColorGameBonusBetArea（833×464 剛好＝注區洞 416.5×232）÷2 換算。小怪物 110 個 slot、50 顆粒子，CSS 化不可行。',
+      '停注過渡（flipping）組合注格：同色飛星 same_fly_<色>（色在動畫名上）與示意骰框 Jump 同時起播（807 0／808 200ms），跳完 567ms 倍率標才翻出、同一刻骰盅框 frame_dice_in 亮 1s；FLIP_TOTAL_MS 1400 → 2000。骰盅框的黑底 slot 用 skeleton.setAttachment(name, null) 藏掉（稿的金框膠囊是 CSS），只留加色亮光與星光——刻意分歧。',
+      '開完三顆：命中且有已確認下注的格播小怪物（useMascotPlay 在 render 期推導名單，中途進房不播）：in 1.9s → loop、1.5s 倍率標淡入、3s 淡出＋out、4s 結束；期間該格不出派彩字，全部播完（BONUS_500X_ANIMATION_END）才出。音效 bonus_500x_flip_card（每顆標翻出）／_reward（小怪物起播）從 cg-client 複製。',
+      '正式房間要 RoomFrame 開 baseFx 平面（目前只有 bandCenter／stage 填了才開）——共用檔，等使用者點頭；dev 工具 dev.html#bonus-board 自己開一張 baseFx 畫布，切 dealing／payout 就播，截圖確認飛星與小怪物都畫出來。',
+    ],
+    decisions: [
+      '三支都走真 Spine、不走 CSS 產線：粒子多、skin 換色、要跟時間軸同步，CSS 還原成本高於收益。',
+      '骨架 complete 只當提早訊號，時間軸一律以 setTimeout 為準：測試環境的 Spine 替身不會回 complete，也要走得完。',
+      '4.3 的 Slot 是 Posed：藏 slot 用 skeleton.setAttachment(name, null) ＋ slot.pose.color.a = 0，沒有 slot.setAttachment。',
+    ],
+    pitfalls: [
+      'Chrome MCP 的 read_network_requests 看不到 iframe 的請求；要確認資源有沒有載，看 console 的框架 log（compoundAssetUnloader purge 就代表載過）。',
+      'MCP 截圖延遲 3–5 秒，4 秒的演出直接截會撲空；用 setInterval 反覆觸發再截。',
+      'dev 工具的 dealing 態不能給骰子（srcResults），不然 bonusCellView 當成開完、直接進派彩態。',
+    ],
+    evidence: ['typecheck 0、eslint 0、bonus 目錄 34 測試綠（含飛星／骰盅框／小怪物三案）；dev 工具截圖：小怪物在 807 與紅格上、飛星從紅框升起。'],
+    files: ['src/views/room/rooms/bonus/BonusSpine.tsx', 'src/views/room/rooms/bonus/BonusSameFly.tsx', 'src/views/room/rooms/bonus/BonusDiceFrame.tsx', 'src/views/room/rooms/bonus/BonusMascot.tsx', 'src/views/room/rooms/bonus/mascotTimeline.ts', 'src/views/room/rooms/bonus/useMascotPlay.ts', 'src/views/room/rooms/bonus/BonusBoard.tsx', 'src/views/room/rooms/bonus/bonusCellView.ts', 'src/views/room/rooms/bonus/BonusRateTag.tsx', 'src/views/room/rooms/bonus/useBoardLowered.ts', 'src/views/room/rooms/bonus/assets.ts', 'src/game/sfx.ts', 'dev/tools/bonusBoard/BonusBoardTool.tsx', 'docs/plan/500x房間設計規格.md'],
+  },
+  {
     date: '2026-09-29',
     title: '文字只在 Windows 偏低：不是排版，是 Luckiest Guy 的字型度量',
     branch: 'benji-dev(未 commit)',
