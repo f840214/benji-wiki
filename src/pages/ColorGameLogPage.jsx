@@ -17,6 +17,18 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-09-30',
+    title: 'BANNER 鈕文字改畫在 SVG 裡（換螢幕不再上下漂）',
+    branch: 'master(未 commit)',
+    summary: ['LobbyMessageBar 的「BANNER」從 DOM span（固定頂 8）改成跟鈕同一個盒子的 SVG text（viewBox 69×23，x 27、基線 15.33），同桌卡 lobby-card-badge 的做法'],
+    decisions: ['固定整數頂只解決小數吸附，不同 DPR 的螢幕行框頂仍各自吸附像素；SVG 的基線是盒內座標，跟整顆鈕一起縮放'],
+    pitfalls: ['SVG text 沒有 text-shadow：用 CSS filter drop-shadow 補稿的 0.58/1.15 陰影'],
+    evidence: ['大廳量：text 盒相對鈕 (6.58, 7.46) 40.8×11.4，字框寬照稿 41'],
+    todo: [],
+    files: ['src/views/lobby/LobbyMessageBar.tsx'],
+    links: [],
+  },
+  {
     topic: '500x',
     date: '2026-09-30',
     title: '電子倍率演出修正：小精靈牌子裡的倍率列、飛光回掃對到倍率標、第一次不閃',
