@@ -23,7 +23,7 @@ const ENTRIES = [
     branch: 'master(未 commit)',
     summary: [
       'Any Double／ANY Triple 的電子倍率標：框整個改用 cg_500X_frame_area_dice（翻出播 frame_dice_in 彈出＋掃光 1s，之後停 frame_dice_stop 留著當膠囊；版位每幀重量跟著縮小過渡），內容（骰＋字，BonusRateTag bare）由 BonusComboTag portal 到 hud 平面',
-      '小精靈手上的倍率列同樣 portal 到 hud；兩者共用 useHudPlacement：格裡留一個已知寬度的錨點，每幀量它相對 hud 的位置與縮放（實際寬 ÷ 設計寬×--upx），值沒變不重繪',
+      '小精靈手上的倍率列同樣 portal 到 hud；兩者共用 useBoardMirror：在 hud 裡建一個「注區鏡像」div，class 直接抄注區洞（含 lowered／shrunk 與 0.5s 過渡），內容用注區座標擺，縮小時跟注區同一條 CSS 過渡一起動、不用量',
       'dev 工具 bonusBoard 加了 hud 平面替身（id ＝ ROOM_PLANE.hud.id）',
     ],
     decisions: [
@@ -32,7 +32,8 @@ const ENTRIES = [
     ],
     pitfalls: [
       '正式房的 hud 平面元素沒有 id：SceneStack 的 DOM 島只有 data-scene-island，平面 id 沒落到 DOM。用「房間框裡、父層 Layer z-index ＝ ROOM_PLANE.hud.z」找那座島；dev 工具替身才用 id。第一版只用 getElementById，dev 工具過、正式房仍被壓',
-      'portal 出去的東西只量一次會錯：dev 工具是先開獎再縮小，列停在縮小前的位置。改每幀量',
+      '第二版是每幀量錨點 rect 再 setState：DOM 比 spine 慢一幀，縮小過渡時內容看得出在追注區。第三版改鏡像，零量測',
+      '鏡像不能 import roomGeometry（roomIsolation 測試：房間層不認識幾何表），所以 class 是從注區洞的元素抄的',
       'SVG text 沒有 text-shadow（BANNER 鈕）：用 CSS filter drop-shadow 補',
     ],
     evidence: ['正式房（CGD19）用 __GAME_DEVTOOLS__ 走 stop：兩顆組合注標的內容都落在 dom-1（hud）島、框上看得到；vitest room 567、lint、typecheck'],
