@@ -17,6 +17,29 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    topic: '500x',
+    date: '2026-09-30',
+    title: '電子倍率演出修正：小精靈牌子裡的倍率列、飛光回掃對到倍率標、第一次不閃',
+    branch: 'master(未 commit)',
+    summary: [
+      '小精靈手上的牌子裡補上「色骰 N 顆＋倍率字」（DOM，跟著 spine 原點定位；1.5s 淡入、3s 淡出），格上原本那顆 MascotTag 拿掉',
+      '飛光（same_fly）與骰盅框改以倍率標中心反推骨架原點：動畫終點位移烙在骨架裡，只能整支平移，回掃就壓在標上',
+      'BonusSpineWarm：進房各掛一支停格 pin 住的暖身實例（洞外）；BonusSpine 拿到實例先套第 0 幀',
+    ],
+    decisions: [
+      '倍率列幾何取 cg-client prefab 500xAniGroup/<格>/LayoutGroup（組合注 dx −41.1／dy −2.2、字 23、骰 12.2；六色 ×0.72）',
+      '飛光起點因此比示意骰中心偏右 ≤ 6 px，光是從 0 放大出現的看不出來；回掃對不上才明顯',
+    ],
+    pitfalls: [
+      '分割後的 4.3 骨架 same_fly 終點分兩排：上排（黃白粉）154.6、下排 144.7，一個原點對不了兩排',
+      'Cocos 的 rateLabel 是點陣字 500x_num.fnt（金字棕影），直接沿用 BonusRateTag 的 Luckiest Guy 漸層字樣',
+    ],
+    evidence: ['dev 工具量：飛光原點 (82.3, 72.0) + 終點位移 ＝ 標中心 (82.6, −0.3)', 'vitest bonus 34 綠、lint、typecheck'],
+    todo: ['使用者截圖裡的紅格「3X」還沒確認是什麼：像是拿掉前的 MascotTag（color 尺寸），等再看一局'],
+    files: ['src/views/room/rooms/bonus/BonusMascot.tsx', 'BonusSpineWarm.tsx', 'sameFlyPath.ts', 'mascotTimeline.ts', 'BonusBoard.tsx', 'BonusRateTag.tsx', 'useMascotPlay.ts', 'BonusRoom.tsx'],
+    links: [],
+  },
+  {
     date: '2026-09-30',
     topic: '500x',
     title: '500x 電子倍率三支骨架：同色飛星、骰盅框、小怪物（真 Spine 畫在 baseFx）',
