@@ -28,7 +28,7 @@ const ENTRIES = [
       'NEWS／WINNINGS 是圖片卡清單（imgTitleUrl 接 siteAssets）＋點開大圖＋CLOSE 回清單；NEW 角標讀寫 localStorage["newsClick"]（沿用 cg-client 鍵名）。Rule 是伺服器一張圖',
       '資料：SdkAdapter 加 getRankList／getEventCenter 兩個薄 getter；queries rankListQueries（GET_RANK_LIST 等同 rankId 的 REFRESH 事件）、eventCenterQueries（GET_NEWS／REWARD／RULE 等 UPDATE_*，model 有現值先用——SDK 10s 節流期內不發事件）；useLuckyTripleRank 今日榜 60s 不重打、歷史榜依日期快取',
       'dev：?tripleBonusFake=1 用假檔期（全桌、進行中、三筆最近中獎）與假榜單（10 列＋自己第 18），只在 DEV／staging',
-      '圖：assets-raw/campaign/ → public/assets/campaign/（title、board header、coming soon 吉祥物、rule icon）；活動中心關閉鈕用共用 icon_popup_close.svg，不另切',
+      '圖：assets-raw/campaign/ → public/assets/campaign/（title、board header、coming soon 吉祥物、rule icon）；活動中心關閉鈕用 How to play 那顆紅圓白叉 btn_close.webp，不另切',
     ],
     decisions: [
       '活動中心 portal 到大廳舞台根節點（新 id LOBBY_STAGE_ID，views/lobby/lobbyStage.ts）：入口在標題 slot 裡、上面有 transform 的 banner 推移容器，fixed 會被它攔住只蓋到中間一段',
