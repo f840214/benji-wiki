@@ -888,11 +888,34 @@ function StateInventory() {
         store 只存 SDK 拿不回來或多個畫面要一致的東西。
       </p>
       <div className="mb-6 rounded-lg border border-line bg-panel p-3 text-[.85rem]">
+        <div className="font-semibold mb-1">hook 跟 store 到底差在哪、什麼時候用哪個</div>
+        <p className="text-muted mb-2"><b>store 是「資料放在哪」，hook 是「元件怎麼拿到資料」</b>，不是同一層、不是二選一。</p>
+        <ul className="list-disc pl-5 text-muted mb-2">
+          <li><b>store</b>（zustand）：活在 React 樹外的物件，保存狀態、能 setState、能被訂閱。存在的唯一理由：有東西要<b>被多處共享、或在元件掛卸之間活下來</b>。例：useGameStore 的相位與骰子——handler 從 SDK 收到寫進去，注區、倒數、派彩各自讀。</li>
+          <li><b>hook</b>：render 期跑的函式，回「這個元件現在該看到的值」，負責訂閱、變了讓元件重畫；<b>本身不保存任何東西</b>，資料從別處來（store、SDK model、config、registry、DOM 量測）。useGameStore((s) =&gt; s.phase) 其實就是 store 自帶的 hook。</li>
+        </ul>
+        <p className="text-muted mb-1"><b>什麼時候要開 store</b>（CLAUDE.md：只存 SDK 拿不回來的）：</p>
+        <ol className="list-decimal pl-5 text-muted mb-2">
+          <li>一次性事件的 payload，過了就沒了（派彩結果、中獎通知）。</li>
+          <li>純 UI 狀態，SDK 不知道（選單開不開、注區手動收起、roomSheet）。</li>
+          <li>樂觀值（下注還沒被伺服器確認前先顯示）。</li>
+          <li>很多畫面必須對同一份值一致、而且來源會變（gameState）。</li>
+        </ol>
+        <p className="text-muted mb-1"><b>只要 hook、不要 store</b>：</p>
+        <ul className="list-disc pl-5 text-muted mb-2">
+          <li>資料<b>隨時能從別處拿回來</b>：SDK model 有 getter（餘額、桌資訊）、config（部署期凍結）、registry（靜態總表 × 來源）。再抄一份進 store 只是多一個會過期的副本，「用 A 欄位當 B 的刷新訊號」那種 race 就是這樣來的。</li>
+          <li>資料<b>只有一個元件用、跟它同生共死</b>：面板開著才查的榜單（useBonusRank，一次往返，useState 就夠）。</li>
+        </ul>
+        <p className="text-muted mb-1"><b>兩個例子</b>：useCampaignSurfaces 是 hook 沒有 store——回的值是「總表（靜態）× 來源（config，凍結）」算出來的，兩個輸入隨時在手、算一次很便宜，沒東西要保存或共享。useTripleBonusStore 是 store——檔期清單一次往返拿回來後，大廳 icon、房內鈕、歷史條、核心派彩都要讀同一份，而且我們決定不依賴 SDK 寫回 table 的那個欄位，落在「拿不回來／多處共享」那一邊。</p>
+        <p className="text-muted"><b>快速判斷</b>：問「這個值我現在不存，等一下還拿得到嗎？」拿得到 → hook 就好；拿不到或要大家一致 → store，再用 hook 讀它。</p>
+      </div>
+      <div className="mb-6 rounded-lg border border-line bg-panel p-3 text-[.85rem]">
         <div className="font-semibold mb-1">我在大廳與 500x 加的</div>
         <ul className="list-disc pl-5 text-muted">
           <li><b>大廳新增的 hook</b>：lobbyCardData、useLobbyTableList、useLobbyCardLive、useTableCountdown、useAdBanners、useAdPopup、useMarqueeList、useTableSnapshot、useDirectGames；畫面工具 useFitToWidth 與 RollingText 元件。</li>
           <li><b>大廳沒有新開 store</b>，只在既有 store 加欄位：useUiStore 的 isAdBannerOpen／adBannerIntroDone／adPopupDone；useUserStore 的 isTourist。</li>
-          <li><b>500x 目前沒有新 hook／store</b>，只在 useGameStore 加 rateDetail（電子倍率明細）；房間元件在 views/room/rooms/bonus/。</li>
+          <li><b>500x</b>：useGameStore 加 rateDetail（電子倍率明細）；房間自己的 hook useMascotPlay（小精靈名單與進度）、useBoardLowered（停注過渡）、useBoardMirror（hud 平面的注區鏡像）、useBonusRank（得獎榜一次往返）；元件在 views/room/rooms/bonus/。</li>
+          <li><b>活動</b>：useTripleBonusStore（views/campaigns/tripleBonus/store.ts，檔期清單、最近中獎局號，隨呈現卸載清）；useCampaignSurfaces（views/campaigns/hooks.ts，總表 × 來源 → 某個 slot 有哪幾塊）。</li>
           <li>其餘（useBetStore、BetHandler 相關 hook、房內與彈窗的 hook、platform/state 各 store）是 roulette 藍本或同事的工作。</li>
         </ul>
       </div>
