@@ -17,6 +17,71 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    topic: 'campaign',
+    date: '2026-10-01',
+    title: 'Triple Bonus 起手：活動 store、總表第一列、查詢',
+    branch: 'master(未 commit)',
+    summary: [
+      'integrations/sdk/queries/bonusActivityQueries.ts：包 SDK GET_BONUS_ACTIVITIES（GTS activity.getBonusActivities）成 Promise，10s 逾時回 null',
+      'views/campaigns/tripleBonus/store.ts：useTripleBonusStore — status／activities／lastWinRoundCodes；load(tableType, tableCode?) 只留 LuckyTriple 型、最近中獎局號反轉成新到舊、桌號不在 tableCodes 就清空；reset 隨呈現卸載；後發查詢蓋先發、reset 後回來的舊結果丟掉',
+      'views/campaigns/registry.ts 第一列 tripleBonus：isOn ＝ 大廳旗標 ‖ 房內旗標（聯集）；掛 lobbyEntry.tsx（現在只掛資料不畫東西，icon 等稿）',
+      '還沒有畫面呼叫 useCampaignSurfaces，整包仍被搖掉、零 chunk',
+    ],
+    decisions: [
+      '「有沒有開」分兩層：旗標（渠道買不買這個模組）進總表 isOn、bootstrap 凍結；檔期（伺服器現在跑不跑、哪張桌）進活動自己的 store，呈現掛上後自己拉、沒檔期 return null。檔期不併進 isOn：它隨局變、還分桌，放進去等於每局重算整張總表',
+      'cg-client 那堆 UTIL.isEventCenterLuckyTripleEnabled() 散在派彩／bundle／elog，是因為沒活動層；我們收成三處：總表 isOn、兩塊呈現各自讀大廳／房內旗標、GameHandler 鏡射那道門',
+      '大廳 icon 與 Color War 共用一個位置（cg-client titleContainer，Color War 優先），互斥在 lobbyEntry 自己判，不改 slot 語意；房內各活動獨立疊加',
+      'slot 這個名字討論過 placement／campaignPlacement，最後維持 slot：它是專案既有術語（CLAUDE.md、設計背景 §三、platform/surfaces 的 SlotPropsMap 共 41 處，且 platform 層與 roulette 同步），改名代價大於語意的小卡',
+    ],
+    pitfalls: [
+      '總表守門第 1 道：每塊呈現必須是 import(\'./<name>/<檔>\') 字面值、目錄與列一一對應；第 5 道只算裸 import 與頂層呼叫，const store = create() 不算副作用',
+      'vitest 的 vi.mock 工廠不能引用外面的 vi.fn()：用 vi.hoisted；@typescript-eslint/no-empty-function 擋 () => {} 的佔位，用 let fn!: T 的 definite assignment',
+    ],
+    evidence: ['campaigns 測試 9（含六道守門）、queries 測試 2、config 測試 33；typecheck、lint、build 綠'],
+    todo: ['接大廳 LobbyView 標題旁的入口與房內 slot（RoomFrame，共用檔先問）', 'dev 指令塞假檔期', 'icon／橫幅／進房提示／歷史條／EventCenter 三頁的稿', '核心那一半：PayoutPanel LuckyTriple 版、192x 讓路、500x 標籤分支、GameHandler 鏡射 round.bonusActivities'],
+    files: ['src/integrations/sdk/queries/bonusActivityQueries.ts', 'src/views/campaigns/tripleBonus/store.ts', 'src/views/campaigns/tripleBonus/lobbyEntry.tsx', 'src/views/campaigns/registry.ts'],
+    links: [],
+  },
+  {
+    topic: 'campaign',
+    date: '2026-10-01',
+    title: '四檔活動的 config 旗標照 cg-client 補齊，六個布林可用 URL 開',
+    branch: 'master(未 commit)',
+    summary: [
+      'fields.ts：Event Center 本體 4 個（isLobby/isRoomEventCenterEnabled、isEventCenterRuleEnabled、isShowEventCenterTop10Animation）、Triple Bonus 5 個（原有）、Lucky Draw 6 個（V3 名）、Color War 8 個（含 isShowEvent）；Free Bet 本來就沒旗標（開關是這張桌有沒有免費額度）',
+      '可 URL 覆寫：isLobbyEventCenterEnabled、isRoomEventCenterEnabled、isLobby/isRoomEventCenterLuckyTripleEnabled、isEventCenterLuckyTripleRuleEnabled、isShowEvent（?x=1）',
+      'golden fixture 兩個案例補預設值、base-manifest 重產',
+    ],
+    decisions: ['dev 開活動走 URL 參數而不是 localStorage 覆寫：跟 channelId／defaultMuted 同一套、只動 fields.ts；正式網址也能帶，但只影響 UI，沒檔期照樣沒內容'],
+    pitfalls: ['config 在 ConfigManager.load() 後凍結、沒有訂閱，任何 dev 開關都要重載頁面；光開旗標畫面不會有東西，還要伺服器檔期（之後補假檔期的 dev 指令）'],
+    evidence: ['config 測試 33 綠；fields.ts 與 golden.json 都是 base 檔'],
+    todo: [],
+    files: ['src/integrations/config/fields.ts', 'src/integrations/config/__fixtures__/golden.json', 'team-skills/game-client-sync/scripts/base-manifest.json'],
+    links: [],
+  },
+  {
+    topic: 'campaign',
+    date: '2026-10-01',
+    title: 'cg-client 四檔活動怎麼接：調查與對我們的切法',
+    branch: '—',
+    summary: [
+      'cg-client 沒有 ActivityManager／註冊表，每檔 ad hoc：Config 布林 + UTIL.isXxxEnabled() + NavigationHandler.openXxx() + bundle 名',
+      '三檔共用一個房內套路：每個房間 prefab 塞一個 Container／Manager 元件，進房 lazy 載活動 bundle 的 prefab 到 button／banner／popup／payout 四個容器，字串 getComponent 跨 bundle',
+      'Lucky Triple：大廳 icon＋定時橫幅、進房提示 3s、最近三同歷史條、派彩換版（唯一走共用 PayoutComp swap 的活動）、tableCodes 分桌；Lucky Draw（repo 只有 V3）：沒有大廳入口、自己的派彩；Free Bet：改下注面、只在 UltimateV4 房、沒 config 旗標；Color War：紅點、ColorWarFlow 單一門面、不碰派彩、全桌',
+      '只有大廳 icon 互斥（Lucky Triple 與 Color War 共用 titleContainer、config 二選一）；房內各自獨立，唯一交集是 Lucky Triple 提示出現時暫停 Color War MVP 進房動畫',
+    ],
+    decisions: [
+      '殼（大廳 icon、房內鈕／橫幅／彈窗／歷史條）走 views/campaigns/ 總表 + slot，cg-client 的四個容器就是我們 slot 該長的樣子：lobby.titleIcon、room.sideRail、room.banner、room.overlay、room.resultStrip',
+      '肉（會變核心行為的）不進活動層：Triple Bonus 派彩換版走核心 domain/bonusActivity（已落地）；Free Bet 是第二條下注通道；500x BonusRateLabel 的三同分支進 bonusCellView',
+      'Lucky Draw V4／Color War V2 的 SDK 都還沒有，殼先用同一組 slot',
+    ],
+    pitfalls: ['LuckyTripleRoomUIController 放在 colorgame bundle 而不是活動 bundle（檔頭自己標 @fixme），別照抄那個位置'],
+    evidence: ['兩個 Explore agent 掃過 assets/bundles/activity/ 與 colorgame／GameCommon 的接線點'],
+    todo: ['Triple Bonus 的 Figma 節點（大廳 icon、橫幅、提示、派彩、EventCenter 三頁）'],
+    files: ['docs/plan/資料流與Store設計.md §5', 'docs/設計背景與決策.md §三'],
+    links: [],
+  },
+  {
     topic: '500x',
     date: '2026-10-01',
     title: '500x 電子倍率告一段落：對稿收尾（骰框、標題、派彩字）、小精靈倍率列防爆版、dev 指令',
@@ -1120,14 +1185,14 @@ export default function ColorGameLogPage() {
   const term = q.trim().toLowerCase()
   const flat = (e) => [e.date, e.title, e.branch, ...(e.summary || []), ...(e.decisions || []), ...(e.pitfalls || []), ...(e.evidence || []), ...(e.todo || []), ...(e.files || [])].join(' ').toLowerCase()
   const topicOf = (e) => e.topic ?? 'log'
-  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => topicOf(e) === (tab === 'b500' ? '500x' : tab === 'shared' ? 'shared' : 'log')).filter(([e]) => !term || flat(e).includes(term))
+  const shown = ENTRIES.map((e, i) => [e, i]).filter(([e]) => topicOf(e) === (tab === 'b500' ? '500x' : tab === 'shared' ? 'shared' : tab === 'campaign' ? 'campaign' : 'log')).filter(([e]) => !term || flat(e).includes(term))
   const toggle = (i) => setOpenSet((s) => { const n = new Set(s); n.has(i) ? n.delete(i) : n.add(i); return n })
 
   return (
     <div>
-      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'shared' ? 'colorgame 共用件製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : tab === 'console' ? 'colorgame Console 速查' : 'colorgame 製作歷程'}</h1>
+      <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'shared' ? 'colorgame 共用件製作歷程' : tab === 'campaign' ? 'colorgame 營銷活動製作歷程' : tab === 'gotchas' ? 'colorgame 疑難雜症' : tab === 'console' ? 'colorgame Console 速查' : 'colorgame 製作歷程'}</h1>
       <div className="flex gap-2 mb-4">
-        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['shared', '共用件'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症'], ['console', 'Console 速查']].map(([k, label]) => (
+        {[['log', '大廳歷程'], ['b500', '500x 房間'], ['campaign', '營銷活動'], ['shared', '共用件'], ['state', 'Store 與 Hook'], ['gotchas', '疑難雜症'], ['console', 'Console 速查']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>
         ))}
@@ -1136,6 +1201,8 @@ export default function ColorGameLogPage() {
       <p className="text-muted mb-5 max-w-[62ch]">
         {tab === 'b500'
           ? <>500x（bonusV2）房間的每個工作段落。稿 <code>CG_RWD (Copy)</code>、量測值在 <code>docs/plan/500x房間設計規格.md</code>；行為對照 cg-client <code>ColorGameBonusRoomView</code>。</>
+          : tab === 'campaign'
+          ? <>四檔營銷活動（Triple Bonus／Lucky Draw／Free Bet／Color War）的工作段落。架構：<code>views/campaigns/</code> 總表 ＋ slot（旗標進 <code>isOn</code>、檔期進活動自己的 store）；Free Bet 不是活動、是第二條下注通道。行為對照 cg-client <code>assets/bundles/activity/</code>；設計理由在 <code>docs/設計背景與決策.md</code> §三、分層在 <code>docs/plan/資料流與Store設計.md</code> §5。</>
           : tab === 'shared'
           ? <>所有房間共用的東西：<code>views/room/shared/</code>（路書列、大路書面板、底部資訊列…）、跨大廳與房間的 <code>views/components/RoadStrip</code>、<code>game/hooks/useRoadSummary</code>。動到這些會影響每一桌，改之前先問。稿「房內路書」<code>yahO4X8R0Q5FIoIA0Z0wPn</code>。</>
           : <><code>nexus-colorgame-client</code> 每個工作段落的紀錄:做了什麼、做了哪些決定、踩到什麼坑、拿什麼證據說做完了、留下什麼。
@@ -1161,7 +1228,7 @@ export default function ColorGameLogPage() {
       <h2>怎麼加一筆</h2>
       <Code>{`src/pages/ColorGameLogPage.jsx 的 ENTRIES 最前面加一個物件(欄位都可省略):
 {
-  topic: '500x',        // '500x' 500x 房間 tab、'shared' 共用件 tab；大廳省略
+  topic: '500x',        // '500x' 500x 房間 tab、'campaign' 營銷活動 tab、'shared' 共用件 tab；大廳省略
   date: '2026-09-10',
   title: '一句話',
   branch: 'benji-dev(未 commit)| commit abc1234',
