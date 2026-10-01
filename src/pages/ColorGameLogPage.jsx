@@ -22,18 +22,20 @@ const ENTRIES = [
     title: 'Triple Bonus：大廳入口 icon、活動中心（排行榜／新聞／規則）、假檔期開關',
     branch: 'master(未 commit)',
     summary: [
-      '大廳入口 TripleBonusLobbyEntry：稿 403:292465 的 logo 70×70 放版位右 26.5、頂 −4；點了送埋點 Lobby.LuckyTripleChest、開活動中心排行榜頁。cg-client 是骨架 icon 循環，先放靜態',
+      '大廳入口 TripleBonusLobbyEntry：點擊框 70×70 放版位右 26.5、頂 −4（稿 403:292465）；畫面是骨架 cg_triple_icon（cg-client h5_cg_lucky_triple 的 icon 循環）畫在大廳 lobby-fx 畫布上，投影框 69.6×53 以骨架原點對齊點擊框中心。點了送埋點 Lobby.LuckyTripleChest、開活動中心排行榜頁',
+      '大廳畫布開了一個通用口 LobbyFxSpine（lobbyFx.tsx → LobbyFxScene.LobbySpine）：活動件給 skel／atlas／動畫／投影框就能畫在同一張畫布上，同一道 lazy 邊界與 runtime 等待',
       '活動中心 TripleBonusCenter：標題圖、關閉、Rule 鈕（旗標；NEWS 頁不出）、LEADERBOARD／NEWS 分頁。排行榜：日期標（YYYY-MM-DD，cg-client LuckyTriple 版）、WINNERS／HISTORY／WINNINGS 子分頁、欄頭與列（前三名各一組配色）、面板底自己那列、空榜吉祥物＋文案、HISTORY 翻日期（historyDates，可不連續、最多 30 天、頭尾藏箭頭）',
       'NEWS／WINNINGS 是圖片卡清單（imgTitleUrl 接 siteAssets）＋點開大圖＋CLOSE 回清單；NEW 角標讀寫 localStorage["newsClick"]（沿用 cg-client 鍵名）。Rule 是伺服器一張圖',
       '資料：SdkAdapter 加 getRankList／getEventCenter 兩個薄 getter；queries rankListQueries（GET_RANK_LIST 等同 rankId 的 REFRESH 事件）、eventCenterQueries（GET_NEWS／REWARD／RULE 等 UPDATE_*，model 有現值先用——SDK 10s 節流期內不發事件）；useLuckyTripleRank 今日榜 60s 不重打、歷史榜依日期快取',
       'dev：?tripleBonusFake=1 用假檔期（全桌、進行中、三筆最近中獎）與假榜單（10 列＋自己第 18），只在 DEV／staging',
-      '圖：assets-raw/campaign/ → public/assets/campaign/（title、board header、coming soon 吉祥物、rule icon、lobby icon）',
+      '圖：assets-raw/campaign/ → public/assets/campaign/（title、board header、coming soon 吉祥物、rule icon）；活動中心關閉鈕用共用 icon_popup_close.svg，不另切',
     ],
     decisions: [
       '活動中心 portal 到大廳舞台根節點（新 id LOBBY_STAGE_ID，views/lobby/lobbyStage.ts）：入口在標題 slot 裡、上面有 transform 的 banner 推移容器，fixed 會被它攔住只蓋到中間一段',
       '假資料放活動目錄、用 URL 參數開，不放 src/debug：守門不准活動目錄以外 import 活動目錄',
       '日期標用 cg-client LuckyTriple 的單日 YYYY-MM-DD；稿上的「DEC 1st 12AM - DEC 7th 12PM」是通用 EventCenter 的格式（行為 Cocos 贏）',
       'WINNINGS 不是表格，是獎勵圖片清單（cg-client ColorGameReward）',
+      '入口 icon 不走 spine→CSS 匯出：catalog 把 lucky_triple_icon 定為 spine 模式（logo 骰＋掃光的多件循環），fx:export 會拒絕；直接用 Pixi Spine 投影在大廳畫布',
     ],
     pitfalls: [
       'Figma images API 匯出的是設計 px 的 4×（稿 2× 再 scale=2），要縮回 2× 再進 webp 管線，不然圖檔三四百 KB',
