@@ -45,18 +45,19 @@ const ENTRIES = [
   {
     topic: 'campaign',
     date: '2026-10-01',
-    title: '四檔活動的 config 旗標照 cg-client 補齊，六個布林可用 URL 開',
+    title: '四檔活動的 config 旗標照 cg-client 補齊，四個布林可用 URL 開；通用 Event Center 的四個不補',
     branch: 'master(未 commit)',
     summary: [
-      'fields.ts：Event Center 本體 4 個（isLobby/isRoomEventCenterEnabled、isEventCenterRuleEnabled、isShowEventCenterTop10Animation）、Triple Bonus 5 個（原有）、Lucky Draw 6 個（V3 名）、Color War 8 個（含 isShowEvent）；Free Bet 本來就沒旗標（開關是這張桌有沒有免費額度）',
-      '可 URL 覆寫：isLobbyEventCenterEnabled、isRoomEventCenterEnabled、isLobby/isRoomEventCenterLuckyTripleEnabled、isEventCenterLuckyTripleRuleEnabled、isShowEvent（?x=1）',
+      'fields.ts：Triple Bonus 5 個（原有）、Lucky Draw 6 個（V3 名）、Color War 8 個（含 isShowEvent），共 19 個；Free Bet 本來就沒旗標（開關是這張桌有沒有免費額度）',
+      'cg-client 的「通用 Event Center」四個（isLobby/isRoomEventCenterEnabled、isEventCenterRuleEnabled、isShowEventCenterTop10Animation）是四檔之外的舊模組（房內通用鈕、Top10 進房動畫），不補；原本就有的 isLobbyEventCenterEnabled 一併拿掉，LobbyGameTitle 改讀「大廳會不會有活動入口」＝ isLobbyEventCenterLuckyTripleEnabled ‖ isLobbyColorWarEnabled 決定標題靠左或置中',
+      '可 URL 覆寫：isLobby/isRoomEventCenterLuckyTripleEnabled、isEventCenterLuckyTripleRuleEnabled、isShowEvent（?x=1）',
       'golden fixture 兩個案例補預設值、base-manifest 重產',
     ],
     decisions: ['dev 開活動走 URL 參數而不是 localStorage 覆寫：跟 channelId／defaultMuted 同一套、只動 fields.ts；正式網址也能帶，但只影響 UI，沒檔期照樣沒內容'],
     pitfalls: ['config 在 ConfigManager.load() 後凍結、沒有訂閱，任何 dev 開關都要重載頁面；光開旗標畫面不會有東西，還要伺服器檔期（之後補假檔期的 dev 指令）'],
     evidence: ['config 測試 33 綠；fields.ts 與 golden.json 都是 base 檔'],
     todo: [],
-    files: ['src/integrations/config/fields.ts', 'src/integrations/config/__fixtures__/golden.json', 'team-skills/game-client-sync/scripts/base-manifest.json'],
+    files: ['src/integrations/config/fields.ts', 'src/integrations/config/__fixtures__/golden.json', 'src/views/lobby/LobbyGameTitle.tsx', 'team-skills/game-client-sync/scripts/base-manifest.json'],
     links: [],
   },
   {
