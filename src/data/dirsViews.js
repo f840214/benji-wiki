@@ -336,8 +336,8 @@ export const DIRS_VIEWS = [
     ['campaigns/hooks.ts', '活動工廠綁定', '把總表與來源組裝綁進 framework 工廠，只綁這一次。'],
     ['campaigns/registry.ts +test', '活動總表', '每檔活動一列，全專案唯一認識 campaigns/<name>/ 目錄的地方。'],
     ['campaigns/slots.ts', 'slot 契約', 'slot 是「畫面願意在某處放活動 UI 並提供這些 props」的約定，不是 DOM 位置。'],
-    ['campaigns/tripleBonus/lobbyEntry.tsx', 'Triple Bonus 入口', '掛在 lobby.titleIcon；旗標關或 Color War 開就不畫，但資料照拉。'],
-    ['campaigns/tripleBonus/store.ts +test', 'Triple Bonus 檔期', '只管檔期：load() 拉 GET_BONUS_ACTIVITIES，生效判斷在 domain。'],
+    ['campaigns/tripleBonus/TripleBonusLobbyEntry.tsx', 'Triple Bonus 入口', '掛在 lobby.titleIcon；旗標關或 Color War 開就不畫，但資料照拉。'],
+    ['campaigns/tripleBonus/useTripleBonusStore.ts +test', 'Triple Bonus 檔期', '只管檔期：load() 拉 GET_BONUS_ACTIVITIES，生效判斷在 domain。'],
   ]],
   ['views/runtime', [
     ['runtime/createPixiRuntimeSetup.ts', 'Pixi 啟動工廠', '建單例式初始化函式，依賴由入口注入，CI 測試不必載 sibling framework。'],

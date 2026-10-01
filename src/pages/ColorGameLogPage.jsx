@@ -23,8 +23,8 @@ const ENTRIES = [
     branch: 'master(未 commit)',
     summary: [
       'integrations/sdk/queries/bonusActivityQueries.ts：包 SDK GET_BONUS_ACTIVITIES（GTS activity.getBonusActivities）成 Promise，10s 逾時回 null',
-      'views/campaigns/tripleBonus/store.ts：useTripleBonusStore — status／activities／lastWinRoundCodes；load(tableType, tableCode?) 只留 LuckyTriple 型、最近中獎局號反轉成新到舊、桌號不在 tableCodes 就清空；reset 隨呈現卸載；後發查詢蓋先發、reset 後回來的舊結果丟掉',
-      'views/campaigns/registry.ts 第一列 tripleBonus：isOn ＝ 大廳旗標 ‖ 房內旗標（聯集）；掛 lobbyEntry.tsx（現在只掛資料不畫東西，icon 等稿）',
+      'views/campaigns/tripleBonus/useTripleBonusStore.ts：useTripleBonusStore — status／activities／lastWinRoundCodes；load(tableType, tableCode?) 只留 LuckyTriple 型、最近中獎局號反轉成新到舊、桌號不在 tableCodes 就清空；reset 隨呈現卸載；後發查詢蓋先發、reset 後回來的舊結果丟掉',
+      'views/campaigns/registry.ts 第一列 tripleBonus：isOn ＝ 大廳旗標 ‖ 房內旗標（聯集）；掛 TripleBonusLobbyEntry.tsx（現在只掛資料不畫東西，icon 等稿）',
       '還沒有畫面呼叫 useCampaignSurfaces，整包仍被搖掉、零 chunk',
     ],
     decisions: [
@@ -39,7 +39,7 @@ const ENTRIES = [
     ],
     evidence: ['campaigns 測試 9（含六道守門）、queries 測試 2、config 測試 33；typecheck、lint、build 綠'],
     todo: ['接大廳 LobbyView 標題旁的入口與房內 slot（RoomFrame，共用檔先問）', 'dev 指令塞假檔期', 'icon／橫幅／進房提示／歷史條／EventCenter 三頁的稿', '核心那一半：PayoutPanel LuckyTriple 版、192x 讓路、500x 標籤分支、GameHandler 鏡射 round.bonusActivities'],
-    files: ['src/integrations/sdk/queries/bonusActivityQueries.ts', 'src/views/campaigns/tripleBonus/store.ts', 'src/views/campaigns/tripleBonus/lobbyEntry.tsx', 'src/views/campaigns/registry.ts'],
+    files: ['src/integrations/sdk/queries/bonusActivityQueries.ts', 'src/views/campaigns/tripleBonus/useTripleBonusStore.ts', 'src/views/campaigns/tripleBonus/TripleBonusLobbyEntry.tsx', 'src/views/campaigns/registry.ts'],
     links: [],
   },
   {
