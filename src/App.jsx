@@ -6,6 +6,7 @@ import HtmlTags from './pages/HtmlTags.jsx'
 import ReactPage from './pages/ReactPage.jsx'
 import ReactDomPage from './pages/ReactDomPage.jsx'
 import ReactRouterPage from './pages/ReactRouterPage.jsx'
+import ColorGameRefPage from './pages/ColorGameRefPage.jsx'
 import ZustandPage from './pages/ZustandPage.jsx'
 import NexusClientPage from './pages/NexusClientPage.jsx'
 import PixiPage from './pages/PixiPage.jsx'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/colorgame-dirs" element={<ColorGameDirsPage />} />
         <Route path="/figma-to-react" element={<FigmaToReactPage />} />
         <Route path="/colorgame-log" element={<ColorGameLogPage />} />
+        <Route path="/colorgame-ref" element={<ColorGameRefPage />} />
       </Route>
     </Routes>
   )
