@@ -8,7 +8,7 @@ import ReactDomPage from './pages/ReactDomPage.jsx'
 import ReactRouterPage from './pages/ReactRouterPage.jsx'
 import ColorGameRefPage from './pages/ColorGameRefPage.jsx'
 import ZustandPage from './pages/ZustandPage.jsx'
-import NexusClientPage from './pages/NexusClientPage.jsx'
+import ColorGameArchPage from './pages/ColorGameArchPage.jsx'
 import PixiPage from './pages/PixiPage.jsx'
 import ColorGameDirsPage from './pages/ColorGameDirsPage.jsx'
 import FigmaToReactPage from './pages/FigmaToReactPage.jsx'
@@ -25,7 +25,7 @@ export default function App() {
         <Route path="/react-dom" element={<ReactDomPage />} />
         <Route path="/react-router" element={<ReactRouterPage />} />
         <Route path="/zustand" element={<ZustandPage />} />
-        <Route path="/nexus-client" element={<NexusClientPage />} />
+        <Route path="/colorgame-arch" element={<ColorGameArchPage />} />
         <Route path="/pixi" element={<PixiPage />} />
         <Route path="/colorgame-dirs" element={<ColorGameDirsPage />} />
         <Route path="/figma-to-react" element={<FigmaToReactPage />} />

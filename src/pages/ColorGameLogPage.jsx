@@ -759,7 +759,7 @@ const ENTRIES = [
       '可插拔 UI 只留檔期活動一張總表(views/campaigns/),skins registry 移除。',
       'domain 9 → 15 支,統一改為回報事實,+117 測試。',
     ],
-    links: [['架構頁', '#/nexus-client']],
+    links: [['架構頁', '#/colorgame-arch']],
   },
 ]
 
@@ -826,7 +826,7 @@ export default function ColorGameLogPage() {
   return (
     <div>
       <h1>{tab === 'b500' ? 'colorgame 500x 房間製作歷程' : tab === 'shared' ? 'colorgame 共用件製作歷程' : tab === 'campaign' ? 'colorgame 營銷活動製作歷程' : 'colorgame 製作歷程'}</h1>
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         {[['log', '大廳歷程'], ['b500', '500x 房間'], ['campaign', '營銷活動'], ['shared', '共用件']].map(([k, label]) => (
           <button key={k} type="button" onClick={() => setTab(k)}
             className={`px-3 py-1 rounded-lg border text-[.85rem] cursor-pointer ${tab === k ? 'border-accent-deep text-accent' : 'border-line text-muted hover:text-accent'}`}>{label}</button>

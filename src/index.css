@@ -21,7 +21,7 @@
 @layer base {
   body { @apply bg-bg text-ink font-sans leading-[1.65]; }
   h1 { @apply text-[1.7rem] font-bold mb-2 text-balance; }
-  h2 { @apply text-lg font-semibold mt-9 mb-3 pb-1.5 border-b border-line; }
+  h2 { @apply text-lg font-semibold mt-9 mb-3 pb-1.5 border-b border-line max-md:mt-7; }
   h3 { @apply text-base font-semibold mt-6 mb-2; }
   p { @apply max-w-[70ch]; }
   a { @apply text-accent hover:underline; }

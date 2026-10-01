@@ -81,8 +81,8 @@ export default function DataTable({ sections, headers, placeholder = '搜尋…'
         <section key={title}>
           <h2>{title}</h2>
           <div className="bg-panel border border-line rounded-xl overflow-x-auto mt-3 mb-6">
-            <table className="w-full border-collapse text-sm">
-              <thead>
+            <table className="w-full border-collapse text-sm max-md:block">
+              <thead className="max-md:hidden">
                 <tr>
                   {headers.map((h) => (
                     <th
@@ -94,20 +94,20 @@ export default function DataTable({ sections, headers, placeholder = '搜尋…'
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="max-md:block">
                 {rows.map((r) => (
-                  <tr key={r[0] + r[2]}>
+                  <tr key={r[0] + r[2]} className="max-md:block max-md:border-t max-md:border-line max-md:px-3 max-md:py-2.5">
                     <td
-                      className="px-3.5 py-2 border-t border-line align-top font-mono text-[.8rem] text-accent whitespace-nowrap cursor-pointer hover:underline"
+                      className="px-3.5 py-2 border-t border-line align-top font-mono text-[.8rem] text-accent whitespace-nowrap cursor-pointer hover:underline max-md:block max-md:p-0 max-md:border-0 max-md:whitespace-normal max-md:break-all"
                       title="點擊複製"
                       onClick={() => copy(r[0])}
                     >
                       {r[0]}
                     </td>
-                    <td className="px-3.5 py-2 border-t border-line align-top font-mono text-xs text-muted">
+                    <td className="px-3.5 py-2 border-t border-line align-top font-mono text-xs text-muted max-md:block max-md:p-0 max-md:mt-0.5 max-md:border-0">
                       {r[1]}
                     </td>
-                    <td className="px-3.5 py-2 border-t border-line align-top">{r[2]}</td>
+                    <td className="px-3.5 py-2 border-t border-line align-top max-md:block max-md:p-0 max-md:mt-1 max-md:border-0 max-md:text-[.85rem]">{r[2]}</td>
                   </tr>
                 ))}
               </tbody>

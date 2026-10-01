@@ -9,7 +9,7 @@ const TOPICS = [
   { to: '/react-dom', tag: 'React 生態', title: 'react-dom', desc: 'createRoot、Portal、與 react 套件的分工。' },
   { to: '/react-router', tag: 'React 生態', title: 'react-router-dom', desc: '路由設定、Link 導航、useNavigate / useParams。' },
   { to: '/zustand', tag: 'React 生態', title: 'Zustand', desc: '建 store、selector 用法、persist 存檔。' },
-  { to: '/nexus-client', tag: '專案', title: 'nexus client', desc: 'roulette / colorgame 共用架構:技術棧、分環資料流、功能實作走讀(列表 / 定位 / 進房 / 傳資料 / 收發事件)、兩專案差異、skills。' },
+  { to: '/colorgame-arch', tag: '專案', title: 'colorgame 架構', desc: 'nexus-colorgame-client 的架構:技術棧、指令、四個環與資料流三問、房間(RoomFrame / planes)與大廳、營銷活動層、資源與 FX 管線、驗證流程、鐵則、skills。' },
   { to: '/colorgame-dirs', tag: '專案', title: 'colorgame 目錄清單', desc: 'nexus-colorgame-client 逐資料夾、逐檔案說明:每個資料夾放什麼、每支檔案在做什麼、哪些是真的哪些是佔位。' },
   { to: '/pixi', tag: '專案', title: 'Pixi / Spine', desc: 'nexus client 的 PixiJS 8 + Spine:用到的 API、兩種用法、資源生命週期、派彩三檔拍板、Spine 交付規則、踩過的坑。' },
   { to: '/figma-to-react', tag: '專案', title: 'Figma → React', desc: '從 Figma 稿到 React 元件的五階段流程:node id → 讀稿 → design-spec → 抓圖 → TSX → 量測驗證;MCP 三個入口、圖片落點、實走大廳稿的教訓。' },

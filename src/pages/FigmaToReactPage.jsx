@@ -4,7 +4,7 @@ import Code from '../components/Code.jsx'
 // Figma → React 完整流程筆記(nexus-colorgame-client 的 figma-to-react skill)。
 // 資料來源:.claude/skills/figma-to-react/(SKILL.md + references/)、docs/資源規範與流程.md §二/§四/§七/§九、
 // scripts/figma-export-assets.sh、.mcp.json。2026-09-09 以大廳稿 lobby_all-size node 1:153 實走一次整理。
-// 相關頁:#/nexus-client(架構)、#/colorgame-dirs(逐檔)、#/pixi(Spine 邊界)。
+// 相關頁:#/colorgame-arch(架構)、#/colorgame-dirs(逐檔)、#/pixi(Spine 邊界)。
 
 const STAGES = [
 ['0 scope:先定範圍', [
@@ -93,7 +93,7 @@ export default function FigmaToReactPage() {
         nexus client 把一份 Figma 稿變成 React 元件的標準流程(repo 裡的 <code>figma-to-react</code> skill)。
         核心是<b>先量、寫成 spec、再寫程式、最後拿數字驗證</b>,不是看著截圖直接刻。
         這頁記五個階段、MCP 與抓圖的兩條路,以及 2026-09-09 拿大廳稿實走一次的心得。
-        架構全貌在 <a href="#/nexus-client">nexus client</a> 頁,資產格式與落點的權威是 repo 的 <code>docs/資源規範與流程.md</code>。
+        架構全貌在 <a href="#/colorgame-arch">colorgame 架構</a> 頁,資產格式與落點的權威是 repo 的 <code>docs/資源規範與流程.md</code>。
       </p>
 
       <h2>操作者視角:我要做一個元件,實際按什麼順序</h2>

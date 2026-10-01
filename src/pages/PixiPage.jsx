@@ -111,7 +111,7 @@ export default function PixiPage() {
       <p className="text-muted mb-5 max-w-[62ch]">
         nexus client 裡 PixiJS 8 的定位很窄:<b>只畫 Spine 骨骼動畫</b>,全房兩張 canvas,一律經 <code>@toppath/pixi-game-framework</code>,
         不自建 Application / ticker / renderer。注盤、籌碼、高亮、面板全是 DOM/SVG。這頁記用到的東西、兩種用法、資源生命週期,
-        以及一路踩過的坑。架構全貌在 <a href="#/nexus-client">nexus client</a> 頁。
+        以及一路踩過的坑。架構全貌在 <a href="#/colorgame-arch">colorgame 架構</a> 頁。
       </p>
 
       <DataTable sections={USED} headers={['東西', '用在哪', '怎麼用 / 注意']} placeholder="搜尋 API、模組…" />
