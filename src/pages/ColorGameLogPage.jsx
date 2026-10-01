@@ -1015,12 +1015,11 @@ __GAME_DEVTOOLS__.run('assets.audit')         // 資產抓漏`,
   {
     title: '500x 四段狀態（在 500x 桌內，逐段打）',
     code: `__GAME_DEVTOOLS__.run('game.bonus.betting')   // 開局：注區展開、清結果、換局號
-__GAME_DEVTOOLS__.run('game.bonus.mascot')    // 小精靈：補 Double 已確認注 → 停注 → 2.5s 後開出綠二同（Double 命中 15X）
-__GAME_DEVTOOLS__.run('game.bonus.mascotTriple') // 小精靈：補 Triple 已確認注 → 停注 → 2.5s 後開出黃三同（Triple 命中 500X）
+__GAME_DEVTOOLS__.run('game.bonus.mascot')    // 小精靈：補自注→停注→2.5s 開綠二同（Double 100X），播完 7s 後換局再走黃三同（Triple 500X）；兩隻沒辦法同一局
 __GAME_DEVTOOLS__.run('game.bonus.stop')      // 停注：注區直接跳到下面、翻電子倍率，1.4s 後自動縮小
-__GAME_DEVTOOLS__.run('game.bonus.results')   // 開出綠二同：縮小態，Double 15X、綠 2X、黃 1X
+__GAME_DEVTOOLS__.run('game.bonus.results')   // 開出綠二同：縮小態，Double 100X、綠 2X、黃 1X
 __GAME_DEVTOOLS__.run('game.bonus.payout')    // 派彩相位（同上結果）`,
-    note: '明細固定：807 15X 鎖綠、808 500X 鎖黃、白 5X 二同、綠 100X 三同。要看下注額先用 bet.add 或直接寫 useBetStore。真桌下一個 SDK 事件會覆蓋回去，用 dev 桌最穩。',
+    note: '明細固定：807 100X 鎖綠、808 500X 鎖黃、白 5X 二同、綠 100X 三同。要看下注額先用 bet.add 或直接寫 useBetStore。真桌下一個 SDK 事件會覆蓋回去，用 dev 桌最穩。',
   },
   {
     title: '直接寫 store（模擬相位／結果／電子倍率）',
@@ -1029,7 +1028,7 @@ const url = performance.getEntriesByType('resource').map(e => e.name).find(n => 
 const { useGameStore } = await import(url)
 // 2. 停注 + 電子倍率
 useGameStore.setState({ phase: 'dealing', gameState: 3, srcResults: [], roundCode: 'SIM-1',
-  rateDetail: { 807: { rate: 15, matchColors: 2, bonusColor: 806 }, 808: { rate: 500, matchColors: 3, bonusColor: 801 }, 802: { rate: 5, matchColors: 2 } } })
+  rateDetail: { 807: { rate: 100, matchColors: 2, bonusColor: 806 }, 808: { rate: 500, matchColors: 3, bonusColor: 801 }, 802: { rate: 5, matchColors: 2 } } })
 // 3. 派彩（綠二同 → 807 命中）
 useGameStore.setState({ phase: 'payout', gameState: 5, srcResults: [806, 801, 806] })
 // 下注額：同法 import useBetStore，setState({ confirmedBets: { anyTriple: 10 } })`,
