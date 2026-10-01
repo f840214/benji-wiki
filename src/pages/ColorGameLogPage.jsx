@@ -19,6 +19,36 @@ const ENTRIES = [
   {
     topic: 'campaign',
     date: '2026-10-01',
+    title: 'Triple Bonus：大廳入口 icon、活動中心（排行榜／新聞／規則）、假檔期開關',
+    branch: 'master(未 commit)',
+    summary: [
+      '大廳入口 TripleBonusLobbyEntry：稿 403:292465 的 logo 70×70 放版位右 26.5、頂 −4；點了送埋點 Lobby.LuckyTripleChest、開活動中心排行榜頁。cg-client 是骨架 icon 循環，先放靜態',
+      '活動中心 TripleBonusCenter：標題圖、關閉、Rule 鈕（旗標；NEWS 頁不出）、LEADERBOARD／NEWS 分頁。排行榜：日期標（YYYY-MM-DD，cg-client LuckyTriple 版）、WINNERS／HISTORY／WINNINGS 子分頁、欄頭與列（前三名各一組配色）、面板底自己那列、空榜吉祥物＋文案、HISTORY 翻日期（historyDates，可不連續、最多 30 天、頭尾藏箭頭）',
+      'NEWS／WINNINGS 是圖片卡清單（imgTitleUrl 接 siteAssets）＋點開大圖＋CLOSE 回清單；NEW 角標讀寫 localStorage["newsClick"]（沿用 cg-client 鍵名）。Rule 是伺服器一張圖',
+      '資料：SdkAdapter 加 getRankList／getEventCenter 兩個薄 getter；queries rankListQueries（GET_RANK_LIST 等同 rankId 的 REFRESH 事件）、eventCenterQueries（GET_NEWS／REWARD／RULE 等 UPDATE_*，model 有現值先用——SDK 10s 節流期內不發事件）；useLuckyTripleRank 今日榜 60s 不重打、歷史榜依日期快取',
+      'dev：?tripleBonusFake=1 用假檔期（全桌、進行中、三筆最近中獎）與假榜單（10 列＋自己第 18），只在 DEV／staging',
+      '圖：assets-raw/campaign/ → public/assets/campaign/（title、board header、coming soon 吉祥物、rule icon、lobby icon）',
+    ],
+    decisions: [
+      '活動中心 portal 到大廳舞台根節點（新 id LOBBY_STAGE_ID，views/lobby/lobbyStage.ts）：入口在標題 slot 裡、上面有 transform 的 banner 推移容器，fixed 會被它攔住只蓋到中間一段',
+      '假資料放活動目錄、用 URL 參數開，不放 src/debug：守門不准活動目錄以外 import 活動目錄',
+      '日期標用 cg-client LuckyTriple 的單日 YYYY-MM-DD；稿上的「DEC 1st 12AM - DEC 7th 12PM」是通用 EventCenter 的格式（行為 Cocos 贏）',
+      'WINNINGS 不是表格，是獎勵圖片清單（cg-client ColorGameReward）',
+    ],
+    pitfalls: [
+      'Figma images API 匯出的是設計 px 的 4×（稿 2× 再 scale=2），要縮回 2× 再進 webp 管線，不然圖檔三四百 KB',
+      '滿版 fixed 覆蓋層在 transform 祖先裡會變成 absolute 的語意：lobby-pushed 有 translateY，fixed inset-0 只蓋到它的盒子',
+      'formatjs 的 no-literal-string-in-jsx 連 aria-label／"₱"／"-" 都擋：aria 走 t()，符號走 platform/ui/glyphs',
+      '@eslint-react/purity 擋 render 期 document.getElementById：放 useState 初始化',
+    ],
+    evidence: ['正式大廳（dev 渠道 + 假檔期）：入口 (310.5,−4) 70×70；活動中心排行榜 10 列、HISTORY 6 列、Rule 彈窗載到伺服器真的規則圖；NEWS／WINNINGS dev 無資料顯示空態。campaigns 測試 14、queries 4、typecheck、lint、build 綠'],
+    todo: ['房內：側欄 icon、橫幅、進房提示、最近三同（RoomFrame 開洞先問）', '派彩換版 ＋ GameHandler 鏡射 round.bonusActivities', '入口改骨架動畫（spine→CSS）', '活動中心 elog（TabSelect／Close／Rule…）', '20:9／21:9 的面板高度（現在固定 768 置中）'],
+    files: ['src/views/campaigns/tripleBonus/*', 'src/integrations/sdk/queries/rankListQueries.ts', 'src/integrations/sdk/queries/eventCenterQueries.ts', 'src/integrations/sdk/SdkAdapter.ts', 'src/views/lobby/lobbyStage.ts', 'src/views/LobbyView.tsx'],
+    links: [],
+  },
+  {
+    topic: 'campaign',
+    date: '2026-10-01',
     title: 'Triple Bonus 起手：活動 store、總表第一列、查詢',
     branch: 'master(未 commit)',
     summary: [
