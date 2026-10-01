@@ -18,6 +18,33 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     topic: '500x',
+    date: '2026-10-01',
+    title: '500x 電子倍率告一段落：對稿收尾（骰框、標題、派彩字）、小精靈倍率列防爆版、dev 指令',
+    branch: 'master',
+    summary: [
+      '示意骰框對 ingame 稿取色（框身／邊線／底板／骰），框放大成 48.5×26.7、框身四邊內縮 0.5，六框各自定位、中心對稿（BOX_LEFT 4.2、BOX_PITCH_X 48.35、BOX_TOP 23.65／49.95）',
+      '組合注格：格頂 −1.5、標題 12.5 Inter 700（大寫頂 7.4）、ANY Triple 色 #FEE31C／邊 #D14E04、金額列右距 10',
+      '組合注格派彩字照新稿 642:10451（新副本 jW8FQQhsiHKUPLzFpoXYy0）：19.9、字距 0.141em、大寫中心 12.85，改以籌碼中心置中',
+      '小精靈倍率列：量自然寬超過 maxW（組合注 96、六色 70）就整列等比縮，三顆骰＋500X 不再爆出牌子',
+      'devtools game.bonus.mascot：補自注 → 停注 → 2.5s 開綠二同（Double 100X）→ 7s 後換局走黃三同（Triple 500X）',
+    ],
+    decisions: [
+      '派彩字靠右對齊時一兩位數會偏到格右角，稿的 500X 本來就壓在籌碼正上方，所以改成以籌碼中心置中、字距尾格用 ps 補回',
+      '六色格派彩字（25.5）稿上沒有新樣本，先不動',
+      '一局只會是二同或三同，Double 與 Triple 的小精靈沒辦法同局出，dev 指令改成接著跑',
+    ],
+    pitfalls: [
+      'Figma REST 很容易 429：取色改用 Figma MCP get_screenshot 抓 ingame 稿 1728px 再用 PIL 取樣；REST 只拿節點幾何',
+      'pane-1 的稿是圖檔、不一定跟 Figma 節點同版；對位用 Figma 節點量、看感覺用 pane-1 curtain',
+      'CG_RWD (Copy) 又換了副本：jW8FQQhsiHKUPLzFpoXYy0（r2KK2… 已失效），docs/資源規範與流程.md §二 還沒更新',
+    ],
+    evidence: ['pane-1 inspect：標題盒 (7.6, 5.6) 寬 97.3、人數右緣 195.5；小精靈列 Double 250X 自然寬 91（不縮）；vitest room 567、lint、typecheck'],
+    todo: ['六色格派彩字要不要跟著縮', '骨架框版位每幀量仍慢注區一幀（框架量測層）', '更新資源規範 §二 的 fileKey'],
+    files: ['src/views/room/rooms/bonus/ComboColorBox.tsx', 'BonusBoard.tsx', 'BonusMascot.tsx', 'mascotTimeline.ts', 'src/debug/gameCommands.ts'],
+    links: [],
+  },
+  {
+    topic: '500x',
     date: '2026-09-30',
     title: '組合注格倍率標整個換成骨架框；注區 DOM 要蓋在 baseFx canvas 上的做法（useHudPlacement）',
     branch: 'master(未 commit)',
