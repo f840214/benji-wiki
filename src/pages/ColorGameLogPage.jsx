@@ -36,6 +36,10 @@ const ENTRIES = [
       '日期標用 cg-client LuckyTriple 的單日 YYYY-MM-DD；稿上的「DEC 1st 12AM - DEC 7th 12PM」是通用 EventCenter 的格式（行為 Cocos 贏）',
       'WINNINGS 不是表格，是獎勵圖片清單（cg-client ColorGameReward）',
       '入口 icon 不走 spine→CSS 匯出：catalog 把 lucky_triple_icon 定為 spine 模式（logo 骰＋掃光的多件循環），fx:export 會拒絕；直接用 Pixi Spine 投影在大廳畫布',
+      '活動中心 RWD（centerLayout.ts）：面板鋪滿大廳縮放舞台，頂上的標題／分頁／日期標／子分頁錨頂，紅板與自己那列錨底邊（top＋bottom，不算舞台高），寬形態板隨舞台寬拉寬、432 欄內容整欄置中（colLeft）。桌機瀏覽器鎖手機框，4:3 要在平板上看',
+      'HISTORY 日期清單照 cg-client HistoryDateListHelper：不含今天、舊排程每筆只取 startTime 那天、只收 30 天內，用 setDate 逐日走（夏令時間）；沒有可翻日期就不查（之前會退回今日榜，HISTORY 跟 WINNERS 一樣）；清單一換 index 回最新一天',
+      'WINNERS 規則照 cg-client：有沒有今日榜看 _resolveShowWinnerRank（檔期開始日看時刻、否則看活動起訖），開在哪頁看今日榜或活動第一天，沒榜不查、日期照 _getWinnerDisplayDate；未上榜（rank ≤ 0）顯示 Unranked 但金額仍顯示伺服器分數',
+      'eventCenter 查詢逾時改回 model 現值（SDK 10 秒節流期內不發事件，空清單會等滿 10 秒才顯示「沒資料」）；活動中心找不到舞台就地渲染（測試才會真的掛起面板）',
     ],
     pitfalls: [
       'Figma images API 匯出的是設計 px 的 4×（稿 2× 再 scale=2），要縮回 2× 再進 webp 管線，不然圖檔三四百 KB',
