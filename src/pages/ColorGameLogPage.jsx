@@ -40,6 +40,9 @@ const ENTRIES = [
       'HISTORY 日期清單照 cg-client HistoryDateListHelper：不含今天、舊排程每筆只取 startTime 那天、只收 30 天內，用 setDate 逐日走（夏令時間）；沒有可翻日期就不查（之前會退回今日榜，HISTORY 跟 WINNERS 一樣）；清單一換 index 回最新一天',
       'WINNERS 規則照 cg-client：有沒有今日榜看 _resolveShowWinnerRank（檔期開始日看時刻、否則看活動起訖），開在哪頁看今日榜或活動第一天，沒榜不查、日期照 _getWinnerDisplayDate；未上榜（rank ≤ 0）顯示 Unranked 但金額仍顯示伺服器分數',
       'eventCenter 查詢逾時改回 model 現值（SDK 10 秒節流期內不發事件，空清單會等滿 10 秒才顯示「沒資料」）；活動中心找不到舞台就地渲染（測試才會真的掛起面板）',
+      '4:3 補強：排行榜列與欄頭隨列寬分布（名次暱稱貼左、次數在 52.5% 置中、金幣＋金額貼右，自己那列同）；新聞／獎勵卡高度照 376.5:137.5 隨寬變，圖的拉伸比例四種畫面一致（圖要寫明確寬高，h-auto 會照原圖比例長出卡外）',
+      'useEventCenterImages 搬到 campaigns/shared/：它讀的是 SDK EventCenter 的新聞／獎勵／規則圖，Lucky Draw 也會用；EventCenter 這個詞是 SDK model 與營運旗標的名字，保留；活動本身叫 Triple Bonus',
+      '合 origin/master：SdkAdapter re-export 清單兩邊都是加項、保留雙方，base-manifest 重產；master 的視訊修正要新的 game-client-framework（setContainer），鄰居 repo 要先 pull 再 npm run sync，不然 typecheck 紅',
     ],
     pitfalls: [
       'Figma images API 匯出的是設計 px 的 4×（稿 2× 再 scale=2），要縮回 2× 再進 webp 管線，不然圖檔三四百 KB',
