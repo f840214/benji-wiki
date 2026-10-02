@@ -20,7 +20,7 @@ const ENTRIES = [
     topic: 'campaign',
     date: '2026-10-01',
     title: 'Triple Bonus：大廳入口 icon、活動中心（排行榜／新聞／規則）、假檔期開關',
-    branch: 'master(未 commit)',
+    branch: 'event_master adcfb89（合 origin/master 時 SdkAdapter 的 re-export 清單與 base-manifest 衝突：兩邊都是加項，保留雙方、manifest 重產）',
     summary: [
       '大廳入口 TripleBonusLobbyEntry：點擊框 70×70 放版位右 26.5、頂 −4（稿 403:292465）；畫面是骨架 cg_triple_icon（cg-client h5_cg_lucky_triple 的 icon 循環）畫在大廳 lobby-fx 畫布上，投影框 69.6×53 以骨架原點對齊點擊框中心。點了送埋點 Lobby.LuckyTripleChest、開活動中心排行榜頁',
       '大廳畫布開了一個通用口 LobbyFxSpine（lobbyFx.tsx → LobbyFxScene.LobbySpine）：活動件給 skel／atlas／動畫／投影框就能畫在同一張畫布上，同一道 lazy 邊界與 runtime 等待',
