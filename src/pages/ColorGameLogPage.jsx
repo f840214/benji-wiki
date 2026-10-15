@@ -41,7 +41,7 @@ const ENTRIES = [
     title: '一般派彩版 2.0：cg_common_you_win 骨架＋三顆骰＋盈利前三名；沒贏也有一版；UJP 保留舊版',
     branch: 'master（未 commit）',
     summary: [
-      '同日補：TOP WINNER 兩側四顆飛出金幣（骨 common_coin1..4）的骨架落點與稿 7:326234 差 1～25 px（coin1 低 24.8、coin4 右 18.5、coin2 左 8.2），掛上時把 BoneData.setupPose 補成稿的（PayoutPanel COIN_BONE_FIX，骨架單位；timeline 以 setup 為基準，飛入與晃動整條跟著移；同一份 SkeletonData 只補一次）；落點由 skeleton JSON 的 win_in 末鍵算（common 骨 y −162.54），稿值取 Frame_TopWinner 噴出的金幣四顆中心',
+      '同日補：TOP WINNER 兩側四顆飛出金幣（骨 common_coin1..4）的骨架落點與稿 7:326234 差 1～25 px（coin1 低 24.8、coin4 右 18.5、coin2 左 8.2），掛上時把 BoneData.setupPose 補成稿的（PayoutPanel COIN_BONE_FIX，骨架單位；timeline 以 setup 為基準，飛入與晃動整條跟著移；同一份 SkeletonData 只補一次）；落點由 skeleton JSON 的 win_in 末鍵算（common 骨 y −162.54），稿值取 Frame_TopWinner 噴出的金幣四顆中心；左側兩顆（coin1、coin4）依使用者指定再比稿高 10',
       'views/room/shared/PayoutPanel.tsx 換成 2.0 版（cg-client ColorGamePayoutNormalNew；稿 Color War 檔 7:326234 贏、7:327925 沒贏）：全房黑 50% 暗底（hudFx 的 Graphics）→ 骨架 cg_common_you_win（repo 的 4.3 重匯出，spine:ship 出貨到 public/assets/spine/room/）→ 三顆 ColorDie、贏到的金額（PayoutGoldText look payout）、盈利前三名三列是 DOM',
       '贏：win_in 3.333 秒接 win_out 1.667 秒，正好是 5 秒停留上限；沒贏：lose_in 3 秒接 lose_loop、4.3 秒起淡出 0.7 秒。骰在骨架事件 dice（int 1..3）那一刻彈入、金額在事件 num 那一刻彈入、三列跟底板一起淡入（贏 1.6 秒、沒贏 1.0 秒）；贏的退場把 DOM 整組套上骨架 UI 骨的縮放曲線（0.4 秒放大到 1.2、0.9 秒縮到 0）',
       '幾何：骨架原點在框水平中心、房間中心往上 48，1 單位＝0.5 設計 px，投影 1400 單位見方；骰 48.37、左右各轉 ±15°、中心在 dice_add1..3 插槽落點；三列左上角相對原點 (−134.6, 80.94＋47.05i)／沒贏 (−134.2, 1.45＋47.05i)，獎牌 53.64×46.95、暱稱 Montserrat 800 15.2 #FFFEF5、金額膠囊 94.96×19.21 ＋ Inter 800 14.94 #FFDB5A；金額中心在原點右 0.74、上 24.2，字 37.22、寬上限 317.5',
