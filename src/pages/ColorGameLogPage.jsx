@@ -61,6 +61,7 @@ const ENTRIES = [
       '新設定 colorWarTripleHistoryExcludedTableCodes（cg-client Config 同名，預設 ["MULTIPLY1"]，空陣列＝全部桌顯示）：fields.ts、project.json、config golden fixture 都補',
       '素材：頭像與骰從 cg-client lucky_triple 搬六隊（color_war_th_icon_*、color_war_th_dice_*；cg 的 54 格裡墨跡正好是稿 percent_* 框內的 44×43.45，直接 27×27 畫）',
       'dev：colorWarFakeTriple=<隊> 同時給三列假紀錄（該隊、紅、綠）',
+      '同日補：活動中心 NEWS 沒有新聞時改成 cg-client 的空狀態（EmptyView）——板內 (35,27.5) 起 330 寬直欄：HOT NEWS 插圖 330×330（color_war_news_empty，從 cg pic_news 搬）、間距 16、紅膠囊 316 寬、高至少 102.5（rgba(237,82,82,.95)、圓角 17.5），字 Inter 700 16／行高 22 白、靠左、字框 241.5 置中；文案改成跑馬燈那句 The announcements are being continuously updated…；原本只有一行 No news yet',
     ],
     decisions: [
       '稿只有三隊的帽圖，六隊齊的是榜列膠囊圖 color_war_rk_pill_*（＝cg-client pill_team_*），用 CSS 三切把左帽拉成稿的 37（cg-client 整組縮 0.8、帽只有 32.4）',
@@ -69,7 +70,7 @@ const ENTRIES = [
     pitfalls: ['局號時間字要驗月日：dev 假局號 DEV-<毫秒> 也是 12 碼以上的數字，不驗會印成 00:00:00', 'RetryableImage 的 src 排隊後才放上元素，jsdom 測試不能用 getAttribute("src") 驗圖，用 data-* 驗'],
     evidence: ['Overlay compare_design 對稿 7:327925（copy 檔）右上角：面板、三列、頭像、骰、時間字框差全 0；vitest 綠'],
     todo: [],
-    files: ['src/views/campaigns/colorWar/room/ColorWarTripleHistory.tsx', 'src/views/campaigns/colorWar/room/tripleHistoryRules.ts', 'src/views/campaigns/colorWar/room/ColorWarRoomRail.tsx', 'src/integrations/sdk/queries/colorWarTripleQueries.ts', 'src/integrations/config/fields.ts', 'src/views/campaigns/colorWar/assets.ts', 'src/assets/icons/icon_cw_th_glint.svg'],
+    files: ['src/views/campaigns/colorWar/ColorWarNewsPage.tsx', 'src/views/campaigns/colorWar/room/ColorWarTripleHistory.tsx', 'src/views/campaigns/colorWar/room/tripleHistoryRules.ts', 'src/views/campaigns/colorWar/room/ColorWarRoomRail.tsx', 'src/integrations/sdk/queries/colorWarTripleQueries.ts', 'src/integrations/config/fields.ts', 'src/views/campaigns/colorWar/assets.ts', 'src/assets/icons/icon_cw_th_glint.svg'],
     links: [],
   },
   {
