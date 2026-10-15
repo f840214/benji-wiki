@@ -8,10 +8,17 @@ const STATE_INVENTORY = [
   {
     group: 'game/store（遊戲層 Zustand）',
     items: [
-      { origin: '500x+', name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果、500x 電子倍率 rateDetail。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots' },
+      { origin: '500x+', name: 'useGameStore', path: 'src/game/store/useGameStore.ts', role: '一張桌的局狀態鏡像：桌台身分（tableCode）、相位、開獎結果、轉盤結果、500x 電子倍率 rateDetail、本局是哪種活動派彩 bonusPayoutKind（luckyTriple／colorWarTriple）、盈利前三名 payoutRank（PAYOUT_RANK 推播、開新局清空）、DevTools 停格 devPayoutHold。', writer: 'GameHandler（room handler，POSITION_CHANGED 掛、離房拆）', reader: 'RoomFrame / 房內各殼、useSuperWheelRate、useBetControlSlots、usePayoutShown、ColorWarPayout' },
       { name: 'useBetStore', path: 'src/game/store/useBetStore.ts', role: '注單與籌碼列的鏡射：已確認注、待確認注、選中籌碼、可下注旗標。', writer: 'BetHandler（唯一寫入者，訂 BetInfoCollection / ChipSelector）', reader: '只准經 useBetAmounts / useBetControlSlots 讀，不准直接讀 confirmedBets' },
       { origin: 'lobby+', name: 'useUiStore', path: 'src/game/store/useUiStore.ts', role: 'UI 開關：系統選單本體與其彈窗、注區手動開闔覆寫（boardOverride）、自訂籌碼面額彈窗、回放層；大廳廣告 banner 展開與首次演示旗標（isAdBannerOpen / adBannerIntroDone）、廣告彈窗本工作階段出過沒（adPopupDone）。', writer: 'actions/menu、actions/advertisement（toggleAdBanner）、房內按鈕 actions', reader: 'MenuLayer、LobbyView / LobbyMessageBar / LobbyAdBanner、RoomFrame' },
       { name: 'useWalletStore', path: 'src/game/store/useWalletStore.ts', role: '餘額與本局派彩金額。餘額一律來自 SYNC_MONEY。', writer: 'UserHandler（SYNC_MONEY）、派彩 handler', reader: 'LobbyHeader 餘額膠囊、房內餘額列' },
+    ],
+  },
+  {
+    group: 'views/campaigns（活動自己的 store；呈現掛上才載，資料層 room.data 整房維護）',
+    items: [
+      { name: 'useColorWarStore', path: 'src/views/campaigns/colorWar/useColorWarStore.ts', role: 'Color War 這檔活動現在怎樣：status／eventId／進行中／已選隊與我的隊／任務進度／週期／獎池／未讀獎勵／結算結果；活動中心開關與分頁、選隊流程、派彩演出中（payoutShowing／payoutFading，給黑罩與入口徽章）。', writer: '自己的 load／subscribe（SDK GET_COLOR_WAR_EVENTS → GET_COLOR_WAR_USER_OVERVIEW）、ColorWarPayout（setPayoutShowing）、ColorWarDataLayer（離房 reset）', reader: 'ColorWarLobbyEntry、ColorWarCenter 各分頁、房內三塊 surface' },
+      { name: 'useTripleBonusStore', path: 'src/views/campaigns/tripleBonus/useTripleBonusStore.ts', role: 'Triple Bonus（EventCenter LuckyTriple）：活動清單、最近中獎局號、payingOut。', writer: 'TripleBonusDataLayer（room.data）', reader: 'TripleBonusRoomRail、TripleBonusRoomEntry、TripleBonusPayout' },
     ],
   },
   {
@@ -138,6 +145,54 @@ function StateInventory() {
 
 // 疑難雜症：跨螢幕漂移、次像素、動畫原點這類「不是 bug 卻很難看出原因」的題目；每題寫症狀 → 原因 → 解法 → 落點
 const GOTCHAS = [
+  {
+    date: '2026-10-15',
+    title: '骨架事件（dice／num）每個都收到兩次',
+    symptom: '派彩版 2.0 的 console.info 看到 dice 1、dice 1、dice 2、dice 2…；靠事件計數的邏輯會跳格。',
+    cause: '框架的 <Spine> 重套 spec（animation 換、量測框變）時會再呼叫 onInstance 回報同一個實例，每次都 state.addListener 就掛了兩份。',
+    fix: 'useRef 一個 WeakSet 記已掛過的實例，onInstance 看到同一個就跳過。setState 寫成冪等（Math.max）只是保險。',
+    where: 'src/views/room/shared/PayoutPanel.tsx onSpine',
+  },
+  {
+    date: '2026-10-15',
+    title: '共用件裡一句 flow === 就被守門擋',
+    symptom: 'roomIsolation.test「共用件零流程判斷」紅：shared/PayoutPanel.tsx: flow ===。',
+    cause: 'views/room/shared 的件不得認玩法（subType／flow／skin），這是房間層隔離的鐵則，測試掃字串。',
+    fix: '預設版放共用件，例外版由房間用 RoomFrame 的 prop 換（UJP：payout={<PayoutPanelLegacy …/>}）。',
+    where: 'src/views/room/roomIsolation.test.ts、src/views/room/rooms/ultimateJackpot/UltimateJackpotRoom.tsx',
+  },
+  {
+    date: '2026-10-15',
+    title: 'Overlay compare_design 說 Figma 檔不存在',
+    symptom: 'TOOL ERROR Figma: That file was not found, or the token’s account cannot see it。',
+    cause: 'Overlay 的 Figma token 看得到的是 Color War_RWD (Copy) O0HXd1ginXOU380FNAYFD0，稿圖雖然是從原檔 KFNDs71b9gIe6IqG0v8nPv 匯的，但 node id 跨複本相同。',
+    fix: 'compare_design 的 fileKey 用 copy 檔；set_design_scale 的參數名是 designScale 不是 scale。',
+    where: 'overlay-design-align skill',
+  },
+  {
+    date: '2026-10-15',
+    title: '用 performance resource entries 判斷「骨架有沒有載」誤判',
+    symptom: '派彩版掛上後 getEntriesByType("resource") 找不到 cg_common_you_win，以為沒載；其實畫面有在播。',
+    cause: 'buffer 預設只留 250 筆（房間一進來就滿了），而且進房預抓已把骨架放進 Pixi Assets 快取，<Spine> 掛上時命中快取不發請求。',
+    fix: '看骨架事件或 DOM 結果（骰／金額出現），或 setResourceTimingBufferSize 後 clearResourceTimings 再量。',
+    where: '—',
+  },
+  {
+    date: '2026-10-14',
+    title: 'Chrome 155 在 zoom 祖先底下量到的幾何是放大後的 px，--upx 讀出 1px',
+    symptom: '評估台（舞台用 zoom）裡飛金幣的 --fly-* 全錯；房內正常。',
+    cause: 'getBoundingClientRect 回的是 zoom 後的 px，getComputedStyle 的 --upx 仍是字串 1px，兩把尺不同。',
+    fix: '放一個寬 calc(100*var(--upx)) 的隱形探針，量它的實際寬 ÷ 100 當 1 設計 px，所有幾何都用這把尺。',
+    where: 'src/views/campaigns/colorWar/room/ColorWarFlyCoinFx.tsx',
+  },
+  {
+    date: '2026-10-14',
+    title: 'fx:verify 的數字忽然全錯',
+    symptom: 'pkill verify.mjs 之後再跑，in-ink 差異暴增，改 CSS 沒反應。',
+    cause: 'pkill 只殺 node，它起的 Chrome 還活著佔 CDP port；下一次 verify 直接 attach 到舊 Chrome，記憶體快取裡是舊 CSS／舊 webp。verify.mjs 沒給 CDP_PORT 時隨機挑 9600–9799，曾經撞到使用者自己的 Chrome。',
+    fix: 'pgrep -f "remote-debugging-port=970x" 連 user-data-dir=…/cdp- 的一起殺；永遠帶 CDP_PORT=9702（fx:cost 用 9431）。',
+    where: 'scripts/fx/verify.mjs',
+  },
   {
     date: '2026-09-24',
     title: '用會繼承的自訂屬性做過渡，整頁每幀都在重算樣式',
@@ -340,6 +395,45 @@ useGameStore.setState({ phase: 'dealing', gameState: 3, srcResults: [], roundCod
 useGameStore.setState({ phase: 'payout', gameState: 5, srcResults: [806, 801, 806] })
 // 下注額：同法 import useBetStore，setState({ confirmedBets: { anyTriple: 10 } })`,
     note: '下一個 SDK 事件會把 store 整份覆蓋回真值，模擬只撐到那時；用 dev 桌（沒荷官、局不動）最穩。',
+  },
+  {
+    title: '派彩測試（192x 桌；$dt 是 __GAME_DEVTOOLS__ 的別名）',
+    code: `$dt.run('sw.open')            // 開一局：換局號、相位進下注、清結果與注單、清前三名
+$dt.run('sw.triple')          // 開彩：三同色黃（sw.result 是黃黃紅）
+$dt.run('sw.payout')          // 轉進派彩：贏 88,888 ＋ 假前三名 → 派彩版 2.0（YOU WIN＋骰＋TOP WINNER）
+$dt.run('sw.payout', '[0]')   // 一般派彩 0：只有骰子與前三名那一版
+$dt.run('sw.payoutLose')      // 同上
+$dt.run('sw.payoutNoRank')    // 贏但沒有前三名；sw.payoutLoseNoRank ＝ 0 且沒前三名（不出）
+$dt.run('sw.payoutBig')       // 1,234,567.89 看縮字
+$dt.run('sw.payoutHold')      // 停格（贏）調位置；sw.payoutHoldLose 停格沒贏；sw.payoutHoldOff 解除`,
+    note: 'sw.open 一定要先跑：派彩版只演「掛著期間從下注走到派彩」的那一局（首次觀測不算）。網址帶 colorWarFakeTriple 時會被 Color War 派彩接管，測一般派彩要拿掉。UJP 桌是舊版 you_win（PayoutPanelLegacy），沒有前三名那一版。108x／500x 的 sd.*／bonus 指令也經同一支 payoutWith，一樣會塞假前三名。',
+  },
+  {
+    title: 'Color War 三同派彩與房內面板（網址參數）',
+    code: `?colorWarFake=joined        // 已選隊（頂列才有戰隊頭像）；1＝進行中未選隊、qualified、closed
+&colorWarFakeTriple=1       // 每局都當黃隊開三同、我實領 100；2 白、3 粉、4 藍、5 紅、6 綠。同時給「最近三同」三列假紀錄
+&colorWarFakeLt=1           // LUCKY TRIPLE › WINNERS 有榜
+&colorWarFakeReward=1       // 開活動中心先彈上一期結算
+&colorWarFakeRank=2         // RANKING 當期有挑戰衛冕（2.0 版型）；soon＝當期未開賽
+// 然後在房內：
+$dt.run('sw.open'); $dt.run('sw.triple'); $dt.run('sw.payout')          // 有 YOU WIN 的版本
+$dt.run('sw.open'); $dt.run('sw.triple'); $dt.run('sw.payout', '[0]')   // 押錯色、三同是我的隊：只有 YOU GET`,
+    note: 'project.json 的 isRoomColorWarEnabled 與 isColorWarTripleBonusEnabled 都要 true，不然 GameHandler 不會標成 colorWarTriple。三同判定看 server 欄位（round.colorWarTriples、bet.colorWarParticipantId、bet.colorWarTripleAwardDetail），前端不比骰子。「最近三同」面板還要桌不在 colorWarTripleHistoryExcludedTableCodes（預設 MULTIPLY1）。',
+  },
+  {
+    title: '從大廳進房（PLAY 鈕的合成點擊進不了房時）',
+    code: `const { enterRoomFromList } = await import('/src/game/actions/navigation.ts')
+enterRoomFromList('CGD12')    // 維護桌會跳 toast；一秒內 [data-testid=room-frame] 就出現`,
+    note: 'Overlay／自動化腳本用 .click() 點 [data-testid=lobby-play-button] 時進不了房（2026-10-15 遇到，原因沒追），直接呼叫 action 正常。Vite dev 下 import 專案檔拿到的是畫面同一個模組實例。',
+  },
+  {
+    title: '派彩相關的 store 欄位',
+    code: `const g = JSON.parse($dt.snapshotJSON()).stores.GameStore
+g.phase            // payout 才演
+g.bonusPayoutKind  // null＝核心派彩；luckyTriple／colorWarTriple＝活動接管
+g.payoutRank       // 盈利前三名 [{ nick, score }]，PAYOUT_RANK 推播來的，開新局清空
+g.devPayoutHold    // true＝停格`,
+    note: '畫面側：[data-testid=payout-panel] 的 data-variant（win／rank）、data-payout（總額）；[data-testid=payout-die]×3、payout-amount、payout-rank-row×n；Color War 的是 color-war-payout、color-war-triple-history（列 color-war-triple-history-row，data-team）。',
   },
   {
     title: '看外殼現在的狀態（不用 store）',

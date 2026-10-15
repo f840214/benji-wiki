@@ -22,7 +22,7 @@ const FOLDERS = [
   ['src/platform/', '最內環:零遊戲知識、零 SDK', 'rwd 引擎、i18n 橋、uiManager、sceneManager、sound、loading、state、storage、dom、surfaces、assetLoading、redDot、video 取樣'],
   ['src/integrations/', '外部系統:認識協定、不認識玩法', 'config(設定管線)、elog(埋點)、sdk(SdkAdapter + queries)、video(VideoAdapter)、host(宿主 postMessage)、replayUrl'],
   ['src/game/', '遊戲領域', 'domain(純函式知識與判讀,全部有測試)、store(Zustand)、actions(玩家寫入)、handlers(server 鏡像)、hooks(畫面讀)、redDot;根層 loadingMap / routes / sfx / assetScheduler / subGameGates / tableProfile'],
-  ['src/views/', '畫面(React + Tailwind)', 'Loading / Login / Lobby / Room 四頁;lobby/(大廳元件 + fx)、room/(RoomFrame、runtime、shared 共用件、rooms/<流程>、skins/)、popup/<domain>/(十一組面板)、components/(跨頁小件 + fx 產物)、campaigns/(活動總表 + tripleBonus/)、runtime/(Pixi 啟動點)、system-ui/(Toast / Modal / Loading)'],
+  ['src/views/', '畫面(React + Tailwind)', 'Loading / Login / Lobby / Room 四頁;lobby/(大廳元件 + fx)、room/(RoomFrame、runtime、shared 共用件、rooms/<流程>、skins/)、popup/<domain>/(十一組面板)、components/(跨頁小件 + fx 產物)、campaigns/(活動總表 + tripleBonus/ + colorWar/:大廳入口、活動中心四分頁、room/ 三塊 surface 與 Lucky Triple 派彩)、runtime/(Pixi 啟動點)、system-ui/(Toast / Modal / Loading)'],
 ]],
 ['src/ 環外的橫切關注', [
   ['src/testing/', '只給 vitest 用', '@toppath 替身 stub、toppathAbsentGuard、moduleGraphScan 與 surfaceRegistryGates 守門、classLength 類名換算'],
