@@ -18,6 +18,30 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-10-15',
+    title: '併 origin/master（同事 251 個 commit）：17 個衝突檔、eLog 搬到新系統、大廳貼底取對方版',
+    branch: 'master（merge 進行中，已解完、未 commit）',
+    summary: [
+      '對方這批是 devin-dev 併回 master：免費投注、聊天、送禮、UJP、eLog 整個搬到 src/game/elog（ELogInterface 型別表＋ElogSpecLock 規格鎖），並刪了 integrations/elog/eLogBehavior.ts；大廳頁尾貼底他們用 lobbyPlacements 的 CONTENT_BOTTOM_PLACEMENT 也做了一份',
+      '取對方：LobbyView／LobbyView.test（我們的 LobbyMainArea 丟掉，domain/directGame 也刪，規則在他們的 directGameLayout.hasDirectGames）、MEMORY.md（對方重整過、舊條目搬 MEMORY-archive，我們 10-08 的 Color War 條目補回去）、base-manifest 重產',
+      '取我們、補對方幾行：PayoutPanel（對方那兩行 --spacing() 改法套到 PayoutPanelLegacy）、usePayoutShown／GameHandler／bonusActivity（註解加「不是免費投注模式」）、roomPlanes（兩邊的 z 值都留）、ColorWarCenter 三個分頁、ColorWarNewsPage 兩段檔頭、dev/tools/fx 三檔各自的條目',
+      'roundScript.payoutWith 合成 options 物件 { rank, jackpotBonus }，兩邊呼叫端（superWheel、freeBetPayoutCommands、roundScript.test）跟著改',
+      'eLog 搬遷：Ranking／隊伍明細／Lucky Triple／WINNERS／房內入口的送點改成 game/actions/colorWarElog 的 report* 函式（ViewTop100.Back 與資格圖示的 time 明帶距顯示 Ranking 分頁的秒數；WINNERS 子頁顯示時設 Winners 起算點；子分頁改送 HowtoWin／Winners；CHOOSE A TEAM NOW 不送——cg 沒有）；規格鎖 10 筆 featureMissing → wired（wired 191 → 201）；補黃金樣本測試',
+      '鄰居 repo 落後（framework 11、SDK 5、pixi 2 個 commit）：pull 後手動 install／build／link（npm run sync 會因本地有未 push 的 commit 拒跑）；SDK 只差百家樂的改動、沒重 build',
+      '合完再修三處：View Team 要走 showTab 才會設 Ranking 起算點（對方的測試）、PayoutGoldText 的 tracking 改 tracking-u-[…]（對方加了舊式 calc(N*var(--upx)) 只減不增的閘門，基準 213）、useColorWarRanking 多餘 import',
+    ],
+    pitfalls: [
+      'Overlay 視窗在背景時頁面 document.hidden＝true、rAF 全停，派彩骨架停在第 0 幀、骨頭全在原點——像是框架壞了，其實是視窗沒在前景；先量 rAF/s 再找程式問題',
+      'HMR 整頁重載後，eval 裡 import("/src/…") 拿到的是另一份模組實例（SdkAdapter 尚未初始化）；進房改點 DOM 的 PLAY 鈕',
+      'git merge 的「兩邊各加」段用 resolve.py 逐段選 ours／theirs／both；修改／刪除衝突（eLogBehavior.ts）git rm 後把內容搬到新家',
+    ],
+    evidence: [
+      'typecheck 0、lint 0、vitest 566 檔 5981 測試、build（dist-paths 1418、dist-preload 9）、assets:check、base-diff same 715；pane 派彩贏／沒贏底板框、金幣原點、光暈、吉祥物層序與合併前相同，停格解除後房間仍在',
+    ],
+    files: ['src/game/actions/colorWarElog.ts', 'src/game/elog/catalog/ElogSpecLock.json', 'src/views/campaigns/colorWar/useColorWarRanking.ts', 'src/views/campaigns/colorWar/luckyTriple/useColorWarLuckyTriple.ts', 'src/debug/roundScript.ts', 'src/views/room/roomPlanes.ts'],
+    links: [],
+  },
+  {
+    date: '2026-10-15',
     title: '全部未 commit 改動的 review 與收尾（派彩 2.0、Color War 活動中心／房內、大廳）',
     branch: 'master（未 commit）',
     summary: [
