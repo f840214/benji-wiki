@@ -18,6 +18,36 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-10-15',
+    title: '全部未 commit 改動的 review 與收尾（派彩 2.0、Color War 活動中心／房內、大廳）',
+    branch: 'master（未 commit）',
+    summary: [
+      '四區各一個 review 子代理（唯讀）出清單，再四區各一個修正子代理只動自己的檔案；最後整套閘門與 pane 實測',
+      'Lucky Triple WINNERS 分頁原本只讀 dev 假資料（檔頭寫 SDK 沒指令，其實 SDK 已有 GET_COLOR_WAR_TRIPLE_RANK／GET_COLOR_WAR_USER_TRIPLE_AWARDS，正式環境永遠 Coming Soon）：luckyTripleData 改走 colorWarQueries 新增的 requestColorWarTripleRank／UserTripleAwards、readColorWarTripleRank／UserTripleAwards、subscribeColorWarTripleUpdates（日期槽 0 今天／1 昨天，今天順便預拉昨天；個人總額／總次數用伺服器的 totalAmount／totalCount，不再前端加總），假資料只在 ?colorWarFake= 時覆蓋',
+      'useColorWarRanking 每秒時鐘讓 periods／period 變新物件、三個 requestColorWarRank effect 每秒觸發（只靠 SDK 5 秒節流擋成輪詢）：periods memo 在 sessions＋分鐘粒度時間，effect 改 key 在 sessionId／eventId／detailTeam；consumeRankingIntent 從 useState 初始化搬到掛載 effect；補 hook 測試（時鐘走 90 秒不重發）',
+      '主頁獎池橫幅 ❗ 補 ColorWarRanking/RewardQualifyClick 埋點（只帶 time，同 cg-client）：eLogBehavior 註冊、hook 多 reportInfoClick',
+      'usePayoutShown：同一派彩相位裡先出沒贏版、visible 才變 true 的話重 key 成贏版（原本變體在第一次 false→true 鎖死）',
+      'PayoutPanel：底板貼圖換上改成每次持有一個取消記號＋換過的 mesh 清單，歸還照清單還原 region、Texture.from 拿不到就略過、整段 try/catch；原 region 記在 mesh 上的 Symbol.for（活過熱更新）；dimRef／onDim 死碼拿掉；hudFx 的 zIndex 改走 roomPlanes 的 HUD_FX_Z_INDEX.payoutDim／payoutSpine；fitPanelMesh 抽到 payoutPanelMesh.ts（純函式，可測）；底板 webp 改登記在 pixi 資產集（第一次出就是解碼好的）',
+      'Color War 房內：registerPayoutPerformer 只在 isRoomColorWarEnabled 時登記；tripleHistoryVisible 搬到 domain/colorWar（colorWarTripleHistoryVisible）；GameHandler 補 Color War 派彩種類四個案例與 PAYOUT 重同步、_onPayoutRank 空對空不寫 store；colorWarTripleQueries、ColorWarPayout／RoomOverlay／RoomRail／DataLayer 各補測試',
+      '大廳：useDirectGames 資料沒變就回同一個物件（兩個宿主各訂閱一份）；LobbyView 停靠測試改驗五個計數；LandedCssFx 飛金幣重播改等全部動畫結束（useAllAnimationsFinished，原本 onAnimationEnd 第一層結束就重掛）',
+      '註解清理：依規範拿掉 cg-client 類名、稿節點 id、匯出尺寸與推導敘述，留決定值與禁止事項；過時的（DirectGamePanel 只有本元件訂閱、GameHandler 四個訂閱、fields isColorWarTripleBonusEnabled 沒人讀、PayoutPanelLegacy 兩皮共用、docs §3.4.2 骰子插槽落點）改成現況',
+      '刪掉 rankingAssets 13 個沒用的 key 與 39 組沒人引用的 color_war_rk_*／lt_* 圖（webp＋png，皆未 track）；messages 的 totalWinners／time；data-figma 屬性 20 處',
+      '飛金幣 spec.json 的 sheet.url 拿掉（元件不讀；JSON 字串打包器改不到，check-dist-paths 擋 build），小圖只在 CSS 與 COLOR_WAR_ROOM.flyCoinFx',
+    ],
+    pitfalls: [
+      '修正後 pane 實測：派彩停格解除 5 秒後整頁重載——框架先銷毀實例再回報 onInstance(null)，那時 spine.skeleton 已是 null，歸還時回頭查 panelMesh(spine.skeleton) 炸 TypeError → 根層錯誤邊界 tryGuardedReload（sessionStorage nx.autoReloadAt 是證據）。歸還不得回頭查實例，照換過的 mesh 清單還原',
+      'review 子代理的每條都要驗：ColorWarRoomRail 不看 payingOut／devPayoutHold 是對的（三方規則在 overlay）；ColorWarLobbyEntry 不預熱 Montserrat 900（沒有 view 用到）',
+      '查 Overlay pane 有沒有被重載：window 上掛的旗標消失＝整頁重載；console.error 的內容要存進 sessionStorage 才看得到重載前的錯',
+      'base-diff 對工作樹是紅的要 --write-manifest（25 個基底檔變動）；project.json 的 url_gw 212、三個 LuckyTriple 旗標 false、兩個 Color War 旗標 true 是開發切換，commit 前由 owner 決定',
+    ],
+    evidence: [
+      'pane-3 進 CGD12：贏版 win_bg (74.11,308)→(357.61,571)、沒贏版 lose_bg (71.5,324.48)→(360.5,487.98)、金幣原點與修前相同、fx_dice 三槽皆空、沒贏版吉祥物在 common_coin4 之後；停格解除後房間仍在、沒有重載',
+      'typecheck ✓、lint 0 警告、vitest 320 檔 3216 測試、assets:check ✓、build（dist-paths 1279 檔、dist-preload 14 檔）✓、base-diff same 580',
+    ],
+    files: ['src/views/campaigns/colorWar/luckyTriple/luckyTripleData.ts', 'src/integrations/sdk/queries/colorWarQueries.ts', 'src/views/campaigns/colorWar/useColorWarRanking.ts', 'src/views/room/shared/PayoutPanel.tsx', 'src/views/room/shared/payoutPanelMesh.ts', 'src/views/room/shared/usePayoutShown.ts', 'src/game/handlers/room/GameHandler.ts'],
+    links: [],
+  },
+  {
+    date: '2026-10-15',
     title: '大廳：頁尾跳轉面板沒掛時內容區直接到底',
     branch: 'master（未 commit）',
     summary: [
