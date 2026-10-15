@@ -80,7 +80,7 @@ const ENTRIES = [
       '新設定 colorWarTripleHistoryExcludedTableCodes（cg-client Config 同名，預設 ["MULTIPLY1"]，空陣列＝全部桌顯示）：fields.ts、project.json、config golden fixture 都補',
       '素材：頭像與骰從 cg-client lucky_triple 搬六隊（color_war_th_icon_*、color_war_th_dice_*；cg 的 54 格裡墨跡正好是稿 percent_* 框內的 44×43.45，直接 27×27 畫）',
       'dev：colorWarFakeTriple=<隊> 同時給三列假紀錄（該隊、紅、綠）',
-      '同日補：面板膠囊三切重算——榜列膠囊圖 150×50 裡本體（含金描邊）只有 44 高，原本整張 50 高塞進列高 20 讓膠囊矮 2.4、描邊變細、右端壓窄；稿（REST 查到描邊 2 在框外）膠囊含描邊是 147.5×22，現在本體畫成 22 高、整圈出列框 1、左帽 40.5、右端半圓 11，圖的透明邊 3 也出框；三顆骰補稿的棕影 0 0.47 1.4 rgb(139,74,19)。量：x=421 那欄頁面與稿逐列相同、左右端差 ≤0.5',
+      '同日補：面板膠囊三切重算——榜列膠囊圖 150×50 裡本體（含金描邊）只有 44 高，原本整張 50 高塞進列高 20 讓膠囊矮 2.4、描邊變細、右端壓窄；稿（REST 查到描邊 2 在框外）膠囊含描邊是 147.5×22，現在改成單一元素的 border-image 九宮格（切 左 84／右 25、中段 fill 拉伸；三個 div 拼在非整數縮放下接縫會漏一條底），本體畫成 22 高、整圈出列框 1、圖的透明邊也出框；三顆骰補稿的棕影 0 0.47 1.4 rgb(139,74,19)。量：x=421 那欄頁面與稿逐列相同、左右端差 ≤0.5',
       '同日補：活動中心 NEWS 沒有新聞時改成 cg-client 的空狀態（EmptyView）——板內 (35,27.5) 起 330 寬直欄：HOT NEWS 插圖 330×330（color_war_news_empty，從 cg pic_news 搬）、間距 16、紅膠囊 316 寬、高至少 102.5（rgba(237,82,82,.95)、圓角 17.5），字 Inter 700 16／行高 22 白、靠左、字框 241.5 置中；文案改成跑馬燈那句 The announcements are being continuously updated…；原本只有一行 No news yet',
     ],
     decisions: [
