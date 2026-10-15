@@ -17,6 +17,25 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-10-15',
+    title: '大廳：頁尾跳轉面板沒掛時內容區直接到底',
+    branch: 'master（未 commit）',
+    summary: [
+      '內容區 main 抽成 LobbyMainArea（LobbyView 內的小元件）：底邊看跳轉面板掛不掛——掛著 bottom 106.5（面板 130.5 高、頂 24 是透明外溢），沒掛 bottom 0，原本固定讓開 106.5，渠道沒跳轉功能時底下留一塊空的',
+      '掛不掛的規則抽成 domain/directGame.hasDirectGames（渠道開放且 Live／E-Game 至少一款），面板與內容區同一條；只有 LobbyMainArea 訂閱 useDirectGames，children 是外層建好的元素，桌卡不跟著重畫（LobbyView.test 補了一條）',
+    ],
+    decisions: [
+      '不用 CSS :has() 看頁尾容器是否空：低階 WebView 支援沒把握，而且 repo 沒先例',
+      '規則不放 hook 檔：面板測試 mock 整個 hook 模組，importOriginal 會拉到 @toppath 真件、撞 CI quality lane 的閘門；domain 零 SDK import 才能在測試裡用真規則',
+    ],
+    evidence: [
+      'acc2af 渠道（benji）重載三次，桌列表回包都沒帶 entryInfo → SDK DirectGameInfo 狀態 -1 → 面板不掛；pane 量 main (5,56.5) 422×711.5、lobby-pushed 680.5 高，到底',
+      'cg-client 同樣只把 directGameCompNode.active 關掉、沒重排列表',
+    ],
+    files: ['src/views/LobbyView.tsx', 'src/game/domain/directGame.ts', 'src/views/lobby/directGame/DirectGamePanel.tsx'],
+    links: [],
+  },
+  {
     topic: 'shared',
     date: '2026-10-15',
     title: '一般派彩版 2.0：cg_common_you_win 骨架＋三顆骰＋盈利前三名；沒贏也有一版；UJP 保留舊版',
