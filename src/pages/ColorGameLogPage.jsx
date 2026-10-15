@@ -30,6 +30,7 @@ const ENTRIES = [
       '舊版改名 PayoutPanelLegacy 只給 UJP：UltimateJackpotRoom 以 RoomFrame 的 payout prop 換上（isSuppressed＝有球賽頁）；192x 新皮的 PayoutSuperWheelModern 不動',
       'Color War 的金額字搬成共用 views/components/PayoutGoldText（多 payout look：同 total 的漸層、兩段間距 0.62、陰影 0 2.07 0 #370000）；獎牌圖 public/assets/payout/payout_rank_medal_1..3.webp（稿 獎盃 4.8× 縮成 4×，contain 進 53.64×46.95）；catalog 新組 payout_common_youwin（spine 模式）',
       'dev 指令：sw.payout（贏＋前三名）、sw.payoutLose（0：只有骰子與前三名）、sw.payoutNoRank、sw.payoutLoseNoRank（不出）、sw.payoutHold／payoutHoldLose／payoutHoldOff；payoutWith 第二參數決定塞不塞假前三名，openRound 清掉',
+      '同日補：三顆骰改用圖（Color War 稿同款白框色球六色 public/assets/payout/payout_dice_*.webp）＋稿的暗暈（51.19×50.54、圓角 12.96、rgba(55,9,9,.5)、模糊 3.24），骨架插槽上的白色光暈 fx_dice 掛上時以 slot.pose／appliedPose.setAttachment(null) 拿掉（4.3 的 Slot 沒有 setAttachment）；金額改成隨長度放大縮小：PayoutGoldText 加 maxScale，短金額放大到框寬 317.5、字最大 59（墨跡 43 在紅框內區 51.25 內），長金額縮到放得下',
     ],
     decisions: [
       '骰子位置以骨架 dice_add 插槽為準，不照稿上靜態擺的位置（兩者差 0.3～3 px）：骰要壓在骨架畫的 fx_dice 白色光暈上',
@@ -83,6 +84,7 @@ const ENTRIES = [
       '三同判定在 domain/colorWar.colorWarTripleHitOf：bet.colorWarTripleAwardDetail 的實領優先，沒有就看 round.colorWarTriples 有沒有「已派、單人獎金 > 0、得獎隊＝自己注單上的隊」；資料由 integrations/sdk/queries/colorWarTripleQueries 湊，dev 用 colorWarFakeTriple=<隊> 每局都當命中',
       '飛金幣改 CSS（ColorWarFlyCoinFx）：node scripts/fx/color-war-fly-coin.mjs 從 fx:gen 的逐格資料產 keyframes、spec 與 16 塊小圖；起點綁房間框中心、終點綁頂列餘額膠囊（依版面變體給百分比），20:9／21:9 路徑拉長時金幣與爆光不縮、拖尾跟著伸；幾何量一次寫成 --fly-*',
       '金額字 GoldAmountText（bonus／total 兩種 look）、橫幅的 fitBannerBar、useInThenLoop',
+      '10-15 補：入口徽章與戰隊頭像在派彩演出期間（自己的、核心派彩版、DevTools 停格）改成壓暗 brightness(0.5)、不吃點擊，不再把徽章藏起來：兩件在 overlay 平面，hud／hudFx 的黑罩罩不到它們',
     ],
     decisions: ['飛金幣不走 fx:export：路徑要跟版面走（起點、終點各綁不同錨），fx:export 的靜態 keyframes 做不到', '終點改綁餘額膠囊（cg-client 固定在框中心）', '拖尾斜切改成終點下方 6 px 的水平裁切；4:3 寬框路徑盒橫向減半'],
     pitfalls: ['Chrome 155 在祖先有 zoom 時 getBoundingClientRect 回放大後的 px、--upx 讀出字串 1px：量幾何用一個寬 100 設計 px 的探針換算', 'fx verify 的 Chrome 被 pkill 掉主程式後還活著佔 CDP port，下一次 attach 到舊 Chrome 拿到舊 CSS：先 pgrep remote-debugging-port 殺乾淨，CDP_PORT 固定', 'Spine 逐格傾印在 k/30 取樣會跨過關鍵影格：翻面類的 step 值可能慢一格'],
