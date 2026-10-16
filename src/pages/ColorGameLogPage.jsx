@@ -18,13 +18,29 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-10-16',
+    title: '192x 新皮派彩對稿（CG_RWD「盈利前三名的結算」兩張）、骰子進派彩版、開獎看板讓路',
+    branch: 'master（未 commit）',
+    summary: [
+      '稿在 CG_RWD（G4WnLuiSm3NuYf96dnoO4w）新皮 canvas 的「盈利前三名的結算」1630:151593（贏）／1630:153479（沒贏），REST 被限流（429、要等 4.6 天），改走 hosted figma MCP（OAuth）拿 metadata／design context／截圖',
+      '稿是骨架 loop 幀的截圖加 DOM 字：兩張截圖擺的位置不一樣——用列底（夾在三列的 clip 插槽 1／2／3）在 2× 截圖與我們 pane 的像素掃描比，贏版骨架比我們高 19.5、沒贏版低 5.2；骨架原點改成各版自己的（SPINE_ORIGIN_Y）',
+      '三顆骰照稿加回 DOM（PAYOUT_DICE_URLS 的白框色球，不轉，中心與邊長贏／沒贏各一組），掛上淡入 0.3 秒；開獎看板 ResultBoardSuperWheelModern 在派彩版（贏或只有前三名）演時不播、演起來就收——用同一支 usePayoutShown 判，骰已在派彩版裡',
+      '金額照稿換成 Paytone One 46 全大寫、六段金漸層＋下影 4 #73010f（CSS background-clip:text＋drop-shadow），大寫字高中心在中心往上 104.6；三列暱稱 Poppins 900 中心對齊、字距 −0.06em、三列各自 #972114／#04585f／#783316；金額 Arimo 700 靠左、上白下 #f8fb64 漸層＋下影 1 #580c00；行框取 1 字高（Poppins 大寫字高中心剛好在中線、Arimo 差 0.012 字高、Paytone 在 0.571 字高）',
+      '量：三列 clip 中心對稿 ≤1.8、骰 0、暱稱 ≤0.9、金額字 ≤2.1（稿上三列金額的 y 本身就各差 1～2）',
+      '新皮 Skin 多載 @fontsource/poppins/900.css',
+    ],
+    decisions: ['稿上兩張骨架截圖高低不一致，不取平均：各版照各自的稿擺，沒贏版比贏版低 24.7 是稿的意思', '開獎看板只在派彩版演時讓路：沒下注也沒前三名時仍播（不然那一局什麼都看不到）'],
+    pitfalls: ['稿 1630:151593 的 16:9 frame 在外框的 y＝310（別張都是 282），用 REST 整張圖裁 16:9 會差 14 px；直接對 16:9 節點截圖才準', 'Figma 的 metadata 給的字框 y 是行框頂，Poppins 行框 1.4 字高，字的大寫字高中心比框中心低——量 ink 不量框'],
+    files: ['src/views/room/skins/superWheelModern/PayoutSuperWheelModern.tsx', 'src/views/room/skins/superWheelModern/PayoutSuperWheelModern.module.css', 'src/views/room/skins/superWheelModern/ResultBoardSuperWheelModern.tsx', 'src/views/room/skins/superWheelModern/index.ts'],
+  },
+  {
+    date: '2026-10-16',
     title: '一般派彩「沒盈利前三名」版、192x 新皮派彩換 jiesuan_win／jiesuan_lose（含前三名）、大廳未選隊自動彈選隊',
     branch: 'master（merge 已解完待 commit，之後的改動未 commit）',
     summary: [
       '一般派彩 2.0 多一版 winNoRank（新稿 Color War 檔 1bsvoij0IcT7EwE3uSuXWf 的 83:3646「一般派彩結算（沒有盈利前三名）」）：贏但前三名沒到 → 整組（骨架盒＋DOM）往下 118、底板／緞帶／金幣堆／四顆飛幣／十七個點點光的插槽每幀拿掉附件（beforeUpdateWorldTransforms，點點光是附件鍵、只拿一次會被鍵回來），三列不出；原點改成 CSS 變數 --payout-origin-y 給骨架盒與 DOM 共用（jsdom 吃不下巢狀 calc，測試驗變數）',
       '版型在掛上那一刻定：前三名之後才到的這一次不畫（整組不得中途跳 118）。dev 渠道 CGD12 沒 dealer、量不到 PAYOUT_RANK 跟 PAYOUT 的先後，先這樣',
       '192x 新皮派彩整個重寫：使用者放進 assets-raw/spine/sw192 的 jiesuan_win（贏＋前三名）／jiesuan_lose（只有前三名）兩支 4.3 骨架（cg-client 的 bjdx／win_youwin／topwinner／lose 合成），catalog 登記 sw_payout_win／sw_payout_lose、spine:ship 出貨；舊的 192x_new_you_win（catalog sw_payout、public 與 assets-raw 的檔）拿掉',
-      '新皮派彩沒稿，照 cg-client ColorGamePayoutNewSuperWheelWithRank／ColorGameRoundPayoutRankCompNewSuperWheel 兩個 prefab 排：原點在房間中心、1 單位＝0.5 設計 px（投影 717.773）；in 1.333s → loop；進 loop 金額淡入 0.3s、三列淡入 0.4s；停 2s → out（贏 1.067s／沒贏 0.767s）同時內容淡出；in 播完事件沒來 1.533s 照進 loop；骰子不畫（開獎看板已畫）',
+      '（同日下午改照稿：見下一條「對稿」）新皮派彩先照 cg-client ColorGamePayoutNewSuperWheelWithRank／ColorGameRoundPayoutRankCompNewSuperWheel 兩個 prefab 排：原點在房間中心、1 單位＝0.5 設計 px（投影 717.773）；in 1.333s → loop；進 loop 金額淡入 0.3s、三列淡入 0.4s；停 2s → out（贏 1.067s／沒贏 0.767s）同時內容淡出；in 播完事件沒來 1.533s 照進 loop；骰子不畫（開獎看板已畫）',
       '新皮 DOM：金額中心在房間中心往上 81（字樣沿用 StyledNumber payout／payoutDigits）；贏的三列中心往下 22.9／92.8／165.8，暱稱 Poppins 700 15 #962115 左緣 −73.15 盒 105、金額 Arimo 700 25 #FFDB5A（暗紅外描邊 1.2＋下影 1）左緣 31.85 盒 110；沒贏三列往上 61.05／往下 6.05／71.55、暱稱色各列不同（#962115／#04585F／#783315）；暱稱與金額靠左、超寬等比縮',
       '新皮贏但前三名沒到：藏 cg jiesuan_topwinner 獨有的 33 個插槽（4.3 匯出把名字裡的 / 改成 -），金額位置不變',
       '大廳未選隊自動彈選隊：store 的 autoOpenIfRequested 房內有叫、大廳入口從 34d9b704 起就只放在 deps 沒呼叫。改成這個工作階段還沒判過就掛上立刻 load、拉完判（cg ColorWarButton._autoOpenIfRequested 也是立刻 requestInitialData）；判過才走原本的 3～8 秒延遲；總覽還不可信（活動列表拉失敗）不算判過，下一個畫面再判；自動開固定在 MY INFO',
