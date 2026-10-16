@@ -27,9 +27,10 @@ const ENTRIES = [
       '金額照稿換成 Paytone One 46 全大寫、六段金漸層＋下影 4 #73010f（CSS background-clip:text＋drop-shadow），大寫字高中心在中心往上 104.6；三列暱稱 Poppins 900 中心對齊、字距 −0.06em、三列各自 #972114／#04585f／#783316；金額 Arimo 700 靠左、上白下 #f8fb64 漸層＋下影 1 #580c00；行框取 1 字高（Poppins 大寫字高中心剛好在中線、Arimo 差 0.012 字高、Paytone 在 0.571 字高）',
       '量：三列 clip 中心對稿 ≤1.8、骰 0、暱稱 ≤0.9、金額字 ≤2.1（稿上三列金額的 y 本身就各差 1～2）',
       '新皮 Skin 多載 @fontsource/poppins/900.css',
+      '同日再改：開獎看板 ResultBoardSuperWheelModern 整個拿掉（元件、測試、tanban 骨架的登記／出貨／catalog、倍率圖 result/*x.webp），派彩版的三顆骰改用本皮的色球圖 result/ball_*.webp；金額與列金額的漸層字在 5173 上整個看不見——background-clip: text 跟 filter: drop-shadow 放同一個元素字會消失，漸層放 span、drop-shadow 放外層盒',
     ],
     decisions: ['稿上兩張骨架截圖高低不一致，不取平均：各版照各自的稿擺，沒贏版比贏版低 24.7 是稿的意思', '開獎看板只在派彩版演時讓路：沒下注也沒前三名時仍播（不然那一局什麼都看不到）'],
-    pitfalls: ['稿 1630:151593 的 16:9 frame 在外框的 y＝310（別張都是 282），用 REST 整張圖裁 16:9 會差 14 px；直接對 16:9 節點截圖才準', 'Figma 的 metadata 給的字框 y 是行框頂，Poppins 行框 1.4 字高，字的大寫字高中心比框中心低——量 ink 不量框'],
+    pitfalls: ['background-clip: text 與 filter 同一個元素：Chromium 會把字裁掉，看起來就是「沒有金額」；pane-4 那次只量 DOM 盒沒看圖才漏掉', 'Overlay navigate 帶太長的網址會被折行、參數名混進 %20：長網址改在頁面內 location.assign', '稿 1630:151593 的 16:9 frame 在外框的 y＝310（別張都是 282），用 REST 整張圖裁 16:9 會差 14 px；直接對 16:9 節點截圖才準', 'Figma 的 metadata 給的字框 y 是行框頂，Poppins 行框 1.4 字高，字的大寫字高中心比框中心低——量 ink 不量框'],
     files: ['src/views/room/skins/superWheelModern/PayoutSuperWheelModern.tsx', 'src/views/room/skins/superWheelModern/PayoutSuperWheelModern.module.css', 'src/views/room/skins/superWheelModern/ResultBoardSuperWheelModern.tsx', 'src/views/room/skins/superWheelModern/index.ts'],
   },
   {
