@@ -376,7 +376,10 @@ __GAME_DEVTOOLS__.run('assets.audit')         // 資產抓漏`,
   },
   {
     title: '500x 四段狀態（在 500x 桌內，逐段打）',
-    code: `__GAME_DEVTOOLS__.run('game.bonus.betting')   // 開局：注區展開、清結果、換局號
+    code: `__GAME_DEVTOOLS__.run('game.bonus.auto')          // 整局自動跑：開局→假注單→6s 停注（下移翻電子倍率 15X／500X／5X／100X）→縮小→9s 開綠三同（Triple＋綠兩隻小精靈）→14.5s 派彩 88,888
+__GAME_DEVTOOLS__.run('game.bonus.autoDouble')    // 同上但開綠二同：Double 15X 小精靈、綠格 2X
+__GAME_DEVTOOLS__.run('game.bonus.autoMidShrink') // 同 auto，但停注後 2.15s（注區縮小途中）就開出：測小精靈／倍率標在過渡中的位置
+__GAME_DEVTOOLS__.run('game.bonus.betting')   // 開局：注區展開、清結果、換局號
 __GAME_DEVTOOLS__.run('game.bonus.mascot')    // 小精靈：補自注→停注→2.5s 開綠二同（Double 100X），播完 7s 後換局再走黃三同（Triple 500X）；兩隻沒辦法同一局
 __GAME_DEVTOOLS__.run('game.bonus.stop')      // 停注：注區直接跳到下面、翻電子倍率，1.4s 後自動縮小
 __GAME_DEVTOOLS__.run('game.bonus.results')   // 開出綠二同：縮小態，Double 100X、綠 2X、黃 1X
