@@ -17,6 +17,21 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-10-19',
+    title: '192x 新皮派彩退場的二十顆金幣飛向頂列餘額丸',
+    branch: 'master（未 commit）',
+    summary: [
+      '使用者：派彩的飛金幣動畫沒有飛到上面金額位置。新皮 jiesuan_win 的 out 段有 20 顆金幣（jinbi/jinbi1–20，各掛在擺臂骨 lN 上甩 −137.52°），落點烤死在骨架裡：用 spine-core 在 node 跑 out 到底，jinbi1 的世界位置 (52.27, 729.74) 骨架單位＝原點上方 365 設計 px，20:9 下落在 (242, 96)，離丸心 (286.5, 25.5) 很遠；cocos 整個畫面等比縮所以剛好對到，我們的頂列位置隨比例變',
+      '做法同免費派彩的 CSS 金幣：轉 out 那一刻量一次餘額丸與 Spine 量測盒（同位同尺寸的看不見的尺）的螢幕 rect，換成相對骨架原點的設計 px → 骨架單位，算出與烤死落點的差 Δ；afterUpdateWorldTransforms（骰群跟 all5 骨頭的同一支 hook）每幀把 Δ 乘上各顆擺臂的進度（(setup 角度 − 這幀角度)/137.52 夾 0～1）疊到 jinbiN.appliedPose.worldX/Y；量不到就照骨架烤死的路線飛。面板帶 data-coin-target 給量測',
+      '終點怎麼到派彩版：p.payout 是房間給外殼的元素、外殼的 balanceTarget 只傳給免費派彩件，不動共用檔——新皮頂列的餘額丸多登記一份進皮內的 zustand store payoutBalanceTarget（與向外殼登記的 freeBetBalanceTarget 合成同一個 callback ref、清除一起清），派彩版只讀這個 store',
+      '純函式拆在 payoutCoinPath（丸中心換算、Δ、擺臂進度、骨頭名）＋測試；派彩版測試驗 out 那一刻的 data-coin-target、頂列測試驗 store 拿到 top-nav-balance',
+    ],
+    decisions: ['只平移、不改擺臂與自轉：Δ 隨進度線性疊上去，弧線形狀照骨架；二十顆共用同一個 Δ（jinbi20 的落點照骨架偏 (−3.8, 2.5)）', '終點走皮內 store 不改 RoomFrame／types：改共用檔要先問；之後若要統一，可把 payout 改成像 freeBetWinner 那樣由外殼傳 balanceTarget'],
+    pitfalls: ['這個 runtime 的骨架世界座標是 y 向下（spine-pixi-v8），node 用 spine-core 算出來的 worldY 是 y 向上：第一版把落點寫成 +729.74，金幣落在丸心下方 140 px；落點常數要以 runtime 的方向寫（−729.74）', 'spine 4.3 的 setup 角度在 bone.data.setupPose.rotation、動畫後的局部角度在 bone.pose.rotation（不是 bone.rotation）', 'vitest 裡派彩版 in→loop→out 的計時器要分兩次 act 推（loop 的計時器在 phase 變了之後的 effect 才掛）'],
+    evidence: ['pane-8 逐幀取樣（fiber 走到 Spine 實例、spine.toGlobal(bone.appliedPose.worldX/Y)）：20:9 432×960 丸心 (286.5, 25.5)、jinbi1 末格 (286.5, 25.5)、jinbi20 (282.7, 28)；4:3 576×768 丸心 (382, 25.5)、jinbi1 (382, 25.5)、jinbi20 (378.2, 28)', '閘門：typecheck 0、lint 0、vitest 567 檔 6006 全綠'],
+    files: ['src/views/room/skins/superWheelModern/payoutCoinPath.ts', 'src/views/room/skins/superWheelModern/payoutBalanceTarget.ts', 'src/views/room/skins/superWheelModern/PayoutSuperWheelModern.tsx', 'src/views/room/skins/superWheelModern/TopNavSuperWheelModern.tsx'],
+  },
+  {
     date: '2026-10-16',
     title: '192x 新皮派彩對稿（CG_RWD「盈利前三名的結算」兩張）、骰子進派彩版、開獎看板讓路',
     branch: 'master（未 commit）',
