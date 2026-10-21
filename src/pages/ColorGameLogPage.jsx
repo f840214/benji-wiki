@@ -26,6 +26,7 @@ const ENTRIES = [
       '不動共用檔：新增 rooms/bonus/BonusOddsInfoBar，BonusRoom 傳 odds 給外殼。三段中心在列寬 15.36%／50%／83.52%（第一段由 15.66% 依量測 −1.2 px 修正），頂距沿用整數 2 防漂；免費投注模式交回共用 OddsInfoBar（它畫免費資訊列）。文案同 key 不改字（稿寫「1: 1」）。',
       '第二輪（使用者：還是有點偏）：字型換 font-inter-v3（Figma 渲染的 Inter 3.19，700）；疊圖看到偏差來自稿的文案多空格（「2: 1」）讓置中後的前段字往左，改成對齊冒號前的字段（相關量）而非整串中心，第二段中心 50% → 49.54%。',
       '量測：前段字相關 vs 稿 −0.11／+0.11／−0.55 px，垂直 −0.11；432／411／375／360 寬（16:9）都在 0.6 內，20:9 位置與 16:9 相同。',
+      '第三輪（使用者：冒號後要有空格）：語系表沒有這幾個 key、畫面吃 defaultMessage；500x 改用自己的 key room.BonusOddsInfoBar.*，文案「1: 1／2: 1／3: 1」，共用 OddsInfoBar 不動。文案對上後中心 15.7%／49.95%／83.52%，前兩段 0.00；第三段稿是「3 Colors- 3: 1」（連字號前少空格），整串置中、前段 +1.1／尾段 −2.2。432／375／360 都一樣。',
       '測人數金額：用 eval 動態 import /src/game/store/useBetStore.ts 呼叫 syncTableStats，把八格寫成稿上的 9620／121（₱9.62k、121）。',
       'review 收尾：screenAnchorUnits 允許清單移除 BonusRateTag 的 [0.8px]、拿掉 BonusRateTag 沒人用的 bare、過時註解改掉。',
     ],
