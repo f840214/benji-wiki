@@ -17,6 +17,22 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-10-21',
+    topic: '500x',
+    title: '500x 賠率列改自己的一份（Inter Bold、三段置中），review 收尾',
+    branch: 'master',
+    summary: [
+      '賠率列（1 Color - 1:1…）原本吃外殼預設的共用 OddsInfoBar（192x 舊皮／500x／108x／UJP 共用）：字 Regular 400、第一段靠左 pl-29、第三段靠右 pr-13。500x 稿（投注期間 1038:25372）是 Inter Bold 700 13.5、三段各自置中，第三段差 11.9 px。',
+      '不動共用檔：新增 rooms/bonus/BonusOddsInfoBar，BonusRoom 傳 odds 給外殼。三段中心在列寬 15.36%／50%／83.52%（第一段由 15.66% 依量測 −1.2 px 修正），頂距沿用整數 2 防漂；免費投注模式交回共用 OddsInfoBar（它畫免費資訊列）。文案同 key 不改字（稿寫「1: 1」）。',
+      '量測：白字墨跡中心 vs 稿 0.11／0.86／0.89 px，垂直 0.3 px。',
+      '測人數金額：用 eval 動態 import /src/game/store/useBetStore.ts 呼叫 syncTableStats，把八格寫成稿上的 9620／121（₱9.62k、121）。',
+      'review 收尾：screenAnchorUnits 允許清單移除 BonusRateTag 的 [0.8px]、拿掉 BonusRateTag 沒人用的 bare、過時註解改掉。',
+    ],
+    decisions: ['500x 賠率列與其他房長相不同 → 房間自備一份，不改共用 OddsInfoBar。'],
+    evidence: ['lint 綠、bonus 測試 64 過；typecheck 只剩 pagePreload.ts 的 preparseSpineSkeleton（pixi-game-framework dist 未更新，非本次）。'],
+    files: ['src/views/room/rooms/bonus/BonusOddsInfoBar.tsx', 'src/views/room/rooms/bonus/BonusRoom.tsx'],
+  },
+  {
     topic: '500x',
     date: '2026-10-19',
     title: '500x 注區對新稿 CG_RWD R1z2OHiV1oDkkwQwp3t9U2（投注期間）',
