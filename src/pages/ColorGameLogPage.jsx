@@ -18,6 +18,21 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-10-21',
+    title: 'Triple Bonus NEWS 沒有新聞時補預設圖（cg-client EmptyView）',
+    branch: 'master（未 commit）',
+    summary: [
+      '原本沒有新聞只在紅板中間印一行白字；cg-client LuckyTriple 的 ColorGameNews.prefab 有 EmptyView（米色板 bg_frame、pic_news 插圖、紅膠囊 txt_bg ＋文字），移植時漏了。',
+      '照 Color War NEWS 的空畫面做法：紅板上鋪米色板（top 169.5／bottom 12／左 23.5 右 23），捲動欄 top 182 左 35.5 右 35，插圖滿欄寬 × 366.5、間距 16、紅膠囊 316（min 102.5）置中、Inter 700 16/22 白字靠左 241.5 寬。位置由 prefab Widget ÷2、對上現有紅板（news 節點原點 top 154.5、left 0.5）換算。',
+      'pic_news 在 LuckyTriple 與 ColorWar 是同一張（md5 相同），複製成 triple_bonus_news_empty.webp，兩個活動單位各自帶圖。',
+      '空字從共用 ImageCards 拿掉（REWARD 本來就自己畫空畫面），ImageCards 不再需要 status prop。',
+      '預覽驗證法：eval 動態 import SdkAdapter，把 getEventCenter() 的 newsList 用 defineProperty 蓋成 []，關掉中心再 openCenter(\'news\') 重新抓（中心已開著不會重抓）；等 SDK 逾時 10 秒才 ready。量完 delete 還原。',
+    ],
+    evidence: ['預覽量測：米色板 23.5,169.5 385.5×586.5、插圖 361.5×366.5（圖載到 764）、膠囊 316×102.5 在欄內 382.5、字框 241.5、Inter 700；lint／typecheck 綠、campaigns 測試 209 過（新增空清單一筆）。'],
+    todo: ['空字文案：我們是「…please stay tuned.」，cg-client prefab 寫「…Kindly stay informed of the latest updates.」（Color War 用後者），待確認要不要統一。'],
+    files: ['src/views/campaigns/tripleBonus/NewsPanel.tsx', 'src/views/campaigns/tripleBonus/ImageCards.tsx', 'src/views/campaigns/tripleBonus/assets.ts'],
+  },
+  {
+    date: '2026-10-21',
     topic: '500x',
     title: '500x 賠率列改自己的一份（Inter Bold、三段置中），review 收尾',
     branch: 'master',
