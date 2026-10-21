@@ -18,6 +18,22 @@ import Code from '../components/Code.jsx'
 const ENTRIES = [
   {
     date: '2026-10-21',
+    title: 'Triple Bonus 派彩「沒開三同色」版對稿（標誌、ON GOING）',
+    branch: 'master（未 commit）',
+    summary: [
+      '測法：192x 桌 DevTools sw.tripleBonusHoldNo（停在 2.5 秒，骨架已靜止），稿 triple_payout_no_one.jpg（~/Desktop/對稿圖/Triple）。',
+      '量測（稿裁塊做模板比對＋0.90～1.10 縮放搜尋）：標誌比稿高 22、ON GOING 比稿大 7% 且偏右 11；NOW、吉祥物、框右下都 ±1.1。',
+      '原因：骨架 cg_triple_results 的 LT_win_logo 兩個皮共用，位置是照三同色稿擺的；no_one 稿的標誌本來就比中獎稿低約 20。',
+      '只在 no_triple 皮：beforeUpdateWorldTransforms 每幀動畫套完後，LT_win_logo pose.y −44（骨架單位，＝22 px 往下），LT_new_on_going scale ×0.935、x 從 setup −22。改後標誌、ON GOING 都 0（相關 0.94／0.96）。',
+    ],
+    pitfalls: [
+      'LT_new_on_going 只有 scale 時間軸、沒有位移時間軸：pose.x += dx 每幀不會被動畫重設，一直累加，整個字飛出畫面。位置要寫 setupPose + dx；有位移時間軸的（標誌）才能用 +=。',
+      'pane 在 DPR 1、0.91 倍，量測精度 1.1 px。',
+    ],
+    files: ['src/views/campaigns/tripleBonus/room/TripleBonusPayout.tsx'],
+  },
+  {
+    date: '2026-10-21',
     title: 'Triple Bonus NEWS 沒有新聞時補預設圖（cg-client EmptyView）',
     branch: 'master（未 commit）',
     summary: [
