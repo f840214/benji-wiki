@@ -34,6 +34,19 @@ const ENTRIES = [
     files: ['src/views/room/rooms/bonus/BonusOddsInfoBar.tsx', 'src/views/room/rooms/bonus/BonusRoom.tsx'],
   },
   {
+    date: '2026-10-21',
+    topic: '500x',
+    title: '500x 注區人數圖示對稿（投注期間）',
+    branch: 'master',
+    summary: [
+      '用稿上每個文字節點的框當相關量測區（避開直播背景），搜尋範圍放大到 ±7。六色格人數圖示稿比我們左 3.6～5.2（平均 4.5）→ 右距 31 → 35.5；組合格人數圖示左 3 → 金額／圖示／人數間距 7／4 改 4／7（金額、數字不動）。',
+      '改後圖示 −0.82～+1.1（粉紅格 +1.1 是稿各格自身不一致，平均約 0）；六色格「121」差 <1 不動；下排比上排高 0.8～1.1 是稿本身列距不一致。',
+      '籌碼列：500x 稿 UNDO 13、籌碼 66 起 5 顆、自訂 318.5、x2 373.5，共用 ChipRow 照 192x 稿（15.75／4 槽／305.75／370.75），共用件未動、待使用者決定。',
+      '踩坑：zsh 迴圈 set -- \$sz 不拆字，set_pane_size 參數錯而沒生效；相關量測區用 Figma 節點框產生才不會框錯（手估的 y 偏了 25）。',
+    ],
+    files: ['src/views/room/rooms/bonus/BonusBoard.tsx', 'docs/plan/500x房間設計規格.md'],
+  },
+  {
     topic: '500x',
     date: '2026-10-19',
     title: '500x 注區對新稿 CG_RWD R1z2OHiV1oDkkwQwp3t9U2（投注期間）',
