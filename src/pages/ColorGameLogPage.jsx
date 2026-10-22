@@ -17,6 +17,25 @@ import Code from '../components/Code.jsx'
 
 const ENTRIES = [
   {
+    date: '2026-10-22',
+    title: '低配版試做：參數照 Cocos、spine 換靜態圖、CSS 演出停格',
+    branch: 'master（未 commit）',
+    summary: [
+      '參數照 Cocos：project.json／網址 performanceLimit（總開關，預設關）、loadingTimeoutSec（預設 10）；網址 lowEnd=1 強制低配（桌機看效果）。bootstrap 讀完設定注入 platform/device（configurePerformanceLimit），isPerformanceLimited＝強制 或（開關開且評分 ≤ 3）；載入超時扣分寫回快取（同 Cocos 改寫 App.deviceChecker）。',
+      '勾選工具：~/Desktop/spine-stills/index.html（spine 每個 skin×動畫的 25/50/75%／最後一格／內容最多、「也套用到」、loop/stop 同一張、低配不用；CSS 分頁是實際遊戲掃到的無限循環動畫，停 0/25/50/75%）。匯出 lowend-stills.json。',
+      '建置：scratchpad 的 build-lowend.mjs 讀 JSON，用真 spine runtime 畫選定格並記骨架範圍 → public/assets/lowend/*.webp（46 張 1.3 MB）＋ src/views/lowEnd/lowEndStills.ts（產生檔）。',
+      'src/views/components/Spine.tsx：框架 Spine 的低配分流，28 個檔改 import 它。低配有對照圖 → DOM img 用 portal 放進 spine 原本那張畫布的根元素（同層），位置照 boxToCanvasTransform＋applySpineFit 算；skip → 只留版位。',
+      '已轉 CSS 的 5 支（500x 得主鈕／得主榜／組合格、108x 中獎注區／標題）包 LowEndCssFreeze：低配把子層 CSS 動畫停在選定秒數（animationstart 也停），null＝不畫。',
+    ],
+    pitfalls: [
+      '畫面層直接 import platform/device 會讓測試載入鏈觸到 @toppath 真件（CI 剝除後紅）：拆出無相依的 platform/lowEndGate，device 載入時登記判斷。',
+      'img 放在版位節點裡會被同 plane 的視訊帶／布幕蓋住（spine 原本畫在上層 Pixi 畫布）→ 改 portal 進畫布根元素。',
+      'golden.json 原本同物件 avatar 寫兩次，用 json 重寫會被合併成一個；改用文字插入。',
+    ],
+    todo: ['108x 轉場／Super Round 圖截圖沒看到、大廳標題沒看到，待確認', '192x 新皮選的 kaishi／LED 倍率這局沒觸發到', '靠骨架 complete 收場的流程低配時要逐一驗'],
+    files: ['src/platform/device.ts', 'src/platform/lowEndGate.ts', 'src/integrations/config/fields.ts', 'src/main.tsx', 'src/views/components/Spine.tsx', 'src/views/lowEnd/', 'public/assets/lowend/'],
+  },
+  {
     date: '2026-10-21',
     title: 'Triple Bonus 派彩「沒開三同色」版對稿（標誌、ON GOING）',
     branch: 'master（未 commit）',
